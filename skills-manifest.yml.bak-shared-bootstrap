@@ -1,0 +1,228 @@
+version: 1
+artifacts:
+- canonical_id: shared.implement
+  name: implement
+  description: Implement a validated specification into production code while respecting the current project's conventions
+    from project-config.md.
+  version: 1.0.0
+  scope: shared
+  project: null
+  domain: implementation
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/shared/implement/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    project_specific_references_allowed: false
+    requires_project_config: true
+    forbids_silent_fallback: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/claude-commands/implement.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/implement/SKILL.md
+- canonical_id: aimoto.new-strategy
+  name: new-strategy
+  description: Design a new AIMOTO strategy from a free-form description without implementing code. Use for architectural
+    guidance, naming, integration points, leakage analysis, and pre-SPEC strategy framing.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/new-strategy/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_repo_read_before_recommendation: true
+    forbids_code_implementation: true
+    requires_canonical_strategy_naming: true
+    requires_leakage_analysis: true
+    requires_explicit_fallback_policy: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/new-strategy.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/new-strategy/SKILL.md
+- canonical_id: aimoto.update-strategy
+  name: update-strategy
+  description: Update an explicitly selected AIMOTO strategy across registered families with version bump, descriptor validation,
+    tests, and validation-grid handoff. Requires an explicit strategy target; never infer silently from previous context.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/update-strategy/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_explicit_strategy: true
+    forbids_silent_fallback: true
+    requires_version_bump: true
+    requires_targeted_tests: true
+    requires_validation_grid: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/update-strategy.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/update-strategy/SKILL.md
+- canonical_id: aimoto.add-indicator
+  name: add-indicator
+  description: Add a new indicator, KPI, strategy objective, metric, grid-search target, UI/API constraint, or closely related
+    field in aimoto. Use when the user asks to introduce a new measurable concept or to extend an existing one without collapsing
+    distinct semantics.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/add-indicator/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/add-indicator.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/add-indicator/SKILL.md
+- canonical_id: aimoto.analyse-signal
+  name: analyse-signal
+  description: Analyze an external signal, article, tweet, paper, or technique against aimoto's current forecasting setup
+    and MEMORY.md. Use when the user provides content to judge relevance, novelty, and practical value for BTC daily forecasting.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/analyse-signal/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/analyse-signal.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/analyse-signal/SKILL.md
+- canonical_id: aimoto.article-review
+  name: article-review
+  description: Review an external article or technique against aimoto's current approach and update the technique registry.
+    Use when the user wants a structured analysis plus historization in `docs/audits/TECHNIQUES-REGISTRY.md`.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/article-review/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/article-review.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/article-review/SKILL.md
+- canonical_id: aimoto.bilan
+  name: bilan
+  description: Produce a global audit of aimoto and write `docs/audits/global/BILAN-YYYY-MM-DD.md`. Use when the user asks
+    for a full project status review, stagnation analysis, or a tradability-oriented health check.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/bilan/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/bilan.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/bilan/SKILL.md
+- canonical_id: aimoto.edit-export-llm-report
+  name: edit-export-llm-report
+  description: Modify the export LLM report prompt, its sections, its versioning, and its tests. Use when the user asks to
+    change the grid-search export LLM report, prompt wording, RCS, veto table, or related prompt plumbing.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/edit-export-llm-report/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/edit-export-llm-report.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/edit-export-llm-report/SKILL.md
+- canonical_id: aimoto.next
+  name: next
+  description: Propose the next most promising improvement for aimoto's BTC forecast without implementing code. Use when the
+    user wants ranked ideas, plateau analysis, and a ready-to-copy `/spec-1-intake` block.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/next/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/next.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/next/SKILL.md
+- canonical_id: aimoto.implement-remediation-spec
+  name: implement-remediation-spec
+  description: Implement exactly one executable aimoto remediation spec from docs/audits/algo-architecture/remediation-specs/
+    using SPEC_PATH, in roadmap order and with strict scope, dependency, legacy, test, and reporting controls. Use when the
+    user asks to execute or implement one Sxx-*.md remediation spec, or the documented temporary FIX-001 exception.
+  version: 1.0.0
+  scope: project
+  project: aimoto
+  domain: backtesting
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/aimoto/implement-remediation-spec/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    requires_project_context: true
+    requires_repo_read_before_recommendation: true
+    project_specific_references_allowed: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.claude/commands/implement-remediation-spec.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/implement-remediation-spec/SKILL.md
