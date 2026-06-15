@@ -51,6 +51,7 @@ SAFE_CONTEXT_MARKERS = [
     "si absent : créer une section",
     "si absent : ajouter dans",
     "si absent et qu'il existe",
+    "si absent, chercher la page marketing principale",
     "read on demand, not auto-loaded",
     "diffèrent des conventions par défaut",
     "different from the language defaults",

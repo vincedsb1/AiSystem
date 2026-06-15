@@ -4,6 +4,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 from scripts.ai_doctor import (
+    classify_line,
     dashboard_results,
     doctor_status,
     print_doctor_dashboard,
@@ -87,6 +88,12 @@ class DoctorDashboardTests(unittest.TestCase):
         self.assertEqual(doctor_status({"danger": 0, "review": 1}), "WARN")
         self.assertEqual(doctor_status({"danger": 0, "review": 0}), "OK")
         self.assertEqual(len(truncate_finding_text("x" * 120)), 100)
+        self.assertEqual(
+            classify_line(
+                "Si absent, chercher la page marketing principale du projet."
+            ),
+            "acceptable",
+        )
 
     def test_all_dangers_remain_visible_past_limit(self):
         results = [
