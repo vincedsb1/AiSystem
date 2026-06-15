@@ -94,6 +94,79 @@ class ProjectAwarePairingTests(unittest.TestCase):
         self.assertEqual(pairs[0]["codex_project"], "aimoto")
         self.assertEqual(pairs[1]["claude_project"], "InterviewOS")
 
+    def test_project_claude_only_exception_changes_missing_status(self):
+        artifacts = [
+            artifact("claude_command", "Pylaa", "data-slot-add"),
+        ]
+        registry = {
+            "pairing_exceptions": [{
+                "project": "Pylaa",
+                "artifact_type": "claude_command",
+                "name": "data-slot-add",
+                "expected_status": "claude_only_project_command",
+                "reason": "Project command.",
+            }],
+        }
+
+        pair = build_pairs(artifacts, registry)[0]
+
+        self.assertEqual(pair["raw_issue"], "missing_codex_skill")
+        self.assertEqual(pair["issue"], "expected_claude_only")
+        self.assertEqual(pair["exception_reason"], "Project command.")
+
+    def test_exception_does_not_apply_to_shared_artifact(self):
+        artifacts = [
+            artifact(
+                "claude_command",
+                "Pylaa",
+                "implement",
+                "shared.implement",
+                "shared",
+            ),
+        ]
+        registry = {
+            "pairing_exceptions": [{
+                "project": "Pylaa",
+                "artifact_type": "claude_command",
+                "name": "implement",
+                "expected_status": "claude_only_project_command",
+            }],
+        }
+
+        pair = build_pairs(artifacts, registry)[0]
+
+        self.assertEqual(pair["issue"], "missing_codex_skill")
+
+    def test_exception_never_masks_drift(self):
+        artifacts = [
+            artifact(
+                "claude_command",
+                "Pylaa",
+                "custom",
+                "pylaa.custom",
+                "project",
+            ),
+            artifact(
+                "codex_skill",
+                "Pylaa",
+                "custom",
+                "pylaa.other",
+                "project",
+            ),
+        ]
+        registry = {
+            "pairing_exceptions": [{
+                "project": "Pylaa",
+                "artifact_type": "claude_command",
+                "name": "custom",
+                "expected_status": "claude_only_project_command",
+            }],
+        }
+
+        pair = build_pairs(artifacts, registry)[0]
+
+        self.assertEqual(pair["issue"], "drift_canonical_id_mismatch")
+
     def test_project_summary_counts_artifacts_and_issues(self):
         artifacts = [
             artifact("claude_command", "InterviewOS", "analyse-signal"),

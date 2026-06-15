@@ -94,6 +94,16 @@ class DoctorDashboardTests(unittest.TestCase):
             ),
             "acceptable",
         )
+        self.assertEqual(
+            classify_line(
+                "Cascade fallback : options persona DB > options génériques DB."
+            ),
+            "acceptable",
+        )
+        self.assertEqual(
+            classify_line('Le template par défaut "SaaS Standard" a 4 sections.'),
+            "acceptable",
+        )
 
     def test_all_dangers_remain_visible_past_limit(self):
         results = [

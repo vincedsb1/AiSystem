@@ -72,6 +72,16 @@ SAFE_CONTEXT_MARKERS = [
     "reads forecast artifacts from disk only; no mock or fallback data",
     "`floor_fields` ou logique d'opérateur par défaut",
     "schémas (ui/flow/états) : **bloquant** → si absent/inutilisable : fail",
+    "persona_fallback_options",
+    "minimax m2.5 (fallback)",
+    "fallback options",
+    "cascade fallback :",
+    "suggested_options_fallback",
+    "fallback sur originales si < 5 résultats",
+    "fallback code dans `matcher.py`",
+    "fallback js firefox",
+    "ou le calcule via le service d'embedding si absent",
+    'template par défaut "saas standard"',
 ]
 
 

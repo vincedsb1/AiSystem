@@ -861,7 +861,69 @@ def shared_cross_project_match(
     )[0]
 
 
-def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def pairing_exception(
+    registry: dict[str, Any],
+    *,
+    project: str,
+    name: str,
+    artifact_type: str,
+) -> dict[str, Any] | None:
+    normalized_name = normalize_name(name)
+
+    for exception in registry.get("pairing_exceptions", []):
+        if (
+            exception.get("project") == project
+            and exception.get("artifact_type") == artifact_type
+            and normalize_name(exception.get("name", "")) == normalized_name
+        ):
+            return exception
+
+    return None
+
+
+def apply_pairing_exception(
+    *,
+    registry: dict[str, Any],
+    project: str,
+    name: str,
+    claude: dict[str, Any] | None,
+    codex: dict[str, Any] | None,
+    issue: str,
+) -> tuple[str, dict[str, Any] | None]:
+    if issue == "missing_codex_skill" and claude and not is_explicitly_shared(claude):
+        exception = pairing_exception(
+            registry,
+            project=project,
+            name=name,
+            artifact_type="claude_command",
+        )
+        if exception and exception.get("expected_status") in {
+            "claude_only_project_command",
+            "expected_claude_only",
+        }:
+            return "expected_claude_only", exception
+
+    if issue == "missing_claude_command" and codex and not is_explicitly_shared(codex):
+        exception = pairing_exception(
+            registry,
+            project=project,
+            name=name,
+            artifact_type="codex_skill",
+        )
+        if exception and exception.get("expected_status") in {
+            "codex_only_project_skill",
+            "expected_codex_only",
+        }:
+            return "expected_codex_only", exception
+
+    return issue, None
+
+
+def build_pairs(
+    artifacts: list[dict[str, Any]],
+    registry: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    registry = registry or {}
     claude = [
         a
         for a in artifacts
@@ -903,7 +965,15 @@ def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         elif x and not c:
             c = shared_cross_project_match(x, claude_by_name.get(name, []))
 
-        issue = pair_issue_from_metadata(c, x)
+        raw_issue = pair_issue_from_metadata(c, x)
+        issue, exception = apply_pairing_exception(
+            registry=registry,
+            project=project,
+            name=name,
+            claude=c,
+            codex=x,
+            issue=raw_issue,
+        )
 
         pairs.append(
             {
@@ -928,7 +998,9 @@ def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     if c and x
                     else None
                 ),
+                "raw_issue": raw_issue,
                 "issue": issue,
+                "exception_reason": exception.get("reason") if exception else None,
             }
         )
 
@@ -938,6 +1010,9 @@ def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def pair_severity(issue: str) -> str:
     if issue in {"ok_same_canonical", "ok_same_export_hash"}:
         return "ok"
+
+    if issue in {"expected_claude_only", "expected_codex_only"}:
+        return "expected"
 
     if issue in {"semantic_review_needed"}:
         return "info"
@@ -989,7 +1064,7 @@ def summarize(
 
     for pair in pairs:
         severity = pair_severity(pair["issue"])
-        if severity == "ok":
+        if severity in {"ok", "expected"}:
             continue
 
         issues.append(
@@ -1127,6 +1202,8 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
         "semantic_review_needed": "Claude and Codex share a name but are not yet linked to canonical metadata.",
         "missing_codex_skill": "Claude command exists, Codex skill is missing.",
         "missing_claude_command": "Codex skill exists, Claude command is missing.",
+        "expected_claude_only": "Project-specific Claude command intentionally has no Codex skill.",
+        "expected_codex_only": "Project-specific Codex skill intentionally has no Claude command.",
         "drift_canonical_id_mismatch": "Claude and Codex declare different canonical IDs.",
         "drift_version_mismatch": "Claude and Codex declare different versions.",
         "drift_source_mismatch": "Claude and Codex declare different source_of_truth paths.",
@@ -1291,6 +1368,8 @@ def print_inventory_dashboard(
         "ok_same_export_hash",
         "missing_codex_skill",
         "missing_claude_command",
+        "expected_claude_only",
+        "expected_codex_only",
         "semantic_review_needed",
         "drift_canonical_id_mismatch",
         "drift_version_mismatch",
@@ -1309,11 +1388,30 @@ def print_inventory_dashboard(
     for pair_status in preferred_statuses + drift_statuses + other_statuses:
         print(f"  {pair_status:<32} {summary['pair_counts'].get(pair_status, 0):>4}")
 
+    expected_pairs = [
+        pair
+        for pair in report["pairs"]
+        if pair_severity(pair["issue"]) == "expected"
+    ]
     problem_pairs = [
         pair
         for pair in report["pairs"]
-        if pair_severity(pair["issue"]) != "ok"
+        if pair_severity(pair["issue"]) not in {"ok", "expected"}
     ]
+    if expected_pairs:
+        print()
+        print("Pairing exceptions")
+        current_project = None
+        for pair in expected_pairs:
+            if pair["project"] != current_project:
+                current_project = pair["project"]
+                print(f"  {current_project}")
+            path = pair["claude_path"] or pair["codex_path"] or ""
+            reason = pair.get("exception_reason") or ""
+            print(f"    {pair['name']} | {pair['issue']} | {path}")
+            if reason:
+                print(f"      {reason}")
+
     if problem_pairs:
         print()
         print("Pairing problems")
@@ -1469,7 +1567,7 @@ def main() -> None:
 
     artifacts = enrich_artifacts_from_manifest(artifacts, manifest_index)
 
-    pairs = build_pairs(artifacts)
+    pairs = build_pairs(artifacts, registry)
     summary = summarize(artifacts, pairs, manifest_exports, project_names)
 
     report = {
