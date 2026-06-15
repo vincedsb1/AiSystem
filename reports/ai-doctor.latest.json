@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15T13:48:28",
+  "generated_at": "2026-06-15T13:55:50",
   "registry": "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml",
   "inventory": "/Users/vincentdesbrosses/Documents/Misc/ai-system/reports/ai-inventory.latest.json",
   "summary": {
@@ -11,22 +11,22 @@
     "by_pattern": {},
     "by_artifact": {},
     "raw": {
-      "total": 108,
+      "total": 126,
       "danger": 0,
       "review": 0,
-      "acceptable": 108,
+      "acceptable": 126,
       "by_artifact_type": {
         "agents_file": 1,
         "claude_command": 51,
         "claude_file": 1,
         "claude_strategy_profile": 2,
-        "codex_skill": 51,
+        "codex_skill": 69,
         "project_config": 2
       },
       "by_pattern": {
-        "fallback": 30,
-        "par défaut": 56,
-        "si absent": 22
+        "fallback": 33,
+        "par défaut": 66,
+        "si absent": 27
       },
       "by_artifact": {
         "agents_file:AGENTS": {
@@ -81,7 +81,7 @@
           "acceptable": 3
         },
         "codex_skill:implement": {
-          "acceptable": 2
+          "acceptable": 3
         },
         "codex_skill:implement-remediation-spec": {
           "acceptable": 2
@@ -90,19 +90,19 @@
           "acceptable": 1
         },
         "codex_skill:optimize-claude-md": {
-          "acceptable": 14
+          "acceptable": 21
         },
         "codex_skill:spec-1-intake": {
-          "acceptable": 2
+          "acceptable": 3
         },
         "codex_skill:spec-3-audit": {
-          "acceptable": 2
+          "acceptable": 3
         },
         "codex_skill:spec-5-revise": {
-          "acceptable": 2
+          "acceptable": 3
         },
         "codex_skill:ui-review": {
-          "acceptable": 14
+          "acceptable": 21
         },
         "codex_skill:update-strategy": {
           "acceptable": 7
@@ -114,5 +114,5 @@
     }
   },
   "findings": [],
-  "raw_findings_count": 108
+  "raw_findings_count": 126
 }
