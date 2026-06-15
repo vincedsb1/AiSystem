@@ -82,6 +82,18 @@ SAFE_CONTEXT_MARKERS = [
     "fallback js firefox",
     "ou le calcule via le service d'embedding si absent",
     'template par défaut "saas standard"',
+    "gemini (primary), minimax (fallback)",
+    "multi-provider llm client (local ollama + cloud fallback",
+    "invariant zéro fallback",
+    "cloud fallback primary",
+    "cloud fallback secondary",
+    "fallback chain",
+    "`video.published_at` (fallback `transcript.created_at`",
+    "puis fallback gemini → minimax",
+]
+
+PRIORITY_SAFE_CONTEXT_MARKERS = [
+    "fallback hérité : extraction du handle depuis l'url si disponible",
 ]
 
 
@@ -146,6 +158,9 @@ def fallback_patterns(registry: dict[str, Any]) -> list[str]:
 
 def classify_line(line: str) -> str:
     lowered = line.lower()
+
+    if any(marker in lowered for marker in PRIORITY_SAFE_CONTEXT_MARKERS):
+        return "acceptable"
 
     if any(marker in lowered for marker in DANGEROUS_CONTEXT_MARKERS):
         return "danger"

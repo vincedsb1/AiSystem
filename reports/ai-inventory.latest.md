@@ -1,22 +1,22 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T14:34:38
+Generated: 2026-06-15T14:44:13
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| codex_skills | 74 |
-| claude_commands | 70 |
+| codex_skills | 87 |
+| claude_commands | 85 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
 | claude_hooks | 6 |
 | codex_hooks | 3 |
-| root_docs | 12 |
-| manifest_covered_artifacts | 132 |
-| manifest_declared_exports | 96 |
+| root_docs | 13 |
+| manifest_covered_artifacts | 154 |
+| manifest_declared_exports | 109 |
 | manifest_missing_exports | 0 |
-| issues | 117 |
+| issues | 140 |
 
 ## Projects summary
 
@@ -27,13 +27,14 @@ Generated: 2026-06-15T14:34:38
 | intrai | 13 | 0 | 0 | 0 | 0 | 1 | 8 |
 | Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 28 |
 | Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 25 |
+| Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 23 |
 
 ## Pair status summary
 
 | Pair status | Count | Meaning |
 |---|---:|---|
-| expected_claude_only | 12 | Project-specific Claude command intentionally has no Codex skill. |
-| ok_same_canonical | 74 | Claude and Codex are linked to the same canonical manifest entry. |
+| expected_claude_only | 18 | Project-specific Claude command intentionally has no Codex skill. |
+| ok_same_canonical | 87 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
@@ -90,6 +91,25 @@ Generated: 2026-06-15T14:34:38
 | Pylot | ui-fix-global | Pylot | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
 | Pylot | ui-review | Pylot | .claude/commands/ui-review.md | Pylot | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | Pylot | ui-review-global | Pylot | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Skriipt | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Skriipt | commit | Skriipt | .claude/commands/commit.md | Skriipt | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| Skriipt | create-doc | InterviewOS | .claude/commands/create-doc.md | Skriipt | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| Skriipt | data-slot-add | Skriipt | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | design-audit-context | Skriipt | .claude/commands/design-audit-context.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | implement | Skriipt | .claude/commands/implement.md | Skriipt | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| Skriipt | landing-review | Skriipt | .claude/commands/landing-review.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | next-step | Skriipt | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | Skriipt | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-0-feedback | Skriipt | .claude/commands/spec-0-feedback.md | Skriipt | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-1-intake | Skriipt | .claude/commands/spec-1-intake.md | Skriipt | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-2-draft | Skriipt | .claude/commands/spec-2-draft.md | Skriipt | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-3-audit | Skriipt | .claude/commands/spec-3-audit.md | Skriipt | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-4-challenge | Skriipt | .claude/commands/spec-4-challenge.md | Skriipt | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-5-revise | Skriipt | .claude/commands/spec-5-revise.md | Skriipt | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| Skriipt | test | InterviewOS | .claude/commands/test.md | Skriipt | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| Skriipt | ui-fix-global | Skriipt | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
+| Skriipt | ui-review | Skriipt | .claude/commands/ui-review.md | Skriipt | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| Skriipt | ui-review-global | Skriipt | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
 | aimoto | add-indicator | aimoto | .claude/commands/add-indicator.md | aimoto | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
 | aimoto | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | aimoto | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | analyse-signal | aimoto | .claude/commands/analyse-signal.md | aimoto | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
@@ -226,6 +246,19 @@ Generated: 2026-06-15T14:34:38
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylot/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylot/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylot/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/ai-post-task-review/SKILL.md | true |
+| shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/commit/SKILL.md | true |
+| shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/create-doc/SKILL.md | true |
+| shared.implement | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/implement/SKILL.md | true |
+| shared.optimize-claude-md | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/optimize-claude-md/SKILL.md | true |
+| shared.spec-0-feedback | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-0-feedback/SKILL.md | true |
+| shared.spec-1-intake | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-1-intake/SKILL.md | true |
+| shared.spec-2-draft | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-2-draft/SKILL.md | true |
+| shared.spec-3-audit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-3-audit/SKILL.md | true |
+| shared.spec-4-challenge | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-4-challenge/SKILL.md | true |
+| shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-5-revise/SKILL.md | true |
+| shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/test/SKILL.md | true |
+| shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/ui-review/SKILL.md | true |
 
 ## Issues
 
@@ -348,6 +381,29 @@ Generated: 2026-06-15T14:34:38
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
+| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
+| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
+| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
+| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
+| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
+| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
+| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
+| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : fallback |
 
 ## Symlinks
 
@@ -411,6 +467,21 @@ Generated: 2026-06-15T14:34:38
 | spec-4-challenge | claude_command | .claude/commands/spec-4-challenge.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-4-challenge.md | ok |
 | spec-5-revise | claude_command | .claude/commands/spec-5-revise.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-5-revise.md | ok |
 | test | claude_command | .claude/commands/test.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/test.md | ok |
+| ui-fix-global | claude_command | .claude/commands/ui-fix-global.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-fix-global.md | ok |
+| ui-review-global | claude_command | .claude/commands/ui-review-global.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review-global.md | ok |
+| ui-review | claude_command | .claude/commands/ui-review.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md | ok |
+| commit | claude_command | .claude/commands/commit.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/commit.md | ok |
+| data-slot-add | claude_command | .claude/commands/data-slot-add.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/data-slot-add.md | ok |
+| design-audit-context | claude_command | .claude/commands/design-audit-context.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/design-audit-context.md | ok |
+| implement | claude_command | .claude/commands/implement.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/implement.md | ok |
+| landing-review | claude_command | .claude/commands/landing-review.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/landing-review.md | ok |
+| next-step | claude_command | .claude/commands/next-step.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/next-step.md | ok |
+| spec-0-feedback | claude_command | .claude/commands/spec-0-feedback.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-0-feedback.md | ok |
+| spec-1-intake | claude_command | .claude/commands/spec-1-intake.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-1-intake.md | ok |
+| spec-2-draft | claude_command | .claude/commands/spec-2-draft.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-2-draft.md | ok |
+| spec-3-audit | claude_command | .claude/commands/spec-3-audit.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-3-audit.md | ok |
+| spec-4-challenge | claude_command | .claude/commands/spec-4-challenge.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-4-challenge.md | ok |
+| spec-5-revise | claude_command | .claude/commands/spec-5-revise.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-5-revise.md | ok |
 | ui-fix-global | claude_command | .claude/commands/ui-fix-global.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-fix-global.md | ok |
 | ui-review-global | claude_command | .claude/commands/ui-review-global.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review-global.md | ok |
 | ui-review | claude_command | .claude/commands/ui-review.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md | ok |

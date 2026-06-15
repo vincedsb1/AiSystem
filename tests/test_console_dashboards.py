@@ -104,6 +104,24 @@ class DoctorDashboardTests(unittest.TestCase):
             classify_line('Le template par défaut "SaaS Standard" a 4 sections.'),
             "acceptable",
         )
+        self.assertEqual(
+            classify_line(
+                "Fallback hérité : extraction du handle depuis l'URL si "
+                "disponible. Si aucun handle n'est présent, conserver Unknown."
+            ),
+            "acceptable",
+        )
+        self.assertEqual(
+            classify_line(
+                "Fallback chain : local → Gemini → MiniMax. "
+                "AllProvidersFailedError si tout échoue."
+            ),
+            "acceptable",
+        )
+        self.assertEqual(
+            classify_line("Si aucun résultat n'existe, appliquer par défaut."),
+            "danger",
+        )
 
     def test_all_dangers_remain_visible_past_limit(self):
         results = [

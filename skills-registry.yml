@@ -163,7 +163,32 @@ projects:
 
   - name: Skriipt
     root: /Users/vincentdesbrosses/Documents/Misc/Skriipt
-    enabled: false
+    enabled: true
+    install_shared_skills:
+      - shared.ai-post-task-review
+      - shared.commit
+      - shared.create-doc
+      - shared.implement
+      - shared.optimize-claude-md
+      - shared.spec-0-feedback
+      - shared.spec-1-intake
+      - shared.spec-2-draft
+      - shared.spec-3-audit
+      - shared.spec-4-challenge
+      - shared.spec-5-revise
+      - shared.test
+      - shared.ui-review
+    paths:
+      codex_skills: .agents/skills
+      claude_commands: .claude/commands
+      claude_rules: .claude/rules
+      claude_strategy_profiles: .claude/strategy-profiles
+      claude_hooks: .claude/hooks
+      codex_hooks: .codex/hooks
+      agents_file: AGENTS.md
+      claude_file: CLAUDE.md
+      project_config: .claude/project-config.md
+      architecture_file: docs/ARCHITECTURE.md
 
   - name: Spotter
     root: /Users/vincentdesbrosses/Documents/Misc/Spotter
@@ -257,6 +282,36 @@ pairing_exceptions:
     name: ui-review-global
     expected_status: claude_only_project_command
     reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: data-slot-add
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: design-audit-context
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: landing-review
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: next-step
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: ui-fix-global
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+  - project: Skriipt
+    artifact_type: claude_command
+    name: ui-review-global
+    expected_status: claude_only_project_command
+    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
 
 quality_rules:
   # Les fichiers runtime Claude/Codex doivent rester compatibles avec leurs outils.
