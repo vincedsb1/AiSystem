@@ -12,6 +12,7 @@ import yaml
 
 
 DEFAULT_MANIFEST = "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-manifest.yml"
+DEFAULT_REGISTRY = "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml"
 
 
 def read_text(path: Path) -> str:
@@ -148,9 +149,162 @@ def sync_export(
     }
 
 
+def manifest_by_canonical_id(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    return {
+        artifact["canonical_id"]: artifact
+        for artifact in manifest.get("artifacts", [])
+        if artifact.get("canonical_id")
+    }
+
+
+def registry_shared_codex_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    artifacts_by_id = manifest_by_canonical_id(manifest)
+    exports: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+
+    for project in registry.get("projects", []):
+        if not project.get("enabled"):
+            continue
+
+        project_name = project.get("name")
+        project_root = project.get("root")
+        codex_skills_path = project.get("paths", {}).get("codex_skills")
+
+        for canonical_id in project.get("install_shared_skills", []):
+            artifact = artifacts_by_id.get(canonical_id)
+
+            if not str(canonical_id).startswith("shared."):
+                errors.append({
+                    "status": "error",
+                    "canonical_id": canonical_id,
+                    "target": "codex_skill",
+                    "path": "",
+                    "message": (
+                        f"{project_name}: install_shared_skills only accepts shared.* canonicals"
+                    ),
+                })
+                continue
+
+            if not artifact:
+                errors.append({
+                    "status": "error",
+                    "canonical_id": canonical_id,
+                    "target": "codex_skill",
+                    "path": "",
+                    "message": f"{project_name}: canonical not found in manifest",
+                })
+                continue
+
+            if artifact.get("scope") != "shared":
+                errors.append({
+                    "status": "error",
+                    "canonical_id": canonical_id,
+                    "target": "codex_skill",
+                    "path": "",
+                    "message": f"{project_name}: canonical scope is not shared",
+                })
+                continue
+
+            if not artifact.get("compatibility", {}).get("codex"):
+                errors.append({
+                    "status": "error",
+                    "canonical_id": canonical_id,
+                    "target": "codex_skill",
+                    "path": "",
+                    "message": f"{project_name}: canonical is not Codex-compatible",
+                })
+                continue
+
+            if not project_root or not codex_skills_path:
+                errors.append({
+                    "status": "error",
+                    "canonical_id": canonical_id,
+                    "target": "codex_skill",
+                    "path": "",
+                    "message": f"{project_name}: missing root or paths.codex_skills",
+                })
+                continue
+
+            exports.append({
+                "canonical_id": canonical_id,
+                "artifact": artifact,
+                "project": project_name,
+                "target": "codex_skill",
+                "path": str(
+                    Path(project_root)
+                    / codex_skills_path
+                    / artifact["name"]
+                    / "SKILL.md"
+                ),
+            })
+
+    return exports, errors
+
+
+def path_is_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve(strict=False).relative_to(root.resolve(strict=False))
+        return True
+    except ValueError:
+        return False
+
+
+def manifest_codex_export_policy_error(
+    *,
+    artifact: dict[str, Any],
+    export_path: Path,
+    registry: dict[str, Any],
+    allowed_shared_paths: set[str],
+) -> str | None:
+    scope = artifact.get("scope")
+    canonical_id = str(artifact.get("canonical_id") or "")
+
+    if scope == "shared":
+        if str(export_path) not in allowed_shared_paths:
+            return (
+                f"{canonical_id}: local Codex export is not allowed by "
+                "install_shared_skills"
+            )
+        return None
+
+    if scope != "project":
+        return f"{canonical_id}: unsupported scope for Codex export: {scope}"
+
+    project_name = artifact.get("project")
+    project = next(
+        (
+            candidate
+            for candidate in registry.get("projects", [])
+            if candidate.get("name") == project_name
+        ),
+        None,
+    )
+    if not project or not project.get("root"):
+        return f"{canonical_id}: declared project is missing from registry"
+
+    expected_prefix = f"{str(project_name).lower()}."
+    if not canonical_id.lower().startswith(expected_prefix):
+        return (
+            f"{canonical_id}: canonical prefix does not match project "
+            f"{project_name}"
+        )
+
+    if not path_is_within(export_path, Path(project["root"])):
+        return (
+            f"{canonical_id}: project export must stay inside "
+            f"{project['root']}"
+        )
+
+    return None
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", default=DEFAULT_MANIFEST)
+    parser.add_argument("--registry", default=DEFAULT_REGISTRY)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--no-backup", action="store_true")
     parser.add_argument("--diff", action="store_true")
@@ -163,9 +317,19 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = load_yaml(Path(args.manifest))
+    registry = load_yaml(Path(args.registry))
     only = set(args.only)
 
     results: list[dict[str, Any]] = []
+    registry_exports, registry_errors = registry_shared_codex_exports(
+        registry,
+        manifest,
+    )
+    results.extend(registry_errors)
+    registry_export_paths = {
+        export["path"]
+        for export in registry_exports
+    }
 
     for artifact in manifest.get("artifacts", []):
         canonical_id = artifact["canonical_id"]
@@ -201,6 +365,24 @@ def main() -> None:
 
         for export in artifact.get("exports", []):
             export_path = Path(export["path"])
+            if str(export_path) in registry_export_paths:
+                continue
+            if export.get("target") == "codex_skill":
+                policy_error = manifest_codex_export_policy_error(
+                    artifact=artifact,
+                    export_path=export_path,
+                    registry=registry,
+                    allowed_shared_paths=registry_export_paths,
+                )
+                if policy_error:
+                    results.append({
+                        "status": "error",
+                        "canonical_id": canonical_id,
+                        "target": export.get("target"),
+                        "path": str(export_path),
+                        "message": policy_error,
+                    })
+                    continue
 
             export_description = export.get("description") or description
 
@@ -217,6 +399,43 @@ def main() -> None:
             result["canonical_id"] = canonical_id
             result["target"] = export.get("target")
             results.append(result)
+
+    for export in registry_exports:
+        canonical_id = export["canonical_id"]
+        if only and canonical_id not in only:
+            continue
+
+        artifact = export["artifact"]
+        description = artifact.get("description")
+        source_of_truth = artifact.get("source_of_truth")
+
+        if not description or not source_of_truth:
+            results.append({
+                "status": "error",
+                "canonical_id": canonical_id,
+                "target": export["target"],
+                "path": export["path"],
+                "message": (
+                    "Missing description"
+                    if not description
+                    else "Missing source_of_truth"
+                ),
+            })
+            continue
+
+        result = sync_export(
+            canonical_path=Path(source_of_truth),
+            export_path=Path(export["path"]),
+            name=artifact["name"],
+            description=description,
+            apply=args.apply,
+            backup=not args.no_backup,
+            show_diff=args.diff,
+        )
+        result["canonical_id"] = canonical_id
+        result["target"] = export["target"]
+        result["project"] = export["project"]
+        results.append(result)
 
     for result in results:
         print(

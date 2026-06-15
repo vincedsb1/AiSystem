@@ -2,18 +2,48 @@
 
 ## État actuel
 
-- Claude commands: 18
-- Codex skills: 0
+- Claude commands: 12
+- Codex skills: 13
 - Claude rules: 4
 - Claude hooks: 3
 - Codex hooks: 0
 - Root docs: 2
+- Pairing: 13 `ok_same_canonical`, aucun missing ou drift
+- AI Doctor: `OK`
 
-## Décisions actées
+## Politique d'installation
 
-### Commandes AIMOTO-only détectées dans InterviewOS
+InterviewOS installe localement les skills Codex `shared.*` déclarés dans
+`projects[].install_shared_skills` dans `skills-registry.yml`.
 
-Ces commandes ne doivent pas être portées vers InterviewOS et ne doivent pas recevoir de skill Codex local InterviewOS :
+Les exports sont générés dans
+`InterviewOS/.agents/skills/<skill>/SKILL.md` depuis les canonicals shared
+existants. Le registre porte la politique d'installation par projet; le
+manifest reste la source des métadonnées canoniques.
+
+La politique actuelle installe :
+
+- `shared.ai-post-task-review`
+- `shared.commit`
+- `shared.create-doc`
+- `shared.implement`
+- `shared.optimize-claude-md`
+- `shared.spec-0-feedback`
+- `shared.spec-1-intake`
+- `shared.spec-2-draft`
+- `shared.spec-3-audit`
+- `shared.spec-4-challenge`
+- `shared.spec-5-revise`
+- `shared.test`
+- `shared.ui-review`
+
+## Isolation des projets
+
+InterviewOS ne reçoit aucun canonical `aimoto.*`. Réciproquement, AIMOTO ne
+reçoit aucun canonical `interviewos.*`.
+
+Les commandes AIMOTO-only suivantes ont été retirées d'InterviewOS et ne
+doivent pas être recréées sous forme de skills locaux :
 
 - `analyse-signal`
 - `article-review`
@@ -22,111 +52,43 @@ Ces commandes ne doivent pas être portées vers InterviewOS et ne doivent pas r
 - `next`
 - `update-strategy`
 
-Décision : les retirer de `InterviewOS/.claude/commands`.
+Les futurs skills project `interviewos.*` seront créés uniquement lorsqu'un
+besoin métier clair le justifiera.
 
-Raison : commandes spécifiques à AIMOTO, non partagées, non adaptées au domaine InterviewOS.
+## Synchronisation
 
-## Problèmes détectés
-
-### Pairing Claude ↔ Codex
-
-Les `missing_codex_skill` actuels viennent des commandes AIMOTO-only exposées par erreur dans InterviewOS :
-
-- `analyse-signal`
-- `article-review`
-- `bilan`
-- `edit-export-llm-report`
-- `next`
-- `update-strategy`
-
-Ces commandes ne doivent pas être corrigées par création de skills Codex locaux. Elles doivent être retirées du projet InterviewOS.
-
-### AI Doctor
-
-Les dangers actuels viennent de la commande AIMOTO-only suivante :
-
-- `InterviewOS/.claude/commands/update-strategy.md`
-  - fallback `_next_minor_ver(...)`
-  - `fallback_next_minor_ver`
-  - source de version implicite
-
-Décision : ne pas corriger cette commande dans InterviewOS. La retirer du projet, car elle ne doit pas être exposée dans InterviewOS.
-
-Review restante :
-
-- `docs/ARCHITECTURE.md`
-  - mention `par défaut` sur la création de champ
-
-Cette review est secondaire. Elle peut être traitée après retrait des commandes AIMOTO-only.
-
-## Actions interdites pour cette phase
-
-- Ne pas créer de skills Codex InterviewOS pour les commandes AIMOTO-only.
-- Ne pas canonicaliser les commandes AIMOTO-only sous `skills/projects/interviewos`.
-- Ne pas ajouter ces commandes au `skills-manifest.yml` pour InterviewOS.
-- Ne pas lancer `sync_skills.py` pour créer des exports InterviewOS à partir de ces commandes.
-- Ne pas modifier les canonicals AIMOTO.
-- Ne pas modifier les exports AIMOTO.
-- Ne pas corriger `update-strategy.md` dans InterviewOS : le fichier doit être retiré du périmètre InterviewOS.
-
-## Plan d'action
-
-1. Retirer les commandes AIMOTO-only de `InterviewOS/.claude/commands` :
-   - `analyse-signal.md`
-   - `article-review.md`
-   - `bilan.md`
-   - `edit-export-llm-report.md`
-   - `next.md`
-   - `update-strategy.md`
-
-2. Relancer l’inventaire :
-
-   `./run-inventory.sh`
-
-3. Relancer le doctor :
-
-   `.venv/bin/python scripts/ai_doctor.py --inventory`
-
-4. Vérifier que les problèmes suivants disparaissent :
-   - `missing_codex_skill` pour les commandes AIMOTO-only ;
-   - `danger` sur `InterviewOS/.claude/commands/update-strategy.md`.
-
-5. Vérifier que les commandes shared utiles restent exposées dans InterviewOS :
-   - `commit`
-   - `create-doc`
-   - `implement`
-   - `optimize-claude-md`
-   - `spec-0-feedback`
-   - `spec-1-intake`
-   - `spec-2-draft`
-   - `spec-3-audit`
-   - `spec-4-challenge`
-   - `spec-5-revise`
-   - `test`
-   - `ui-review`
-
-6. Traiter ensuite la review secondaire dans `InterviewOS/docs/ARCHITECTURE.md` si elle reste signalée.
-
-## État attendu après retrait
-
-### Inventory
-
-- `InterviewOS` reste scanné.
-- `InterviewOS` ne contient plus les commandes AIMOTO-only.
-- `missing_codex_skill = 0` pour les commandes AIMOTO-only.
-- Aucun drift inter-projets artificiel.
-
-### Doctor
-
-- `danger = 0`
-- `review` peut rester à `1` si `docs/ARCHITECTURE.md` contient encore la mention `par défaut`.
-
-## Validation finale
-
-Commandes à lancer depuis `ai-system` :
+Depuis `ai-system` :
 
 ```bash
-cd /Users/vincentdesbrosses/Documents/Misc/ai-system
+.venv/bin/python scripts/sync_skills.py --apply --no-backup
+```
 
+Le synchroniseur :
+
+- accepte uniquement des canonicals `shared.*` dans
+  `install_shared_skills` ;
+- vérifie que le canonical existe, est `scope: shared` et compatible Codex ;
+- génère les exports vers le chemin `codex_skills` du projet cible ;
+- conserve les skills project strictement liés à leur projet.
+
+## Contrôle d'inventaire
+
+`ai_inventory.py` dérive les exports attendus depuis la même politique. Un
+shared skill déclaré mais absent est signalé comme export manquant pour le
+projet concerné.
+
+## Validation
+
+```bash
 ./run-inventory.sh
 .venv/bin/python scripts/ai_doctor.py --inventory
+```
+
+Résultat validé :
+
+- `InterviewOS codex_skills = 13`
+- `missing_codex_skill = 0`
+- `missing_claude_command = 0`
+- tous les compteurs `drift_* = 0`
+- aucun canonical `aimoto.*` exporté dans InterviewOS
+- `AI Doctor — OK`

@@ -190,7 +190,7 @@ Ces points sont des angles morts récurrents qui passent à travers une optimisa
 - [ ] Python venv / chemin de l'interpréteur documenté ?
 - [ ] Version de Python requise ?
 - [ ] Version de Node / pnpm requise ?
-- [ ] Variables d'environnement obligatoires citées (`AIMOTO_DATA_DIR`, etc.) ?
+- [ ] Variables d'environnement obligatoires citées avec leur rôle et leur source de configuration ?
 
 → Si absent : ajouter dans `## Build & test` ou `## Stack & constraints`.
 

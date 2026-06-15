@@ -19,7 +19,7 @@ Examples:
 /create-doc HOOK main-scroll-restoration --source frontend/hooks/use-main-scroll.ts
 /create-doc GUIDE adding-tests
 /create-doc CONTEXT ai-maintenance-context
-/create-doc CONTEXT backtesting-context
+/create-doc CONTEXT domain-workflow-context
 ```
 
 If arguments are not supplied, ask the user:
@@ -126,9 +126,9 @@ For `CONTEXT`, create or update a dedicated context pack only if the document is
 A context pack is valid when it has a stable reusable scope, for example:
 
 - maintenance workflow;
-- backtesting pipeline;
-- forecasting architecture;
-- strategy improvement loop;
+- data-processing pipeline;
+- domain service architecture;
+- recurring business workflow;
 - deployment or operations context;
 - project onboarding context.
 
@@ -204,7 +204,7 @@ For `CONTEXT`, use:
 **Status**: Active
 **Last Updated**: <YYYY-MM-DD>
 **Category**: Context Pack
-**Scope**: <maintenance | backtesting | forecasting | strategy-loop | onboarding | operations>
+**Scope**: <maintenance | domain-workflow | data-pipeline | onboarding | operations>
 **Load when**: <short condition>
 
 ---

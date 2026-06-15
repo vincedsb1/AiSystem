@@ -1,6 +1,13 @@
+import tempfile
 import unittest
+from pathlib import Path
 
-from scripts.ai_inventory import build_pairs, summarize
+from scripts.ai_inventory import (
+    build_pairs,
+    expected_shared_codex_exports,
+    summarize,
+    validate_manifest_exports,
+)
 
 
 def artifact(
@@ -112,6 +119,38 @@ class ProjectAwarePairingTests(unittest.TestCase):
         self.assertEqual(summary["projects"]["InterviewOS"]["artifacts"], 1)
         self.assertEqual(summary["projects"]["InterviewOS"]["issues"], 1)
         self.assertEqual(summary["projects"]["aimoto"]["issues"], 1)
+
+    def test_missing_registered_shared_skill_is_reported_for_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            registry = {
+                "projects": [{
+                    "name": "InterviewOS",
+                    "root": directory,
+                    "enabled": True,
+                    "install_shared_skills": ["shared.implement"],
+                    "paths": {"codex_skills": ".agents/skills"},
+                }],
+            }
+            manifest = {
+                "artifacts": [{
+                    "canonical_id": "shared.implement",
+                    "name": "implement",
+                    "version": "1.0.0",
+                    "scope": "shared",
+                    "compatibility": {"codex": True},
+                }],
+            }
+
+            exports = expected_shared_codex_exports(registry, manifest)
+            issues = validate_manifest_exports(exports)
+
+            self.assertEqual(len(issues), 1)
+            self.assertEqual(issues[0]["project"], "InterviewOS")
+            self.assertEqual(issues[0]["code"], "manifest_export_missing")
+            self.assertEqual(
+                Path(issues[0]["path"]),
+                Path(directory) / ".agents/skills/implement/SKILL.md",
+            )
 
 
 if __name__ == "__main__":

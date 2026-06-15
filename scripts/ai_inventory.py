@@ -131,6 +131,13 @@ def registry_project_path(registry: dict[str, Any], project_name: str, key: str)
     return None
 
 
+def registry_project(registry: dict[str, Any], project_name: str) -> dict[str, Any] | None:
+    for project in registry.get("projects", []):
+        if project.get("name") == project_name:
+            return project
+    return None
+
+
 def is_ignored(path: Path, registry: dict[str, Any]) -> bool:
     return path.name in registry_ignore_names(registry)
 
@@ -166,7 +173,97 @@ def path_index_keys(path: Path) -> set[str]:
     return keys
 
 
-def build_manifest_index(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
+def manifest_payload(
+    artifact: dict[str, Any],
+    *,
+    export_target: str,
+    export_path: Path,
+) -> dict[str, Any]:
+    return {
+        "manifest_found": True,
+        "manifest_canonical_id": artifact.get("canonical_id"),
+        "manifest_name": artifact.get("name"),
+        "manifest_description": artifact.get("description"),
+        "manifest_version": artifact.get("version"),
+        "manifest_scope": artifact.get("scope"),
+        "manifest_project": artifact.get("project"),
+        "manifest_domain": artifact.get("domain"),
+        "manifest_status": artifact.get("status"),
+        "manifest_source_of_truth": artifact.get("source_of_truth"),
+        "manifest_compatibility": artifact.get("compatibility"),
+        "manifest_guards": artifact.get("guards"),
+        "manifest_export_target": export_target,
+        "manifest_export_path": str(export_path),
+    }
+
+
+def expected_shared_codex_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> list[dict[str, Any]]:
+    artifacts_by_id = {
+        artifact.get("canonical_id"): artifact
+        for artifact in manifest.get("artifacts", [])
+        if artifact.get("canonical_id")
+    }
+    exports: list[dict[str, Any]] = []
+
+    for project in registry.get("projects", []):
+        if not project.get("enabled"):
+            continue
+
+        project_name = project.get("name")
+        project_root = project.get("root")
+        codex_skills_path = project.get("paths", {}).get("codex_skills")
+
+        for canonical_id in project.get("install_shared_skills", []):
+            artifact = artifacts_by_id.get(canonical_id)
+            valid = (
+                str(canonical_id).startswith("shared.")
+                and artifact
+                and artifact.get("scope") == "shared"
+                and artifact.get("compatibility", {}).get("codex")
+                and project_root
+                and codex_skills_path
+            )
+
+            if not valid:
+                exports.append({
+                    "canonical_id": canonical_id,
+                    "name": artifact.get("name") if artifact else canonical_id,
+                    "version": artifact.get("version") if artifact else None,
+                    "target": "codex_skill",
+                    "project": project_name,
+                    "path": None,
+                    "exists": False,
+                    "policy_error": "invalid_install_shared_skill",
+                })
+                continue
+
+            export_path = (
+                Path(project_root)
+                / codex_skills_path
+                / artifact["name"]
+                / "SKILL.md"
+            )
+            exports.append({
+                "canonical_id": canonical_id,
+                "name": artifact.get("name"),
+                "version": artifact.get("version"),
+                "target": "codex_skill",
+                "project": project_name,
+                "path": str(export_path),
+                "exists": export_path.exists(),
+                "artifact": artifact,
+            })
+
+    return exports
+
+
+def build_manifest_index(
+    manifest: dict[str, Any],
+    registry: dict[str, Any],
+) -> dict[str, dict[str, Any]]:
     """
     Indexe chaque export déclaré dans skills-manifest.yml par chemin absolu
     et par realpath résolu.
@@ -188,25 +285,29 @@ def build_manifest_index(manifest: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
             export_path = Path(raw_path).expanduser()
 
-            manifest_payload = {
-                "manifest_found": True,
-                "manifest_canonical_id": canonical_id,
-                "manifest_name": artifact.get("name"),
-                "manifest_description": artifact.get("description"),
-                "manifest_version": artifact.get("version"),
-                "manifest_scope": artifact.get("scope"),
-                "manifest_project": artifact.get("project"),
-                "manifest_domain": artifact.get("domain"),
-                "manifest_status": artifact.get("status"),
-                "manifest_source_of_truth": artifact.get("source_of_truth"),
-                "manifest_compatibility": artifact.get("compatibility"),
-                "manifest_guards": artifact.get("guards"),
-                "manifest_export_target": export.get("target"),
-                "manifest_export_path": str(export_path),
-            }
+            payload = manifest_payload(
+                artifact,
+                export_target=export.get("target"),
+                export_path=export_path,
+            )
 
             for key in path_index_keys(export_path):
-                index[key] = manifest_payload
+                index[key] = payload
+
+    for export in expected_shared_codex_exports(registry, manifest):
+        artifact = export.get("artifact")
+        raw_path = export.get("path")
+        if not artifact or not raw_path:
+            continue
+
+        export_path = Path(raw_path)
+        payload = manifest_payload(
+            artifact,
+            export_target="codex_skill",
+            export_path=export_path,
+        )
+        for key in path_index_keys(export_path):
+            index[key] = payload
 
     return index
 
@@ -261,7 +362,10 @@ def enrich_artifacts_from_manifest(
     return enriched
 
 
-def manifest_declared_exports(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+def manifest_declared_exports(
+    manifest: dict[str, Any],
+    registry: dict[str, Any],
+) -> list[dict[str, Any]]:
     exports: list[dict[str, Any]] = []
 
     for artifact in manifest.get("artifacts", []):
@@ -272,12 +376,27 @@ def manifest_declared_exports(manifest: dict[str, Any]) -> list[dict[str, Any]]:
                     "name": artifact.get("name"),
                     "version": artifact.get("version"),
                     "target": export.get("target"),
+                    "project": artifact.get("project"),
                     "path": export.get("path"),
                     "exists": Path(export.get("path", "")).expanduser().exists()
                     if export.get("path")
                     else False,
                 }
             )
+
+    existing_paths = {
+        export.get("path")
+        for export in exports
+        if export.get("path")
+    }
+    for export in expected_shared_codex_exports(registry, manifest):
+        if export.get("path") in existing_paths:
+            continue
+        exports.append({
+            key: value
+            for key, value in export.items()
+            if key != "artifact"
+        })
 
     return exports
 
@@ -369,10 +488,27 @@ def validate_manifest_exports(manifest_exports: list[dict[str, Any]]) -> list[di
     issues: list[dict[str, Any]] = []
 
     for export in manifest_exports:
+        if export.get("policy_error"):
+            issues.append(
+                {
+                    "project": export.get("project"),
+                    "artifact": export.get("name"),
+                    "artifact_type": "shared_skill_policy",
+                    "path": export.get("path"),
+                    "severity": "error",
+                    "code": export["policy_error"],
+                    "message": (
+                        f"Invalid install_shared_skills entry: "
+                        f"{export.get('canonical_id')}"
+                    ),
+                }
+            )
+            continue
+
         if not export.get("exists"):
             issues.append(
                 {
-                    "project": None,
+                    "project": export.get("project"),
                     "artifact": export.get("name"),
                     "artifact_type": "manifest_export",
                     "path": export.get("path"),
@@ -1240,8 +1376,8 @@ def main() -> None:
 
     manifest_path = get_manifest_path(registry)
     manifest = load_yaml(manifest_path) if manifest_path else {}
-    manifest_index = build_manifest_index(manifest)
-    manifest_exports = manifest_declared_exports(manifest)
+    manifest_index = build_manifest_index(manifest, registry)
+    manifest_exports = manifest_declared_exports(manifest, registry)
 
     artifacts: list[dict[str, Any]] = []
     project_names: list[str] = []

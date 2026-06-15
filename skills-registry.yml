@@ -15,6 +15,20 @@ projects:
   - name: aimoto
     root: /Users/vincentdesbrosses/Documents/Misc/aimoto
     enabled: true
+    install_shared_skills:
+      - shared.ai-post-task-review
+      - shared.commit
+      - shared.create-doc
+      - shared.implement
+      - shared.optimize-claude-md
+      - shared.spec-0-feedback
+      - shared.spec-1-intake
+      - shared.spec-2-draft
+      - shared.spec-3-audit
+      - shared.spec-4-challenge
+      - shared.spec-5-revise
+      - shared.test
+      - shared.ui-review
     paths:
       codex_skills: .agents/skills
       claude_commands: .claude/commands
@@ -30,6 +44,20 @@ projects:
   - name: InterviewOS
     root: /Users/vincentdesbrosses/Documents/Misc/InterviewOS
     enabled: true
+    install_shared_skills:
+      - shared.ai-post-task-review
+      - shared.commit
+      - shared.create-doc
+      - shared.implement
+      - shared.optimize-claude-md
+      - shared.spec-0-feedback
+      - shared.spec-1-intake
+      - shared.spec-2-draft
+      - shared.spec-3-audit
+      - shared.spec-4-challenge
+      - shared.spec-5-revise
+      - shared.test
+      - shared.ui-review
     paths:
       codex_skills: .agents/skills
       claude_commands: .claude/commands

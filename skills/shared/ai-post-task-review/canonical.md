@@ -148,7 +148,7 @@ Do not recommend documentation updates for cosmetic or purely internal changes u
 
 ### 5. Architecture impact
 
-If the task touches architecture, persistence, API contracts, strategy identity, execution flow, metrics, storage, frontend/backend boundaries, or lifecycle rules, check whether an architecture reference should be updated.
+If the task touches architecture, persistence, API contracts, domain entity identity, execution flow, metrics, storage, frontend/backend boundaries, or lifecycle rules, check whether an architecture reference should be updated.
 
 Examples of architecture-sensitive changes:
 
@@ -160,9 +160,9 @@ Examples of architecture-sensitive changes:
 - garbage collection;
 - hard delete behavior;
 - API response shape;
-- strategy naming or versioning;
+- domain entity naming or versioning;
 - scoring or ranking semantics;
-- forecast/backtest split logic;
+- separation between processing stages or execution modes;
 - context loading rules.
 
 ### 6. Context pack impact
@@ -172,9 +172,9 @@ Check whether any context pack should be refreshed.
 Relevant context packs may include:
 
 - docs/context/ai-maintenance-context.md;
-- docs/context/backtesting-context.md;
-- docs/context/strategy-improvement-loop-context.md;
-- docs/context/forecasting-context.md.
+- docs/context/domain-workflow-context.md;
+- docs/context/data-pipeline-context.md;
+- docs/context/operations-context.md.
 
 Refresh a context pack only when the completed task changes reusable context needed to start future conversations.
 
@@ -223,7 +223,7 @@ Look for newly introduced:
 - mock data used as real output;
 - hardcoded placeholder metric;
 - hidden default;
-- implicit strategy selection;
+- implicit domain-object selection;
 - ambiguous date/window behavior;
 - swallowed error;
 - broad except without explicit handling;
@@ -296,9 +296,9 @@ Return the report in this structure:
 | Context pack | Refresh needed? | Reason |
 |---|---:|---|
 | ai-maintenance-context | yes/no | ... |
-| backtesting-context | yes/no | ... |
-| strategy-improvement-loop-context | yes/no | ... |
-| forecasting-context | yes/no | ... |
+| domain-workflow-context | yes/no | ... |
+| data-pipeline-context | yes/no | ... |
+| operations-context | yes/no | ... |
 
 ### 7. Skill or command improvement
 
@@ -364,7 +364,7 @@ Expected focus:
 /ai-post-task-review
 
 Task completed:
-Created docs/context/backtesting-context.md.
+Created docs/context/domain-workflow-context.md.
 
 Expected focus:
 
