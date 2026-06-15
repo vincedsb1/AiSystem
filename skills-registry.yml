@@ -101,7 +101,32 @@ projects:
 
   - name: linkedin-ia-comments
     root: /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments
-    enabled: false
+    enabled: true
+    install_shared_skills:
+      - shared.ai-post-task-review
+      - shared.commit
+      - shared.create-doc
+      - shared.implement
+      - shared.optimize-claude-md
+      - shared.spec-0-feedback
+      - shared.spec-1-intake
+      - shared.spec-2-draft
+      - shared.spec-3-audit
+      - shared.spec-4-challenge
+      - shared.spec-5-revise
+      - shared.test
+      - shared.ui-review
+    paths:
+      codex_skills: .agents/skills
+      claude_commands: .claude/commands
+      claude_rules: .claude/rules
+      claude_strategy_profiles: .claude/strategy-profiles
+      claude_hooks: .claude/hooks
+      codex_hooks: .codex/hooks
+      agents_file: AGENTS.md
+      claude_file: CLAUDE.md
+      project_config: .claude/project-config.md
+      architecture_file: docs/ARCHITECTURE.md
 
   - name: Pylaa
     root: /Users/vincentdesbrosses/Documents/Misc/Pylaa

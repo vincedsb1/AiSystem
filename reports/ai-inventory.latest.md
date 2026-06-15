@@ -1,22 +1,22 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T15:22:27
+Generated: 2026-06-15T15:29:28
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| codex_skills | 126 |
+| codex_skills | 139 |
 | claude_commands | 121 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
 | claude_hooks | 6 |
 | codex_hooks | 3 |
-| root_docs | 16 |
-| manifest_covered_artifacts | 217 |
-| manifest_declared_exports | 148 |
+| root_docs | 17 |
+| manifest_covered_artifacts | 230 |
+| manifest_declared_exports | 161 |
 | manifest_missing_exports | 0 |
-| issues | 198 |
+| issues | 206 |
 
 ## Projects summary
 
@@ -25,6 +25,7 @@ Generated: 2026-06-15T15:22:27
 | aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 39 |
 | InterviewOS | 13 | 12 | 4 | 3 | 0 | 2 | 17 |
 | intrai | 13 | 0 | 0 | 0 | 0 | 1 | 8 |
+| linkedin-ia-comments | 13 | 0 | 0 | 0 | 0 | 1 | 8 |
 | Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 28 |
 | Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 25 |
 | Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 23 |
@@ -37,7 +38,7 @@ Generated: 2026-06-15T15:22:27
 | Pair status | Count | Meaning |
 |---|---:|---|
 | expected_claude_only | 30 | Project-specific Claude command intentionally has no Codex skill. |
-| ok_same_canonical | 126 | Claude and Codex are linked to the same canonical manifest entry. |
+| ok_same_canonical | 139 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
@@ -161,6 +162,19 @@ Generated: 2026-06-15T15:22:27
 | intrai | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | intrai | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | intrai | test | InterviewOS | .claude/commands/test.md | intrai | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | intrai | ui-review | InterviewOS | .claude/commands/ui-review.md | intrai | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | linkedin-ia-comments | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | commit | InterviewOS | .claude/commands/commit.md | linkedin-ia-comments | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | create-doc | InterviewOS | .claude/commands/create-doc.md | linkedin-ia-comments | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | implement | InterviewOS | .claude/commands/implement.md | linkedin-ia-comments | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | linkedin-ia-comments | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | linkedin-ia-comments | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | linkedin-ia-comments | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | linkedin-ia-comments | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | linkedin-ia-comments | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | linkedin-ia-comments | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | linkedin-ia-comments | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | test | InterviewOS | .claude/commands/test.md | linkedin-ia-comments | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | ui-review | InterviewOS | .claude/commands/ui-review.md | linkedin-ia-comments | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | suggst | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | suggst | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | suggst | commit | suggst | .claude/commands/commit.md | suggst | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | suggst | create-doc | suggst | .claude/commands/create-doc.md | suggst | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
@@ -274,6 +288,19 @@ Generated: 2026-06-15T15:22:27
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/ai-post-task-review/SKILL.md | true |
+| shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/commit/SKILL.md | true |
+| shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/create-doc/SKILL.md | true |
+| shared.implement | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/implement/SKILL.md | true |
+| shared.optimize-claude-md | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/optimize-claude-md/SKILL.md | true |
+| shared.spec-0-feedback | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-0-feedback/SKILL.md | true |
+| shared.spec-1-intake | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-1-intake/SKILL.md | true |
+| shared.spec-2-draft | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-2-draft/SKILL.md | true |
+| shared.spec-3-audit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-3-audit/SKILL.md | true |
+| shared.spec-4-challenge | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-4-challenge/SKILL.md | true |
+| shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/spec-5-revise/SKILL.md | true |
+| shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/test/SKILL.md | true |
+| shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments/.agents/skills/ui-review/SKILL.md | true |
 | shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylaa/.agents/skills/ai-post-task-review/SKILL.md | true |
 | shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylaa/.agents/skills/commit/SKILL.md | true |
 | shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Pylaa/.agents/skills/create-doc/SKILL.md | true |
@@ -413,6 +440,14 @@ Generated: 2026-06-15T15:22:27
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
