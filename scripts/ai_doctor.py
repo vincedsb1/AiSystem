@@ -430,7 +430,7 @@ def build_report_payload(
     }
 
 
-def print_results(results: list[dict[str, Any]], summary: dict[str, Any]) -> None:
+def print_plain_results(results: list[dict[str, Any]], summary: dict[str, Any]) -> None:
     print(
         "Summary: danger={danger}, review={review}, acceptable={acceptable}".format(
             danger=summary["danger"],
@@ -453,6 +453,145 @@ def print_results(results: list[dict[str, Any]], summary: dict[str, Any]) -> Non
                 text=result.get("text"),
             )
         )
+
+
+def console_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(Path.cwd()))
+    except ValueError:
+        return str(path)
+
+
+def truncate_finding_text(value: str, limit: int = 100) -> str:
+    compact = " ".join(value.split())
+    if len(compact) <= limit:
+        return compact
+    return compact[: limit - 3].rstrip() + "..."
+
+
+def doctor_status(summary: dict[str, Any]) -> str:
+    if summary["danger"] > 0:
+        return "FAIL"
+    if summary["review"] > 0:
+        return "WARN"
+    return "OK"
+
+
+def dashboard_results(
+    results: list[dict[str, Any]],
+    max_findings: int,
+) -> tuple[list[dict[str, Any]], int]:
+    visible_candidates = [
+        result
+        for result in results
+        if result["classification"] != "acceptable"
+    ]
+    dangers = [
+        result
+        for result in visible_candidates
+        if result["classification"] == "danger"
+    ]
+    other_findings = [
+        result
+        for result in visible_candidates
+        if result["classification"] != "danger"
+    ]
+    remaining_slots = max(max_findings - len(dangers), 0)
+    visible = dangers + other_findings[:remaining_slots]
+    dangerous_artifacts = {
+        (
+            str(result.get("project") or "standalone"),
+            str(result.get("artifact") or "unknown"),
+        )
+        for result in visible
+        if result["classification"] == "danger"
+    }
+    visible.sort(
+        key=lambda result: (
+            str(result.get("project") or "standalone"),
+            0
+            if (
+                str(result.get("project") or "standalone"),
+                str(result.get("artifact") or "unknown"),
+            ) in dangerous_artifacts
+            else 1,
+            str(result.get("artifact") or "unknown"),
+            0 if result["classification"] == "danger" else 1,
+            result.get("line") or 0,
+        )
+    )
+    return visible, len(visible_candidates) - len(visible)
+
+
+def print_doctor_dashboard(
+    results: list[dict[str, Any]],
+    summary: dict[str, Any],
+    *,
+    max_findings: int,
+    markdown_path: Path | None,
+    json_path: Path | None,
+) -> None:
+    visible, hidden_count = dashboard_results(results, max_findings)
+
+    print(f"AI Doctor — {doctor_status(summary)}")
+    print()
+    print(
+        "Summary"
+        f"  danger={summary['danger']}"
+        f"  review={summary['review']}"
+        f"  acceptable hidden={summary['acceptable']}"
+    )
+
+    if visible:
+        print()
+        print("Findings")
+        current_project = None
+        current_artifact = None
+        for result in visible:
+            project = str(result.get("project") or "standalone")
+            artifact = str(result.get("artifact") or "unknown")
+            path = str(
+                result.get("inventory_path")
+                or result.get("path")
+                or ""
+            )
+
+            if project != current_project:
+                current_project = project
+                current_artifact = None
+                print(f"  {project}")
+
+            artifact_key = (artifact, path)
+            if artifact_key != current_artifact:
+                current_artifact = artifact_key
+                print(f"    {artifact}  {path}")
+
+            line = result.get("line")
+            line_label = f"line {line}" if line else "line ?"
+            pattern = result.get("pattern") or "unknown"
+            text = truncate_finding_text(str(result.get("text") or ""))
+            print(f"      {line_label} | {pattern} | {text}")
+    else:
+        print()
+        print("Findings")
+        print("  No danger or review finding.")
+
+    if hidden_count > 0:
+        report_path = (
+            console_path(markdown_path)
+            if markdown_path
+            else "the Markdown report"
+        )
+        print()
+        print(f"... {hidden_count} more findings. See {report_path}")
+
+    if markdown_path or json_path:
+        print()
+        print("Reports")
+        if markdown_path:
+            print(f"  Markdown  {console_path(markdown_path)}")
+        if json_path:
+            print(f"  JSON      {console_path(json_path)}")
 
 
 def main() -> None:
@@ -496,8 +635,22 @@ def main() -> None:
         action="store_true",
         help="When using --inventory, scan each realpath once.",
     )
+    parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="Use the legacy line-by-line console output.",
+    )
+    parser.add_argument(
+        "--max-findings",
+        type=int,
+        default=20,
+        metavar="N",
+        help="Maximum dashboard findings to show (all dangers are always shown).",
+    )
 
     args = parser.parse_args()
+    if args.max_findings < 0:
+        parser.error("--max-findings must be >= 0")
 
     registry_path = Path(args.registry)
     registry = load_yaml(registry_path)
@@ -530,10 +683,6 @@ def main() -> None:
 
     filtered_summary = summarize_results(results)
 
-    # Console output should reflect the raw classification state, even if
-    # acceptable findings are hidden from the final listing.
-    print_results(results, raw_summary)
-
     json_output: Path | None = None
     markdown_output: Path | None = None
 
@@ -561,7 +710,6 @@ def main() -> None:
 
     if json_output:
         write_text(json_output, dump_json(payload))
-        print(f"JSON report: {json_output}")
 
     if markdown_output:
         markdown = render_markdown_report(
@@ -576,7 +724,23 @@ def main() -> None:
             },
         )
         write_text(markdown_output, markdown + "\n")
-        print(f"Markdown report: {markdown_output}")
+
+    # Console status reflects the raw classification state even when reports
+    # filter acceptable findings or only include dangers.
+    if args.plain:
+        print_plain_results(results, raw_summary)
+        if json_output:
+            print(f"JSON report: {json_output}")
+        if markdown_output:
+            print(f"Markdown report: {markdown_output}")
+    else:
+        print_doctor_dashboard(
+            results,
+            raw_summary,
+            max_findings=args.max_findings,
+            markdown_path=markdown_output,
+            json_path=json_output,
+        )
 
     if raw_summary["danger"] > 0:
         raise SystemExit(1)

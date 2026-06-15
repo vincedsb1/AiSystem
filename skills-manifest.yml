@@ -470,3 +470,30 @@ artifacts:
     path: /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md
   - target: codex_skill
     path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ui-review/SKILL.md
+
+- canonical_id: shared.ai-post-task-review
+  name: ai-post-task-review
+  description: Run a post-task review after a completed task to detect validation, documentation, context, skill, unsafe-assumption, sync, and commit-readiness obligations.
+  version: 1.0.0
+  scope: shared
+  project: null
+  domain: ai-maintenance
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/shared/ai-post-task-review/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  guards:
+    project_specific_references_allowed: false
+    requires_git_status_review: true
+    requires_diff_review: true
+    requires_doc_impact_check: true
+    requires_context_pack_check: true
+    requires_skill_improvement_check: true
+    forbids_code_changes: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/claude-commands/ai-post-task-review.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ai-post-task-review/SKILL.md
+

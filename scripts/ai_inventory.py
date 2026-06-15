@@ -681,6 +681,50 @@ def pair_issue_from_metadata(
     return "ok_same_canonical"
 
 
+def is_explicitly_shared(artifact: dict[str, Any] | None) -> bool:
+    if not artifact:
+        return False
+
+    canonical_id = str(artifact.get("canonical_id") or "")
+    return canonical_id.startswith("shared.") or artifact.get("scope") == "shared"
+
+
+def shared_cross_project_match(
+    artifact: dict[str, Any],
+    candidates: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    if not is_explicitly_shared(artifact):
+        return None
+
+    shared_candidates = [
+        candidate
+        for candidate in candidates
+        if candidate.get("project") != artifact.get("project")
+        and is_explicitly_shared(candidate)
+    ]
+
+    canonical_id = artifact.get("canonical_id")
+    if canonical_id:
+        same_canonical = [
+            candidate
+            for candidate in shared_candidates
+            if candidate.get("canonical_id") == canonical_id
+        ]
+        if same_canonical:
+            shared_candidates = same_canonical
+
+    if not shared_candidates:
+        return None
+
+    return sorted(
+        shared_candidates,
+        key=lambda candidate: (
+            str(candidate.get("project") or ""),
+            str(candidate.get("path") or ""),
+        ),
+    )[0]
+
+
 def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
     claude = [
         a
@@ -694,21 +738,43 @@ def build_pairs(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if a["artifact_type"] == "codex_skill" and a["active"]
     ]
 
-    by_codex_name = {a["normalized_name"]: a for a in codex}
-    by_claude_name = {a["normalized_name"]: a for a in claude}
+    by_codex_key = {
+        (a["project"], a["normalized_name"]): a
+        for a in codex
+    }
+    by_claude_key = {
+        (a["project"], a["normalized_name"]): a
+        for a in claude
+    }
+    codex_by_name: dict[str, list[dict[str, Any]]] = {}
+    claude_by_name: dict[str, list[dict[str, Any]]] = {}
+
+    for artifact in codex:
+        codex_by_name.setdefault(artifact["normalized_name"], []).append(artifact)
+
+    for artifact in claude:
+        claude_by_name.setdefault(artifact["normalized_name"], []).append(artifact)
 
     pairs = []
-    all_names = sorted(set(by_claude_name) | set(by_codex_name))
+    all_keys = sorted(set(by_claude_key) | set(by_codex_key))
 
-    for name in all_names:
-        c = by_claude_name.get(name)
-        x = by_codex_name.get(name)
+    for project, name in all_keys:
+        c = by_claude_key.get((project, name))
+        x = by_codex_key.get((project, name))
+
+        if c and not x:
+            x = shared_cross_project_match(c, codex_by_name.get(name, []))
+        elif x and not c:
+            c = shared_cross_project_match(x, claude_by_name.get(name, []))
+
         issue = pair_issue_from_metadata(c, x)
 
         pairs.append(
             {
-                "project": (c or x or {}).get("project"),
+                "project": project,
                 "name": name,
+                "claude_project": c.get("project") if c else None,
+                "codex_project": x.get("project") if x else None,
                 "claude_path": c["path"] if c else None,
                 "codex_path": x["path"] if x else None,
                 "claude_version": c.get("version") if c else None,
@@ -757,6 +823,7 @@ def summarize(
     artifacts: list[dict[str, Any]],
     pairs: list[dict[str, Any]],
     manifest_exports: list[dict[str, Any]],
+    project_names: list[str],
 ) -> dict[str, Any]:
     def count_type(t: str) -> int:
         return len(
@@ -807,6 +874,43 @@ def summarize(
 
     manifest_covered = len([a for a in artifacts if a.get("manifest_found")])
     manifest_exports_missing = len([e for e in manifest_exports if not e.get("exists")])
+    project_summaries: dict[str, dict[str, int]] = {}
+    root_doc_types = {
+        "agents_file",
+        "claude_file",
+        "project_config",
+        "architecture_file",
+    }
+
+    for project_name in project_names:
+        project_artifacts = [
+            artifact
+            for artifact in artifacts
+            if artifact.get("project") == project_name and artifact.get("active")
+        ]
+
+        def project_count(artifact_type: str) -> int:
+            return sum(
+                artifact["artifact_type"] == artifact_type
+                for artifact in project_artifacts
+            )
+
+        project_summaries[project_name] = {
+            "artifacts": len(project_artifacts),
+            "codex_skills": project_count("codex_skill"),
+            "claude_commands": project_count("claude_command"),
+            "claude_rules": project_count("claude_rule"),
+            "claude_hooks": project_count("claude_hook"),
+            "codex_hooks": project_count("codex_hook"),
+            "root_docs": sum(
+                artifact["artifact_type"] in root_doc_types
+                for artifact in project_artifacts
+            ),
+            "issues": sum(
+                issue.get("project") == project_name
+                for issue in issues
+            ),
+        }
 
     return {
         "counts": {
@@ -834,6 +938,7 @@ def summarize(
             "manifest_missing_exports": manifest_exports_missing,
         },
         "pair_counts": pair_counts,
+        "projects": project_summaries,
         "issues_count": len(issues),
         "issues": issues,
     }
@@ -860,6 +965,21 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
     lines.append(f"| issues | {summary['issues_count']} |")
     lines.append("")
 
+    lines.append("## Projects summary")
+    lines.append("")
+    lines.append(
+        "| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Issues |"
+    )
+    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|")
+    for project, counts in summary["projects"].items():
+        lines.append(
+            "| {project} | {codex_skills} | {claude_commands} | {claude_rules} | {claude_hooks} | {codex_hooks} | {root_docs} | {issues} |".format(
+                project=project,
+                **counts,
+            )
+        )
+    lines.append("")
+
     lines.append("## Pair status summary")
     lines.append("")
     lines.append("| Pair status | Count | Meaning |")
@@ -883,9 +1003,9 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
     lines.append("## Claude ↔ Codex pairs")
     lines.append("")
     lines.append(
-        "| Name | Claude | Codex | Canonical ID | Version | Same raw hash | Issue |"
+        "| Project | Name | Claude project | Claude | Codex project | Codex | Canonical ID | Version | Same raw hash | Issue |"
     )
-    lines.append("|---|---|---|---|---|---|---|")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|")
 
     for pair in pairs:
         canonical_id = pair.get("claude_canonical_id") or pair.get("codex_canonical_id") or ""
@@ -894,9 +1014,12 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
         same_raw_hash_label = "" if same_raw_hash is None else str(same_raw_hash).lower()
 
         lines.append(
-            "| {name} | {claude} | {codex} | {canonical} | {version} | {same_hash} | {issue} |".format(
+            "| {project} | {name} | {claude_project} | {claude} | {codex_project} | {codex} | {canonical} | {version} | {same_hash} | {issue} |".format(
+                project=pair["project"],
                 name=pair["name"],
+                claude_project=pair.get("claude_project") or "",
                 claude=pair["claude_path"] or "",
+                codex_project=pair.get("codex_project") or "",
                 codex=pair["codex_path"] or "",
                 canonical=canonical_id,
                 version=version,
@@ -968,6 +1091,138 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
     write_text(output_path, "\n".join(lines))
 
 
+def console_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(Path.cwd()))
+    except ValueError:
+        return str(path)
+
+
+def inventory_status(summary: dict[str, Any]) -> str:
+    if any(issue.get("severity") == "error" for issue in summary["issues"]):
+        return "FAIL"
+    if summary["issues_count"] > 0:
+        return "WARN"
+    return "OK"
+
+
+def print_inventory_dashboard(
+    report: dict[str, Any],
+    *,
+    json_path: Path,
+    markdown_path: Path,
+) -> None:
+    summary = report["summary"]
+    status = inventory_status(summary)
+
+    print(f"AI Inventory — {status}")
+    print()
+    print("Projects")
+    headers = (
+        "project",
+        "artifacts",
+        "issues",
+        "claude_commands",
+        "codex_skills",
+        "claude_rules",
+        "claude_hooks",
+        "codex_hooks",
+        "root_docs",
+    )
+    rows = [
+        (project, *(str(counts[header]) for header in headers[1:]))
+        for project, counts in summary["projects"].items()
+    ]
+    widths = [
+        max(len(headers[index]), *(len(row[index]) for row in rows))
+        for index in range(len(headers))
+    ]
+    print("  " + "  ".join(
+        header.ljust(widths[index])
+        for index, header in enumerate(headers)
+    ))
+    print("  " + "  ".join("-" * width for width in widths))
+    for row in rows:
+        print("  " + "  ".join(
+            value.ljust(widths[index]) if index == 0 else value.rjust(widths[index])
+            for index, value in enumerate(row)
+        ))
+
+    print()
+    print("Pairing")
+    preferred_statuses = [
+        "ok_same_canonical",
+        "ok_same_export_hash",
+        "missing_codex_skill",
+        "missing_claude_command",
+        "semantic_review_needed",
+        "drift_canonical_id_mismatch",
+        "drift_version_mismatch",
+        "drift_source_mismatch",
+    ]
+    drift_statuses = sorted(
+        status
+        for status in summary["pair_counts"]
+        if status.startswith("drift_") and status not in preferred_statuses
+    )
+    other_statuses = sorted(
+        status
+        for status in summary["pair_counts"]
+        if status not in preferred_statuses and status not in drift_statuses
+    )
+    for pair_status in preferred_statuses + drift_statuses + other_statuses:
+        print(f"  {pair_status:<32} {summary['pair_counts'].get(pair_status, 0):>4}")
+
+    problem_pairs = [
+        pair
+        for pair in report["pairs"]
+        if pair_severity(pair["issue"]) != "ok"
+    ]
+    if problem_pairs:
+        print()
+        print("Pairing problems")
+        current_project = None
+        for pair in problem_pairs:
+            if pair["project"] != current_project:
+                current_project = pair["project"]
+                print(f"  {current_project}")
+            path = pair["claude_path"] or pair["codex_path"] or ""
+            print(f"    {pair['name']} | {pair['issue']} | {path}")
+
+    print()
+    print("Reports")
+    print(f"  Markdown  {console_path(markdown_path)}")
+    print(f"  JSON      {console_path(json_path)}")
+
+    next_actions: list[str] = []
+    error_issues = [
+        issue for issue in summary["issues"] if issue.get("severity") == "error"
+    ]
+    if error_issues:
+        first = error_issues[0]
+        next_actions.append(
+            f"Fix {first.get('project') or 'global'}: "
+            f"{first.get('code')} in {first.get('path')}"
+        )
+    if problem_pairs:
+        affected_projects = sorted({
+            str(pair.get("project") or "global")
+            for pair in problem_pairs
+        })
+        next_actions.append(
+            "Review non-OK pairing for " + ", ".join(affected_projects)
+        )
+    if summary["issues_count"] > 0:
+        next_actions.append(f"Open {console_path(markdown_path)} for all issues")
+    if not next_actions:
+        next_actions.append("No action required")
+
+    print()
+    print("Next")
+    for index, action in enumerate(next_actions[:3], start=1):
+        print(f"  {index}. {action}")
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -989,12 +1244,14 @@ def main() -> None:
     manifest_exports = manifest_declared_exports(manifest)
 
     artifacts: list[dict[str, Any]] = []
+    project_names: list[str] = []
 
     for project in registry.get("projects", []):
         if not project.get("enabled"):
             continue
 
         project_name = project["name"]
+        project_names.append(project_name)
         root = Path(project["root"])
 
         artifacts.extend(scan_codex_skills(project_name, root, registry))
@@ -1077,7 +1334,7 @@ def main() -> None:
     artifacts = enrich_artifacts_from_manifest(artifacts, manifest_index)
 
     pairs = build_pairs(artifacts)
-    summary = summarize(artifacts, pairs, manifest_exports)
+    summary = summarize(artifacts, pairs, manifest_exports, project_names)
 
     report = {
         "generated_at": dt.datetime.now().isoformat(timespec="seconds"),
@@ -1099,9 +1356,11 @@ def main() -> None:
 
     write_markdown_report(report, md_path)
 
-    print(f"JSON report: {json_path}")
-    print(f"Markdown report: {md_path}")
-    print(f"Issues: {summary['issues_count']}")
+    print_inventory_dashboard(
+        report,
+        json_path=json_path,
+        markdown_path=md_path,
+    )
 
 
 if __name__ == "__main__":

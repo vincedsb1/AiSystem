@@ -29,7 +29,18 @@ projects:
 
   - name: InterviewOS
     root: /Users/vincentdesbrosses/Documents/Misc/InterviewOS
-    enabled: false
+    enabled: true
+    paths:
+      codex_skills: .agents/skills
+      claude_commands: .claude/commands
+      claude_rules: .claude/rules
+      claude_strategy_profiles: .claude/strategy-profiles
+      claude_hooks: .claude/hooks
+      codex_hooks: .codex/hooks
+      agents_file: AGENTS.md
+      claude_file: CLAUDE.md
+      project_config: .claude/project-config.md
+      architecture_file: docs/ARCHITECTURE.md
 
   - name: intrai
     root: /Users/vincentdesbrosses/Documents/Misc/intrai

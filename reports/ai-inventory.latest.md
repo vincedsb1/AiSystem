@@ -1,54 +1,81 @@
 # AI Inventory Report
 
-Generated: 2026-06-13T20:46:13
+Generated: 2026-06-15T11:13:11
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| codex_skills | 21 |
-| claude_commands | 21 |
-| claude_rules | 4 |
+| codex_skills | 22 |
+| claude_commands | 40 |
+| claude_rules | 8 |
 | claude_strategy_profiles | 6 |
-| claude_hooks | 3 |
+| claude_hooks | 6 |
 | codex_hooks | 3 |
-| root_docs | 4 |
-| manifest_covered_artifacts | 42 |
-| manifest_declared_exports | 42 |
+| root_docs | 6 |
+| manifest_covered_artifacts | 56 |
+| manifest_declared_exports | 44 |
 | manifest_missing_exports | 0 |
-| issues | 39 |
+| issues | 66 |
+
+## Projects summary
+
+| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Issues |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 39 |
+| InterviewOS | 0 | 18 | 4 | 3 | 0 | 2 | 27 |
 
 ## Pair status summary
 
 | Pair status | Count | Meaning |
 |---|---:|---|
-| ok_same_canonical | 21 | Claude and Codex are linked to the same canonical manifest entry. |
+| missing_codex_skill | 6 | Claude command exists, Codex skill is missing. |
+| ok_same_canonical | 34 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
-| Name | Claude | Codex | Canonical ID | Version | Same raw hash | Issue |
-|---|---|---|---|---|---|---|
-| add-indicator | .claude/commands/add-indicator.md | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
-| analyse-signal | .claude/commands/analyse-signal.md | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
-| article-review | .claude/commands/article-review.md | .agents/skills/article-review/SKILL.md | aimoto.article-review | 1.0.0 | true | ok_same_canonical |
-| bilan | .claude/commands/bilan.md | .agents/skills/bilan/SKILL.md | aimoto.bilan | 1.0.0 | true | ok_same_canonical |
-| commit | .claude/commands/commit.md | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
-| create-doc | .claude/commands/create-doc.md | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
-| edit-export-llm-report | .claude/commands/edit-export-llm-report.md | .agents/skills/edit-export-llm-report/SKILL.md | aimoto.edit-export-llm-report | 1.0.0 | true | ok_same_canonical |
-| implement | .claude/commands/implement.md | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
-| implement-remediation-spec | .claude/commands/implement-remediation-spec.md | .agents/skills/implement-remediation-spec/SKILL.md | aimoto.implement-remediation-spec | 1.0.0 | true | ok_same_canonical |
-| new-strategy | .claude/commands/new-strategy.md | .agents/skills/new-strategy/SKILL.md | aimoto.new-strategy | 1.0.0 | true | ok_same_canonical |
-| next | .claude/commands/next.md | .agents/skills/next/SKILL.md | aimoto.next | 1.0.0 | true | ok_same_canonical |
-| optimize-claude-md | .claude/commands/optimize-claude-md.md | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
-| spec-0-feedback | .claude/commands/spec-0-feedback.md | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| spec-1-intake | .claude/commands/spec-1-intake.md | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
-| spec-2-draft | .claude/commands/spec-2-draft.md | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
-| spec-3-audit | .claude/commands/spec-3-audit.md | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
-| spec-4-challenge | .claude/commands/spec-4-challenge.md | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
-| spec-5-revise | .claude/commands/spec-5-revise.md | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
-| test | .claude/commands/test.md | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
-| ui-review | .claude/commands/ui-review.md | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| update-strategy | .claude/commands/update-strategy.md | .agents/skills/update-strategy/SKILL.md | aimoto.update-strategy | 1.0.0 | true | ok_same_canonical |
+| Project | Name | Claude project | Claude | Codex project | Codex | Canonical ID | Version | Same raw hash | Issue |
+|---|---|---|---|---|---|---|---|---|---|
+| InterviewOS | analyse-signal | InterviewOS | .claude/commands/analyse-signal.md |  |  |  |  |  | missing_codex_skill |
+| InterviewOS | article-review | InterviewOS | .claude/commands/article-review.md |  |  |  |  |  | missing_codex_skill |
+| InterviewOS | bilan | InterviewOS | .claude/commands/bilan.md |  |  |  |  |  | missing_codex_skill |
+| InterviewOS | commit | InterviewOS | .claude/commands/commit.md | aimoto | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | create-doc | InterviewOS | .claude/commands/create-doc.md | aimoto | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | edit-export-llm-report | InterviewOS | .claude/commands/edit-export-llm-report.md |  |  |  |  |  | missing_codex_skill |
+| InterviewOS | implement | InterviewOS | .claude/commands/implement.md | aimoto | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | next | InterviewOS | .claude/commands/next.md |  |  |  |  |  | missing_codex_skill |
+| InterviewOS | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | aimoto | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | aimoto | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | aimoto | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | aimoto | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | aimoto | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | aimoto | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | aimoto | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | test | InterviewOS | .claude/commands/test.md | aimoto | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | ui-review | InterviewOS | .claude/commands/ui-review.md | aimoto | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | update-strategy | InterviewOS | .claude/commands/update-strategy.md |  |  |  |  |  | missing_codex_skill |
+| aimoto | add-indicator | aimoto | .claude/commands/add-indicator.md | aimoto | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
+| aimoto | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | aimoto | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| aimoto | analyse-signal | aimoto | .claude/commands/analyse-signal.md | aimoto | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
+| aimoto | article-review | aimoto | .claude/commands/article-review.md | aimoto | .agents/skills/article-review/SKILL.md | aimoto.article-review | 1.0.0 | true | ok_same_canonical |
+| aimoto | bilan | aimoto | .claude/commands/bilan.md | aimoto | .agents/skills/bilan/SKILL.md | aimoto.bilan | 1.0.0 | true | ok_same_canonical |
+| aimoto | commit | aimoto | .claude/commands/commit.md | aimoto | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| aimoto | create-doc | aimoto | .claude/commands/create-doc.md | aimoto | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| aimoto | edit-export-llm-report | aimoto | .claude/commands/edit-export-llm-report.md | aimoto | .agents/skills/edit-export-llm-report/SKILL.md | aimoto.edit-export-llm-report | 1.0.0 | true | ok_same_canonical |
+| aimoto | implement | aimoto | .claude/commands/implement.md | aimoto | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| aimoto | implement-remediation-spec | aimoto | .claude/commands/implement-remediation-spec.md | aimoto | .agents/skills/implement-remediation-spec/SKILL.md | aimoto.implement-remediation-spec | 1.0.0 | true | ok_same_canonical |
+| aimoto | new-strategy | aimoto | .claude/commands/new-strategy.md | aimoto | .agents/skills/new-strategy/SKILL.md | aimoto.new-strategy | 1.0.0 | true | ok_same_canonical |
+| aimoto | next | aimoto | .claude/commands/next.md | aimoto | .agents/skills/next/SKILL.md | aimoto.next | 1.0.0 | true | ok_same_canonical |
+| aimoto | optimize-claude-md | aimoto | .claude/commands/optimize-claude-md.md | aimoto | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-0-feedback | aimoto | .claude/commands/spec-0-feedback.md | aimoto | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-1-intake | aimoto | .claude/commands/spec-1-intake.md | aimoto | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-2-draft | aimoto | .claude/commands/spec-2-draft.md | aimoto | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-3-audit | aimoto | .claude/commands/spec-3-audit.md | aimoto | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-4-challenge | aimoto | .claude/commands/spec-4-challenge.md | aimoto | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-5-revise | aimoto | .claude/commands/spec-5-revise.md | aimoto | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| aimoto | test | aimoto | .claude/commands/test.md | aimoto | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| aimoto | ui-review | aimoto | .claude/commands/ui-review.md | aimoto | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| aimoto | update-strategy | aimoto | .claude/commands/update-strategy.md | aimoto | .agents/skills/update-strategy/SKILL.md | aimoto.update-strategy | 1.0.0 | true | ok_same_canonical |
 
 ## Manifest exports
 
@@ -96,6 +123,8 @@ Generated: 2026-06-13T20:46:13
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ai-post-task-review.md | true |
+| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ai-post-task-review/SKILL.md | true |
 
 ## Issues
 
@@ -140,11 +169,51 @@ Generated: 2026-06-13T20:46:13
 | warning | fallback_candidate | AGENTS | AGENTS.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | CLAUDE | CLAUDE.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
+| warning | missing_frontmatter | analyse-signal | .claude/commands/analyse-signal.md | Frontmatter YAML absent. |
+| warning | missing_frontmatter | article-review | .claude/commands/article-review.md | Frontmatter YAML absent. |
+| warning | missing_frontmatter | bilan | .claude/commands/bilan.md | Frontmatter YAML absent. |
+| warning | missing_frontmatter | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
+| warning | missing_frontmatter | next | .claude/commands/next.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | next | .claude/commands/next.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
+| warning | missing_frontmatter | update-strategy | .claude/commands/update-strategy.md | Frontmatter YAML absent. |
+| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : par défaut |
+| warning | missing_codex_skill | analyse-signal | .claude/commands/analyse-signal.md | missing_codex_skill |
+| warning | missing_codex_skill | article-review | .claude/commands/article-review.md | missing_codex_skill |
+| warning | missing_codex_skill | bilan | .claude/commands/bilan.md | missing_codex_skill |
+| warning | missing_codex_skill | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | missing_codex_skill |
+| warning | missing_codex_skill | next | .claude/commands/next.md | missing_codex_skill |
+| warning | missing_codex_skill | update-strategy | .claude/commands/update-strategy.md | missing_codex_skill |
 
 ## Symlinks
 
 | Artifact | Type | Path | Target | Status |
 |---|---|---|---|---|
+| ai-post-task-review | claude_command | .claude/commands/ai-post-task-review.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ai-post-task-review.md | ok |
+| commit | claude_command | .claude/commands/commit.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/commit.md | ok |
+| create-doc | claude_command | .claude/commands/create-doc.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/create-doc.md | ok |
+| implement | claude_command | .claude/commands/implement.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/implement.md | ok |
+| optimize-claude-md | claude_command | .claude/commands/optimize-claude-md.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/optimize-claude-md.md | ok |
+| spec-0-feedback | claude_command | .claude/commands/spec-0-feedback.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-0-feedback.md | ok |
+| spec-1-intake | claude_command | .claude/commands/spec-1-intake.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-1-intake.md | ok |
+| spec-2-draft | claude_command | .claude/commands/spec-2-draft.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-2-draft.md | ok |
+| spec-3-audit | claude_command | .claude/commands/spec-3-audit.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-3-audit.md | ok |
+| spec-4-challenge | claude_command | .claude/commands/spec-4-challenge.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-4-challenge.md | ok |
+| spec-5-revise | claude_command | .claude/commands/spec-5-revise.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/spec-5-revise.md | ok |
+| test | claude_command | .claude/commands/test.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/test.md | ok |
+| ui-review | claude_command | .claude/commands/ui-review.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md | ok |
 | commit | claude_command | .claude/commands/commit.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/commit.md | ok |
 | create-doc | claude_command | .claude/commands/create-doc.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/create-doc.md | ok |
 | implement | claude_command | .claude/commands/implement.md | /Users/vincentdesbrosses/Documents/Misc/claude-commands/implement.md | ok |
