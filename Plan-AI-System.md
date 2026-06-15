@@ -383,3 +383,45 @@ Contenu attendu :
 - installation de Python ;
 - préparation d'un environnement local avec `pyyaml` ;
 - exécution de `make check`.
+
+
+## Phase 17 — README racine — TERMINÉE
+
+Objectif :
+fournir une entrée courte qui rappelle la source de vérité, les commandes
+principales et les règles non négociables.
+
+Livrable :
+
+- `README.md`
+
+Contenu attendu :
+
+- rôle de `ai-system` ;
+- règle source de vérité : canonicals + registry + manifest ;
+- commandes `make check`, `make inventory`, `make doctor` ;
+- liens vers les docs d'exploitation, de workflow et d'onboarding ;
+- interdictions : modifier les exports à la main, masquer un drift par
+  exception, exporter un skill project-specific dans un autre projet.
+
+
+## Phase 18 — Version stable initiale — TERMINÉE
+
+Objectif :
+figer la première version stable du système central avec sa documentation,
+ses validations et ses garde-fous locaux/CI.
+
+Livrable :
+
+- `CHANGELOG.md`
+
+Contenu attendu :
+
+- entrée `v1.0.0` ou `initial-stable` ;
+- résumé de l'onboarding multi-projets ;
+- résumé de l'inventaire consolidé ;
+- état `AI Doctor OK` ;
+- validation locale `make check` ;
+- hook pre-commit local ;
+- validation CI GitHub Actions ;
+- documentation opératoire disponible.
