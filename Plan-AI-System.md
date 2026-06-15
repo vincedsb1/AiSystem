@@ -251,3 +251,28 @@ Axes :
 - réserver `WARN` aux findings à revoir ou aux actions non bloquantes ;
 - conserver les findings acceptés dans les rapports sans dégrader le statut ;
 - maintenir `missing_* = 0`, `drift_* = 0` et AI Doctor `OK`.
+
+
+## Phase 11 — Validation automatisée globale — TERMINÉE
+
+Objectif :
+valider l'état complet de `ai-system` avec une commande unique.
+
+Commande :
+
+```bash
+./check-ai-system.sh
+```
+
+La commande régénère Inventory et Doctor, puis échoue avec un code de sortie
+non nul si l'un des invariants suivants est violé :
+
+- `action_required > 0` ;
+- Doctor `danger > 0` ou `review > 0` ;
+- `missing_codex_skill > 0` ou `missing_claude_command > 0` ;
+- `semantic_review_needed > 0` ;
+- un compteur `drift_* > 0` ;
+- `manifest_missing_exports > 0`.
+
+Les `accepted_findings` et `expected_exceptions` restent affichés pour
+transparence mais ne provoquent pas d'échec.
