@@ -133,6 +133,16 @@ class DoctorDashboardTests(unittest.TestCase):
             classify_line("Fallback vers un emplacement secondaire inconnu."),
             "review",
         )
+        self.assertEqual(
+            classify_line(
+                "60-second timeout per request with graceful fallbacks"
+            ),
+            "acceptable",
+        )
+        self.assertEqual(
+            classify_line("Graceful fallback for an unspecified failure."),
+            "review",
+        )
 
     def test_all_dangers_remain_visible_past_limit(self):
         results = [

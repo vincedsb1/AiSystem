@@ -91,6 +91,12 @@ SAFE_CONTEXT_MARKERS = [
     "`video.published_at` (fallback `transcript.created_at`",
     "puis fallback gemini → minimax",
     "modèle llm (fallback : `documents/`)",
+    "graceful fallbacks for openai failures",
+    "position calculation with multiple fallback strategies",
+    "`backdrop-filter` support with `@supports` fallbacks",
+    "graceful fallbacks - continue operation even if non-critical parts fail",
+    "60-second timeout per request with graceful fallbacks",
+    "client-side session checks with graceful fallbacks",
 ]
 
 PRIORITY_SAFE_CONTEXT_MARKERS = [
