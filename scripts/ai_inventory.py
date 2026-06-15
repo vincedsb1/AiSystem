@@ -22,6 +22,11 @@ except ImportError:
         "python scripts/ai_inventory.py"
     )
 
+try:
+    from scripts.ai_doctor import classify_line
+except ModuleNotFoundError:
+    from ai_doctor import classify_line
+
 
 DEFAULT_REGISTRY = "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml"
 
@@ -407,17 +412,44 @@ def manifest_declared_exports(
 
 def detect_fallback_candidates(content: str, registry: dict[str, Any]) -> list[dict[str, str]]:
     issues: list[dict[str, str]] = []
-    lowered = content.lower()
+    lines = content.splitlines()
 
     for pattern in fallback_patterns(registry):
-        if pattern.lower() in lowered:
-            issues.append(
-                {
-                    "severity": "warning",
-                    "code": "fallback_candidate",
-                    "message": f"Pattern suspect détecté : {pattern}",
-                }
-            )
+        matching_lines = [
+            line
+            for line in lines
+            if pattern.lower() in line.lower()
+        ]
+        if not matching_lines:
+            continue
+
+        doctor_classifications = {
+            classify_line(line)
+            for line in matching_lines
+        }
+        if "danger" in doctor_classifications:
+            doctor_classification = "danger"
+            severity = "error"
+            classification = "action_required"
+        elif "review" in doctor_classifications:
+            doctor_classification = "review"
+            severity = "warning"
+            classification = "action_required"
+        else:
+            doctor_classification = "acceptable"
+            severity = "warning"
+            classification = "accepted_finding"
+
+        issues.append(
+            {
+                "severity": severity,
+                "code": "fallback_candidate",
+                "message": f"Pattern suspect détecté : {pattern}",
+                "classification": classification,
+                "doctor_classification": doctor_classification,
+                "matches": len(matching_lines),
+            }
+        )
 
     return issues
 
@@ -1076,7 +1108,18 @@ def summarize(
                 "severity": severity,
                 "code": pair["issue"],
                 "message": pair["issue"],
+                "classification": "action_required",
             }
+        )
+
+    for issue in issues:
+        if issue.get("classification"):
+            continue
+        issue["classification"] = (
+            "action_required"
+            if issue.get("severity") == "error"
+            or issue.get("code") == "manifest_export_missing"
+            else "accepted_finding"
         )
 
     pair_counts: dict[str, int] = {}
@@ -1085,6 +1128,35 @@ def summarize(
 
     manifest_covered = len([a for a in artifacts if a.get("manifest_found")])
     manifest_exports_missing = len([e for e in manifest_exports if not e.get("exists")])
+    action_required = [
+        issue
+        for issue in issues
+        if issue.get("classification") == "action_required"
+    ]
+    accepted_findings = [
+        issue
+        for issue in issues
+        if issue.get("classification") == "accepted_finding"
+    ]
+    expected_exceptions = [
+        pair
+        for pair in pairs
+        if pair_severity(pair["issue"]) == "expected"
+    ]
+    doctor_counts = {
+        "danger": sum(
+            issue.get("doctor_classification") == "danger"
+            for issue in issues
+        ),
+        "review": sum(
+            issue.get("doctor_classification") == "review"
+            for issue in issues
+        ),
+        "acceptable": sum(
+            issue.get("doctor_classification") == "acceptable"
+            for issue in issues
+        ),
+    }
     project_summaries: dict[str, dict[str, int]] = {}
     root_doc_types = {
         "agents_file",
@@ -1121,6 +1193,18 @@ def summarize(
                 issue.get("project") == project_name
                 for issue in issues
             ),
+            "action_required": sum(
+                issue.get("project") == project_name
+                for issue in action_required
+            ),
+            "accepted_findings": sum(
+                issue.get("project") == project_name
+                for issue in accepted_findings
+            ),
+            "expected_exceptions": sum(
+                pair.get("project") == project_name
+                for pair in expected_exceptions
+            ),
         }
 
     return {
@@ -1149,9 +1233,18 @@ def summarize(
             "manifest_missing_exports": manifest_exports_missing,
         },
         "pair_counts": pair_counts,
+        "classification_counts": {
+            "action_required": len(action_required),
+            "accepted_findings": len(accepted_findings),
+            "expected_exceptions": len(expected_exceptions),
+        },
+        "doctor_counts": doctor_counts,
         "projects": project_summaries,
         "issues_count": len(issues),
         "issues": issues,
+        "action_required": action_required,
+        "accepted_findings": accepted_findings,
+        "expected_exceptions": expected_exceptions,
     }
 
 
@@ -1173,18 +1266,28 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
     lines.append("|---|---:|")
     for key, value in summary["counts"].items():
         lines.append(f"| {key} | {value} |")
-    lines.append(f"| issues | {summary['issues_count']} |")
+    for key, value in summary["classification_counts"].items():
+        lines.append(f"| {key} | {value} |")
+    lines.append(f"| doctor_danger | {summary['doctor_counts']['danger']} |")
+    lines.append(f"| doctor_review | {summary['doctor_counts']['review']} |")
+    lines.append("")
+    lines.append(
+        f"**Status: {inventory_status(summary)}.** "
+        "Accepted findings are retained for transparency but do not require "
+        "action. Expected pairing exceptions are registry decisions and do "
+        "not count as warnings."
+    )
     lines.append("")
 
     lines.append("## Projects summary")
     lines.append("")
     lines.append(
-        "| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Issues |"
+        "| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Action required | Accepted findings | Expected exceptions |"
     )
-    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|")
+    lines.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
     for project, counts in summary["projects"].items():
         lines.append(
-            "| {project} | {codex_skills} | {claude_commands} | {claude_rules} | {claude_hooks} | {codex_hooks} | {root_docs} | {issues} |".format(
+            "| {project} | {codex_skills} | {claude_commands} | {claude_rules} | {claude_hooks} | {codex_hooks} | {root_docs} | {action_required} | {accepted_findings} | {expected_exceptions} |".format(
                 project=project,
                 **counts,
             )
@@ -1258,12 +1361,15 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
         )
 
     lines.append("")
-    lines.append("## Issues")
+    lines.append("## Action required")
     lines.append("")
     lines.append("| Severity | Code | Artifact | Path | Message |")
     lines.append("|---|---|---|---|---|")
 
-    for issue in summary["issues"]:
+    if not summary["action_required"]:
+        lines.append("|  |  |  |  | No action required. |")
+
+    for issue in summary["action_required"]:
         lines.append(
             "| {severity} | {code} | {artifact} | {path} | {message} |".format(
                 severity=issue.get("severity", ""),
@@ -1271,6 +1377,44 @@ def write_markdown_report(report: dict[str, Any], output_path: Path) -> None:
                 artifact=issue.get("artifact", ""),
                 path=issue.get("path", ""),
                 message=str(issue.get("message", "")).replace("|", "\\|"),
+            )
+        )
+
+    lines.append("")
+    lines.append("## Accepted findings")
+    lines.append("")
+    lines.append(
+        "These findings remain visible for auditability. Fallback candidates "
+        "in this section were classified `acceptable` by the same rules as "
+        "`ai_doctor.py`; advisory metadata findings are non-blocking."
+    )
+    lines.append("")
+    lines.append("| Code | Artifact | Path | Classification | Message |")
+    lines.append("|---|---|---|---|---|")
+    for issue in summary["accepted_findings"]:
+        lines.append(
+            "| {code} | {artifact} | {path} | {classification} | {message} |".format(
+                code=issue.get("code", ""),
+                artifact=issue.get("artifact", ""),
+                path=issue.get("path", ""),
+                classification=issue.get("doctor_classification", "advisory"),
+                message=str(issue.get("message", "")).replace("|", "\\|"),
+            )
+        )
+
+    lines.append("")
+    lines.append("## Expected pairing exceptions")
+    lines.append("")
+    lines.append("| Project | Name | Status | Path | Reason |")
+    lines.append("|---|---|---|---|---|")
+    for pair in summary["expected_exceptions"]:
+        lines.append(
+            "| {project} | {name} | {status} | {path} | {reason} |".format(
+                project=pair.get("project", ""),
+                name=pair.get("name", ""),
+                status=pair.get("issue", ""),
+                path=pair.get("claude_path") or pair.get("codex_path") or "",
+                reason=str(pair.get("exception_reason") or "").replace("|", "\\|"),
             )
         )
 
@@ -1312,9 +1456,42 @@ def console_path(path: Path) -> str:
 
 
 def inventory_status(summary: dict[str, Any]) -> str:
-    if any(issue.get("severity") == "error" for issue in summary["issues"]):
+    pair_counts = summary.get("pair_counts", {})
+    counts = summary.get("counts", {})
+    doctor_counts = summary.get("doctor_counts", {})
+    action_required = summary.get("action_required")
+    if action_required is None:
+        action_required = summary.get("issues", [])
+    classification_counts = summary.get("classification_counts", {})
+    action_required_count = classification_counts.get(
+        "action_required",
+        summary.get("issues_count", len(action_required)),
+    )
+    blocking_pairs = (
+        pair_counts.get("missing_codex_skill", 0)
+        + pair_counts.get("missing_claude_command", 0)
+        + sum(
+            count
+            for status, count in pair_counts.items()
+            if status.startswith("drift_")
+        )
+    )
+
+    if (
+        blocking_pairs > 0
+        or counts.get("manifest_missing_exports", 0) > 0
+        or doctor_counts.get("danger", 0) > 0
+        or any(
+            issue.get("severity") == "error"
+            for issue in action_required
+        )
+    ):
         return "FAIL"
-    if summary["issues_count"] > 0:
+    if (
+        pair_counts.get("semantic_review_needed", 0) > 0
+        or doctor_counts.get("review", 0) > 0
+        or action_required_count > 0
+    ):
         return "WARN"
     return "OK"
 
@@ -1327,14 +1504,28 @@ def print_inventory_dashboard(
 ) -> None:
     summary = report["summary"]
     status = inventory_status(summary)
+    classification_counts = summary.get("classification_counts", {
+        "action_required": summary.get("issues_count", 0),
+        "accepted_findings": 0,
+        "expected_exceptions": 0,
+    })
 
     print(f"AI Inventory — {status}")
+    print()
+    print(
+        "Summary"
+        f"  action_required={classification_counts['action_required']}"
+        f"  accepted_findings={classification_counts['accepted_findings']}"
+        f"  expected_exceptions={classification_counts['expected_exceptions']}"
+    )
     print()
     print("Projects")
     headers = (
         "project",
         "artifacts",
-        "issues",
+        "action_required",
+        "accepted_findings",
+        "expected_exceptions",
         "claude_commands",
         "codex_skills",
         "claude_rules",
@@ -1343,7 +1534,20 @@ def print_inventory_dashboard(
         "root_docs",
     )
     rows = [
-        (project, *(str(counts[header]) for header in headers[1:]))
+        (
+            project,
+            *(
+                str(
+                    counts.get(
+                        header,
+                        counts.get("issues", 0)
+                        if header == "action_required"
+                        else 0,
+                    )
+                )
+                for header in headers[1:]
+            ),
+        )
         for project, counts in summary["projects"].items()
     ]
     widths = [
@@ -1446,8 +1650,10 @@ def print_inventory_dashboard(
         next_actions.append(
             "Review non-OK pairing for " + ", ".join(affected_projects)
         )
-    if summary["issues_count"] > 0:
-        next_actions.append(f"Open {console_path(markdown_path)} for all issues")
+    if classification_counts["action_required"] > 0:
+        next_actions.append(
+            f"Open {console_path(markdown_path)} for action-required findings"
+        )
     if not next_actions:
         next_actions.append("No action required")
 

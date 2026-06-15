@@ -1,6 +1,6 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T15:29:28
+Generated: 2026-06-15T15:39:45
 
 ## Summary
 
@@ -16,22 +16,28 @@ Generated: 2026-06-15T15:29:28
 | manifest_covered_artifacts | 230 |
 | manifest_declared_exports | 161 |
 | manifest_missing_exports | 0 |
-| issues | 206 |
+| action_required | 0 |
+| accepted_findings | 206 |
+| expected_exceptions | 30 |
+| doctor_danger | 0 |
+| doctor_review | 0 |
+
+**Status: OK.** Accepted findings are retained for transparency but do not require action. Expected pairing exceptions are registry decisions and do not count as warnings.
 
 ## Projects summary
 
-| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Issues |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 39 |
-| InterviewOS | 13 | 12 | 4 | 3 | 0 | 2 | 17 |
-| intrai | 13 | 0 | 0 | 0 | 0 | 1 | 8 |
-| linkedin-ia-comments | 13 | 0 | 0 | 0 | 0 | 1 | 8 |
-| Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 28 |
-| Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 25 |
-| Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 23 |
-| Spotter | 13 | 0 | 0 | 0 | 0 | 0 | 8 |
-| suggst | 13 | 18 | 0 | 0 | 0 | 2 | 25 |
-| truthify | 13 | 18 | 0 | 0 | 0 | 1 | 25 |
+| Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Action required | Accepted findings | Expected exceptions |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 0 | 39 | 0 |
+| InterviewOS | 13 | 12 | 4 | 3 | 0 | 2 | 0 | 17 | 0 |
+| intrai | 13 | 0 | 0 | 0 | 0 | 1 | 0 | 8 | 0 |
+| linkedin-ia-comments | 13 | 0 | 0 | 0 | 0 | 1 | 0 | 8 | 0 |
+| Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 0 | 28 | 6 |
+| Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 0 | 25 | 6 |
+| Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 0 | 23 | 6 |
+| Spotter | 13 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 0 |
+| suggst | 13 | 18 | 0 | 0 | 0 | 2 | 0 | 25 | 6 |
+| truthify | 13 | 18 | 0 | 0 | 0 | 1 | 0 | 25 | 6 |
 
 ## Pair status summary
 
@@ -380,216 +386,259 @@ Generated: 2026-06-15T15:29:28
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/ui-review/SKILL.md | true |
 
-## Issues
+## Action required
 
 | Severity | Code | Artifact | Path | Message |
 |---|---|---|---|---|
-| warning | fallback_candidate | add-indicator | .agents/skills/add-indicator/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | add-indicator | .agents/skills/add-indicator/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | edit-export-llm-report | .agents/skills/edit-export-llm-report/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | edit-export-llm-report | .agents/skills/edit-export-llm-report/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement-remediation-spec | .agents/skills/implement-remediation-spec/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | next | .agents/skills/next/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | add-indicator | .claude/commands/add-indicator.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | add-indicator | .claude/commands/add-indicator.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement-remediation-spec | .claude/commands/implement-remediation-spec.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | next | .claude/commands/next.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | _template | .claude/strategy-profiles/_template.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | forecast_signal_driven_long_only | .claude/strategy-profiles/forecast_signal_driven_long_only.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | AGENTS | AGENTS.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | CLAUDE | CLAUDE.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
-| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
-| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
-| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | AGENTS | AGENTS.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | CLAUDE | CLAUDE.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
-| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
-| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
-| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
-| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
-| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
-| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
-| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
-| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
-| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | Frontmatter YAML absent. |
-| warning | missing_name | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : name |
-| warning | missing_description | design-audit-context | .claude/commands/design-audit-context.md | Champ frontmatter manquant : description |
-| warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | landing-review | .claude/commands/landing-review.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | landing-review | .claude/commands/landing-review.md | Pattern suspect détecté : si absent |
-| warning | missing_frontmatter | next-step | .claude/commands/next-step.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | Pattern suspect détecté : si absent |
-| warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
-| warning | missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | CLAUDE | CLAUDE.md | Pattern suspect détecté : fallback |
+|  |  |  |  | No action required. |
+
+## Accepted findings
+
+These findings remain visible for auditability. Fallback candidates in this section were classified `acceptable` by the same rules as `ai_doctor.py`; advisory metadata findings are non-blocking.
+
+| Code | Artifact | Path | Classification | Message |
+|---|---|---|---|---|
+| fallback_candidate | add-indicator | .agents/skills/add-indicator/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | add-indicator | .agents/skills/add-indicator/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | edit-export-llm-report | .agents/skills/edit-export-llm-report/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | edit-export-llm-report | .agents/skills/edit-export-llm-report/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement-remediation-spec | .agents/skills/implement-remediation-spec/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | next | .agents/skills/next/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | update-strategy | .agents/skills/update-strategy/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | add-indicator | .claude/commands/add-indicator.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | add-indicator | .claude/commands/add-indicator.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement-remediation-spec | .claude/commands/implement-remediation-spec.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | next | .claude/commands/next.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | update-strategy | .claude/commands/update-strategy.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | update-strategy | .claude/commands/update-strategy.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | update-strategy | .claude/commands/update-strategy.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | _template | .claude/strategy-profiles/_template.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | forecast_signal_driven_long_only | .claude/strategy-profiles/forecast_signal_driven_long_only.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | AGENTS | AGENTS.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | CLAUDE | CLAUDE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | project-config | .claude/project-config.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | project-config | .claude/project-config.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
+| missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
+| missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | landing-review | .claude/commands/landing-review.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | landing-review | .claude/commands/landing-review.md | acceptable | Pattern suspect détecté : si absent |
+| missing_frontmatter | next-step | .claude/commands/next-step.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | advisory | Frontmatter YAML absent. |
+| missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | AGENTS | AGENTS.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | CLAUDE | CLAUDE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
+| missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
+| missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | landing-review | .claude/commands/landing-review.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | landing-review | .claude/commands/landing-review.md | acceptable | Pattern suspect détecté : si absent |
+| missing_frontmatter | next-step | .claude/commands/next-step.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | advisory | Frontmatter YAML absent. |
+| missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
+| missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
+| missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | landing-review | .claude/commands/landing-review.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | landing-review | .claude/commands/landing-review.md | acceptable | Pattern suspect détecté : si absent |
+| missing_frontmatter | next-step | .claude/commands/next-step.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | advisory | Frontmatter YAML absent. |
+| missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
+| missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
+| missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | landing-review | .claude/commands/landing-review.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | landing-review | .claude/commands/landing-review.md | acceptable | Pattern suspect détecté : si absent |
+| missing_frontmatter | next-step | .claude/commands/next-step.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | advisory | Frontmatter YAML absent. |
+| missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
+| missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
+| missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| missing_frontmatter | landing-review | .claude/commands/landing-review.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | landing-review | .claude/commands/landing-review.md | acceptable | Pattern suspect détecté : si absent |
+| missing_frontmatter | next-step | .claude/commands/next-step.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| missing_frontmatter | ui-fix-global | .claude/commands/ui-fix-global.md | advisory | Frontmatter YAML absent. |
+| missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | CLAUDE | CLAUDE.md | acceptable | Pattern suspect détecté : fallback |
+
+## Expected pairing exceptions
+
+| Project | Name | Status | Path | Reason |
+|---|---|---|---|---|
+| Pylaa | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylaa | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylaa | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylaa | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylaa | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylaa | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet Pylaa non convertie automatiquement en Codex skill. |
+| Pylot | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Pylot | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Pylot | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Pylot | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Pylot | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Pylot | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet Pylot non convertie automatiquement en Codex skill. |
+| Skriipt | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| Skriipt | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| Skriipt | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| Skriipt | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| Skriipt | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| Skriipt | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
+| suggst | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| suggst | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| suggst | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| suggst | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| suggst | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| suggst | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| truthify | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet truthify non convertie automatiquement en Codex skill. |
+| truthify | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet truthify non convertie automatiquement en Codex skill. |
+| truthify | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet truthify non convertie automatiquement en Codex skill. |
+| truthify | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet truthify non convertie automatiquement en Codex skill. |
+| truthify | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet truthify non convertie automatiquement en Codex skill. |
+| truthify | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet truthify non convertie automatiquement en Codex skill. |
 
 ## Symlinks
 

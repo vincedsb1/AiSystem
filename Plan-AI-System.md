@@ -217,7 +217,7 @@ après une correction ou une implémentation, vérifier :
 - règle à ajouter ou supprimer.
 
 
-## Phase 9 — Extension aux autres projets
+## Phase 9 — Extension aux autres projets — TERMINÉE
 
 Une fois AIMOTO fiable :
 
@@ -231,4 +231,23 @@ Une fois AIMOTO fiable :
 - suggst
 - truthify
 
-Le registre activera les projets progressivement.
+Tous ces projets sont maintenant activés dans le registre. Chacun reçoit
+uniquement les skills `shared.*` déclarés dans `install_shared_skills`. Les
+commandes Claude-only justifiées sont encodées individuellement dans
+`pairing_exceptions`; aucun skill project-specific étranger n'est exporté.
+
+
+## Phase 10 — Consolidation multi-projets — EN COURS
+
+Objectif :
+rendre les rapports Inventory et Doctor immédiatement actionnables après
+l'onboarding.
+
+Axes :
+
+- séparer `action_required`, `accepted_findings` et `expected_exceptions` ;
+- réserver `FAIL` aux drifts, pairings manquants non justifiés, exports
+  manifest manquants, erreurs techniques et dangers Doctor ;
+- réserver `WARN` aux findings à revoir ou aux actions non bloquantes ;
+- conserver les findings acceptés dans les rapports sans dégrader le statut ;
+- maintenir `missing_* = 0`, `drift_* = 0` et AI Doctor `OK`.

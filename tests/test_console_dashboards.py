@@ -38,6 +38,11 @@ class InventoryDashboardTests(unittest.TestCase):
         report = {
             "summary": {
                 "issues_count": 1,
+                "classification_counts": {
+                    "action_required": 1,
+                    "accepted_findings": 0,
+                    "expected_exceptions": 0,
+                },
                 "issues": [{
                     "severity": "warning",
                     "project": "InterviewOS",
@@ -54,6 +59,9 @@ class InventoryDashboardTests(unittest.TestCase):
                         "claude_hooks": 0,
                         "codex_hooks": 0,
                         "root_docs": 1,
+                        "action_required": 1,
+                        "accepted_findings": 0,
+                        "expected_exceptions": 0,
                     },
                 },
                 "pair_counts": {"missing_codex_skill": 1},
@@ -76,7 +84,7 @@ class InventoryDashboardTests(unittest.TestCase):
             )
 
         rendered = output.getvalue()
-        self.assertIn("AI Inventory — WARN", rendered)
+        self.assertIn("AI Inventory — FAIL", rendered)
         self.assertIn("InterviewOS", rendered)
         self.assertIn("missing_codex_skill", rendered)
         self.assertIn("reports/inventory.md", rendered)

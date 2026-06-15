@@ -4,7 +4,9 @@ from pathlib import Path
 
 from scripts.ai_inventory import (
     build_pairs,
+    detect_fallback_candidates,
     expected_shared_codex_exports,
+    inventory_status,
     summarize,
     validate_manifest_exports,
 )
@@ -35,6 +37,95 @@ def artifact(
 
 
 class ProjectAwarePairingTests(unittest.TestCase):
+    def test_accepted_fallback_is_not_action_required(self):
+        registry = {
+            "quality_rules": {
+                "forbidden_silent_fallback_patterns": ["fallback"],
+            },
+        }
+
+        issues = detect_fallback_candidates(
+            "Suspense fallback pendant le chargement.",
+            registry,
+        )
+
+        self.assertEqual(issues[0]["classification"], "accepted_finding")
+        self.assertEqual(issues[0]["doctor_classification"], "acceptable")
+
+    def test_review_fallback_remains_action_required(self):
+        registry = {
+            "quality_rules": {
+                "forbidden_silent_fallback_patterns": ["fallback"],
+            },
+        }
+
+        issues = detect_fallback_candidates(
+            "Fallback vers un comportement inconnu.",
+            registry,
+        )
+
+        self.assertEqual(issues[0]["classification"], "action_required")
+        self.assertEqual(issues[0]["doctor_classification"], "review")
+
+    def test_inventory_status_enforces_blocking_health_rules(self):
+        healthy = {
+            "counts": {"manifest_missing_exports": 0},
+            "pair_counts": {"expected_claude_only": 30},
+            "classification_counts": {
+                "action_required": 0,
+                "accepted_findings": 206,
+                "expected_exceptions": 30,
+            },
+            "doctor_counts": {
+                "danger": 0,
+                "review": 0,
+                "acceptable": 171,
+            },
+            "action_required": [],
+        }
+        self.assertEqual(inventory_status(healthy), "OK")
+
+        for pair_status in (
+            "missing_codex_skill",
+            "missing_claude_command",
+            "drift_version_mismatch",
+        ):
+            summary = {
+                **healthy,
+                "pair_counts": {pair_status: 1},
+            }
+            self.assertEqual(inventory_status(summary), "FAIL")
+
+        self.assertEqual(
+            inventory_status({
+                **healthy,
+                "counts": {"manifest_missing_exports": 1},
+            }),
+            "FAIL",
+        )
+        self.assertEqual(
+            inventory_status({
+                **healthy,
+                "doctor_counts": {
+                    "danger": 1,
+                    "review": 0,
+                    "acceptable": 0,
+                },
+            }),
+            "FAIL",
+        )
+        self.assertEqual(
+            inventory_status({
+                **healthy,
+                "doctor_counts": {
+                    "danger": 0,
+                    "review": 1,
+                    "acceptable": 0,
+                },
+            }),
+            "WARN",
+        )
+
     def test_same_name_is_paired_within_project(self):
         artifacts = [
             artifact(
