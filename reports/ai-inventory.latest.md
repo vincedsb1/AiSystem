@@ -1,22 +1,22 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T14:44:13
+Generated: 2026-06-15T14:53:15
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| codex_skills | 87 |
+| codex_skills | 100 |
 | claude_commands | 85 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
 | claude_hooks | 6 |
 | codex_hooks | 3 |
 | root_docs | 13 |
-| manifest_covered_artifacts | 154 |
-| manifest_declared_exports | 109 |
+| manifest_covered_artifacts | 167 |
+| manifest_declared_exports | 122 |
 | manifest_missing_exports | 0 |
-| issues | 140 |
+| issues | 148 |
 
 ## Projects summary
 
@@ -28,13 +28,14 @@ Generated: 2026-06-15T14:44:13
 | Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 28 |
 | Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 25 |
 | Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 23 |
+| Spotter | 13 | 0 | 0 | 0 | 0 | 0 | 8 |
 
 ## Pair status summary
 
 | Pair status | Count | Meaning |
 |---|---:|---|
 | expected_claude_only | 18 | Project-specific Claude command intentionally has no Codex skill. |
-| ok_same_canonical | 87 | Claude and Codex are linked to the same canonical manifest entry. |
+| ok_same_canonical | 100 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
@@ -110,6 +111,19 @@ Generated: 2026-06-15T14:44:13
 | Skriipt | ui-fix-global | Skriipt | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
 | Skriipt | ui-review | Skriipt | .claude/commands/ui-review.md | Skriipt | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | Skriipt | ui-review-global | Skriipt | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
+| Spotter | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Spotter | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Spotter | commit | InterviewOS | .claude/commands/commit.md | Spotter | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| Spotter | create-doc | InterviewOS | .claude/commands/create-doc.md | Spotter | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| Spotter | implement | InterviewOS | .claude/commands/implement.md | Spotter | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| Spotter | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | Spotter | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | Spotter | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | Spotter | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | Spotter | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | Spotter | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | Spotter | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | Spotter | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| Spotter | test | InterviewOS | .claude/commands/test.md | Spotter | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| Spotter | ui-review | InterviewOS | .claude/commands/ui-review.md | Spotter | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | add-indicator | aimoto | .claude/commands/add-indicator.md | aimoto | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
 | aimoto | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | aimoto | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | analyse-signal | aimoto | .claude/commands/analyse-signal.md | aimoto | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
@@ -259,6 +273,19 @@ Generated: 2026-06-15T14:44:13
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Skriipt/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/ai-post-task-review/SKILL.md | true |
+| shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/commit/SKILL.md | true |
+| shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/create-doc/SKILL.md | true |
+| shared.implement | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/implement/SKILL.md | true |
+| shared.optimize-claude-md | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/optimize-claude-md/SKILL.md | true |
+| shared.spec-0-feedback | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-0-feedback/SKILL.md | true |
+| shared.spec-1-intake | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-1-intake/SKILL.md | true |
+| shared.spec-2-draft | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-2-draft/SKILL.md | true |
+| shared.spec-3-audit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-3-audit/SKILL.md | true |
+| shared.spec-4-challenge | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-4-challenge/SKILL.md | true |
+| shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-5-revise/SKILL.md | true |
+| shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/test/SKILL.md | true |
+| shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/ui-review/SKILL.md | true |
 
 ## Issues
 
@@ -404,6 +431,14 @@ Generated: 2026-06-15T14:44:13
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | implement | .agents/skills/implement/SKILL.md | Pattern suspect détecté : fallback |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-1-intake | .agents/skills/spec-1-intake/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | spec-3-audit | .agents/skills/spec-3-audit/SKILL.md | Pattern suspect détecté : si absent |
+| warning | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : par défaut |
+| warning | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | Pattern suspect détecté : fallback |
 
 ## Symlinks
 
