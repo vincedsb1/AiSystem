@@ -122,6 +122,17 @@ class DoctorDashboardTests(unittest.TestCase):
             classify_line("Si aucun résultat n'existe, appliquer par défaut."),
             "danger",
         )
+        self.assertEqual(
+            classify_line(
+                "`Bundle/model.mlmodelc` — modèle LLM "
+                "(fallback : `Documents/`)"
+            ),
+            "acceptable",
+        )
+        self.assertEqual(
+            classify_line("Fallback vers un emplacement secondaire inconnu."),
+            "review",
+        )
 
     def test_all_dangers_remain_visible_past_limit(self):
         results = [

@@ -90,6 +90,7 @@ SAFE_CONTEXT_MARKERS = [
     "fallback chain",
     "`video.published_at` (fallback `transcript.created_at`",
     "puis fallback gemini → minimax",
+    "modèle llm (fallback : `documents/`)",
 ]
 
 PRIORITY_SAFE_CONTEXT_MARKERS = [

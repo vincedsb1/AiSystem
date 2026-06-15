@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15T14:53:20",
+  "generated_at": "2026-06-15T15:09:26",
   "registry": "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml",
   "inventory": "/Users/vincentdesbrosses/Documents/Misc/ai-system/reports/ai-inventory.latest.json",
   "summary": {
@@ -11,30 +11,30 @@
     "by_pattern": {},
     "by_artifact": {},
     "raw": {
-      "total": 274,
+      "total": 312,
       "danger": 0,
       "review": 0,
-      "acceptable": 274,
+      "acceptable": 312,
       "by_artifact_type": {
         "agents_file": 2,
-        "architecture_file": 24,
-        "claude_command": 101,
+        "architecture_file": 25,
+        "claude_command": 120,
         "claude_file": 2,
         "claude_strategy_profile": 2,
-        "codex_skill": 141,
+        "codex_skill": 159,
         "project_config": 2
       },
       "by_pattern": {
-        "fallback": 78,
-        "par défaut": 134,
-        "si absent": 62
+        "fallback": 85,
+        "par défaut": 154,
+        "si absent": 73
       },
       "by_artifact": {
         "agents_file:AGENTS": {
           "acceptable": 2
         },
         "architecture_file:ARCHITECTURE": {
-          "acceptable": 24
+          "acceptable": 25
         },
         "claude_command:add-indicator": {
           "acceptable": 2
@@ -43,31 +43,31 @@
           "acceptable": 3
         },
         "claude_command:implement": {
-          "acceptable": 5
+          "acceptable": 6
         },
         "claude_command:implement-remediation-spec": {
           "acceptable": 2
         },
         "claude_command:landing-review": {
-          "acceptable": 3
+          "acceptable": 4
         },
         "claude_command:next": {
           "acceptable": 1
         },
         "claude_command:optimize-claude-md": {
-          "acceptable": 28
+          "acceptable": 35
         },
         "claude_command:spec-1-intake": {
-          "acceptable": 5
+          "acceptable": 6
         },
         "claude_command:spec-3-audit": {
-          "acceptable": 5
+          "acceptable": 6
         },
         "claude_command:spec-5-revise": {
-          "acceptable": 5
+          "acceptable": 6
         },
         "claude_command:ui-review": {
-          "acceptable": 35
+          "acceptable": 42
         },
         "claude_command:update-strategy": {
           "acceptable": 7
@@ -88,7 +88,7 @@
           "acceptable": 3
         },
         "codex_skill:implement": {
-          "acceptable": 7
+          "acceptable": 8
         },
         "codex_skill:implement-remediation-spec": {
           "acceptable": 2
@@ -97,19 +97,19 @@
           "acceptable": 1
         },
         "codex_skill:optimize-claude-md": {
-          "acceptable": 49
+          "acceptable": 56
         },
         "codex_skill:spec-1-intake": {
-          "acceptable": 7
+          "acceptable": 8
         },
         "codex_skill:spec-3-audit": {
-          "acceptable": 7
+          "acceptable": 8
         },
         "codex_skill:spec-5-revise": {
-          "acceptable": 7
+          "acceptable": 8
         },
         "codex_skill:ui-review": {
-          "acceptable": 49
+          "acceptable": 56
         },
         "codex_skill:update-strategy": {
           "acceptable": 7
@@ -121,5 +121,5 @@
     }
   },
   "findings": [],
-  "raw_findings_count": 274
+  "raw_findings_count": 312
 }
