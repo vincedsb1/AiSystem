@@ -1,13 +1,13 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T11:13:11
+Generated: 2026-06-15T11:42:07
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
 | codex_skills | 22 |
-| claude_commands | 40 |
+| claude_commands | 34 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
 | claude_hooks | 6 |
@@ -16,34 +16,28 @@ Generated: 2026-06-15T11:13:11
 | manifest_covered_artifacts | 56 |
 | manifest_declared_exports | 44 |
 | manifest_missing_exports | 0 |
-| issues | 66 |
+| issues | 48 |
 
 ## Projects summary
 
 | Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Issues |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 39 |
-| InterviewOS | 0 | 18 | 4 | 3 | 0 | 2 | 27 |
+| InterviewOS | 0 | 12 | 4 | 3 | 0 | 2 | 9 |
 
 ## Pair status summary
 
 | Pair status | Count | Meaning |
 |---|---:|---|
-| missing_codex_skill | 6 | Claude command exists, Codex skill is missing. |
 | ok_same_canonical | 34 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
 | Project | Name | Claude project | Claude | Codex project | Codex | Canonical ID | Version | Same raw hash | Issue |
 |---|---|---|---|---|---|---|---|---|---|
-| InterviewOS | analyse-signal | InterviewOS | .claude/commands/analyse-signal.md |  |  |  |  |  | missing_codex_skill |
-| InterviewOS | article-review | InterviewOS | .claude/commands/article-review.md |  |  |  |  |  | missing_codex_skill |
-| InterviewOS | bilan | InterviewOS | .claude/commands/bilan.md |  |  |  |  |  | missing_codex_skill |
 | InterviewOS | commit | InterviewOS | .claude/commands/commit.md | aimoto | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | create-doc | InterviewOS | .claude/commands/create-doc.md | aimoto | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
-| InterviewOS | edit-export-llm-report | InterviewOS | .claude/commands/edit-export-llm-report.md |  |  |  |  |  | missing_codex_skill |
 | InterviewOS | implement | InterviewOS | .claude/commands/implement.md | aimoto | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
-| InterviewOS | next | InterviewOS | .claude/commands/next.md |  |  |  |  |  | missing_codex_skill |
 | InterviewOS | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | aimoto | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | aimoto | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | aimoto | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
@@ -53,7 +47,6 @@ Generated: 2026-06-15T11:13:11
 | InterviewOS | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | aimoto | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | test | InterviewOS | .claude/commands/test.md | aimoto | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | ui-review | InterviewOS | .claude/commands/ui-review.md | aimoto | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| InterviewOS | update-strategy | InterviewOS | .claude/commands/update-strategy.md |  |  |  |  |  | missing_codex_skill |
 | aimoto | add-indicator | aimoto | .claude/commands/add-indicator.md | aimoto | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
 | aimoto | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | aimoto | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | analyse-signal | aimoto | .claude/commands/analyse-signal.md | aimoto | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
@@ -169,15 +162,7 @@ Generated: 2026-06-15T11:13:11
 | warning | fallback_candidate | AGENTS | AGENTS.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | CLAUDE | CLAUDE.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | analyse-signal | .claude/commands/analyse-signal.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | article-review | .claude/commands/article-review.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | bilan | .claude/commands/bilan.md | Frontmatter YAML absent. |
-| warning | missing_frontmatter | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | implement | .claude/commands/implement.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | next | .claude/commands/next.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | next | .claude/commands/next.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | Pattern suspect détecté : si absent |
 | warning | fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | Pattern suspect détecté : par défaut |
@@ -185,17 +170,7 @@ Generated: 2026-06-15T11:13:11
 | warning | fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : par défaut |
 | warning | fallback_candidate | ui-review | .claude/commands/ui-review.md | Pattern suspect détecté : fallback |
-| warning | missing_frontmatter | update-strategy | .claude/commands/update-strategy.md | Frontmatter YAML absent. |
-| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : par défaut |
-| warning | fallback_candidate | update-strategy | .claude/commands/update-strategy.md | Pattern suspect détecté : fallback |
 | warning | fallback_candidate | project-config | .claude/project-config.md | Pattern suspect détecté : fallback |
-| warning | fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | Pattern suspect détecté : par défaut |
-| warning | missing_codex_skill | analyse-signal | .claude/commands/analyse-signal.md | missing_codex_skill |
-| warning | missing_codex_skill | article-review | .claude/commands/article-review.md | missing_codex_skill |
-| warning | missing_codex_skill | bilan | .claude/commands/bilan.md | missing_codex_skill |
-| warning | missing_codex_skill | edit-export-llm-report | .claude/commands/edit-export-llm-report.md | missing_codex_skill |
-| warning | missing_codex_skill | next | .claude/commands/next.md | missing_codex_skill |
-| warning | missing_codex_skill | update-strategy | .claude/commands/update-strategy.md | missing_codex_skill |
 
 ## Symlinks
 

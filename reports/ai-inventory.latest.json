@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15T11:13:11",
+  "generated_at": "2026-06-15T11:42:07",
   "registry": "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml",
   "manifest": "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-manifest.yml",
   "artifacts": [
@@ -3884,123 +3884,6 @@
     },
     {
       "project": "InterviewOS",
-      "name": "analyse-signal",
-      "normalized_name": "analyse-signal",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/analyse-signal.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/analyse-signal.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/analyse-signal.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "81bd7274cd2b6ce5a617cd698c4aad2bb11e48eb7cf1b9911f6a78f090c77a50",
-      "size": 4158,
-      "line_count": 112,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        }
-      ],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
-      "name": "article-review",
-      "normalized_name": "article-review",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/article-review.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/article-review.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/article-review.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "b1c4fad72b7223e7ee2adb23c1019b5d565afa49557ecaf7f13f3d5e07e1559d",
-      "size": 3805,
-      "line_count": 108,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        }
-      ],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
-      "name": "bilan",
-      "normalized_name": "bilan",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/bilan.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/bilan.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/bilan.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "4685fbf01b9962300d0b152ce5e71bbe0055132020cbfd3d2a0beaf40c28aef2",
-      "size": 5067,
-      "line_count": 106,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        }
-      ],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
       "name": "commit",
       "normalized_name": "commit",
       "artifact_type": "claude_command",
@@ -4181,55 +4064,6 @@
     },
     {
       "project": "InterviewOS",
-      "name": "edit-export-llm-report",
-      "normalized_name": "edit-export-llm-report",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/edit-export-llm-report.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/edit-export-llm-report.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/edit-export-llm-report.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "4ee7684fb23b4e3f4ea685d2f7d50a8ef33eccf4358453033d88fbc6b25ce135",
-      "size": 17892,
-      "line_count": 305,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        },
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : par défaut"
-        },
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : fallback"
-        }
-      ],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
       "name": "implement",
       "normalized_name": "implement",
       "artifact_type": "claude_command",
@@ -4321,50 +4155,6 @@
       "size": 10655,
       "line_count": 220,
       "issues": [],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
-      "name": "next",
-      "normalized_name": "next",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/next.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/next.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/next.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "d8748f094278830d296114bae585df296a441a80dec7db942ae69fff365afaf9",
-      "size": 11437,
-      "line_count": 194,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        },
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : par défaut"
-        }
-      ],
       "manifest_found": false
     },
     {
@@ -4955,55 +4745,6 @@
     },
     {
       "project": "InterviewOS",
-      "name": "update-strategy",
-      "normalized_name": "update-strategy",
-      "artifact_type": "claude_command",
-      "declared_artifact_type": null,
-      "path": ".claude/commands/update-strategy.md",
-      "absolute_path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/update-strategy.md",
-      "exists": true,
-      "active": true,
-      "is_symlink": false,
-      "symlink_target": null,
-      "symlink_exists": null,
-      "realpath": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/update-strategy.md",
-      "runtime_name": null,
-      "runtime_description": null,
-      "frontmatter": {},
-      "version": null,
-      "scope": null,
-      "status": null,
-      "domain": null,
-      "project_declared": null,
-      "canonical_id": null,
-      "source_of_truth": null,
-      "canonical_hash": null,
-      "export_target": null,
-      "export_hash": null,
-      "sha256": "574faead7c96be19b427b5a98a40ed29020bb52a3aa0fdaa770a6cd20e97749a",
-      "size": 20818,
-      "line_count": 432,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "missing_frontmatter",
-          "message": "Frontmatter YAML absent."
-        },
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : par défaut"
-        },
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : fallback"
-        }
-      ],
-      "manifest_found": false
-    },
-    {
-      "project": "InterviewOS",
       "name": "audits",
       "normalized_name": "audits",
       "artifact_type": "claude_rule",
@@ -5326,16 +5067,10 @@
       "canonical_hash": null,
       "export_target": null,
       "export_hash": null,
-      "sha256": "9a44ffbbbb4c72edb53f52863f91361fe9b9222200836304734bab083d57f349",
-      "size": 8820,
+      "sha256": "48a74e510eadcfc4d300c69e071aa696d98014c0d91d800aee1c8a8bf8cbd7ca",
+      "size": 8878,
       "line_count": 140,
-      "issues": [
-        {
-          "severity": "warning",
-          "code": "fallback_candidate",
-          "message": "Pattern suspect détecté : par défaut"
-        }
-      ],
+      "issues": [],
       "manifest_found": false
     }
   ],
@@ -5696,66 +5431,6 @@
   "pairs": [
     {
       "project": "InterviewOS",
-      "name": "analyse-signal",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/analyse-signal.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "81bd7274cd2b6ce5a617cd698c4aad2bb11e48eb7cf1b9911f6a78f090c77a50",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
-    },
-    {
-      "project": "InterviewOS",
-      "name": "article-review",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/article-review.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "b1c4fad72b7223e7ee2adb23c1019b5d565afa49557ecaf7f13f3d5e07e1559d",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
-    },
-    {
-      "project": "InterviewOS",
-      "name": "bilan",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/bilan.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "4685fbf01b9962300d0b152ce5e71bbe0055132020cbfd3d2a0beaf40c28aef2",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
-    },
-    {
-      "project": "InterviewOS",
       "name": "commit",
       "claude_project": "InterviewOS",
       "codex_project": "aimoto",
@@ -5796,26 +5471,6 @@
     },
     {
       "project": "InterviewOS",
-      "name": "edit-export-llm-report",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/edit-export-llm-report.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "4ee7684fb23b4e3f4ea685d2f7d50a8ef33eccf4358453033d88fbc6b25ce135",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
-    },
-    {
-      "project": "InterviewOS",
       "name": "implement",
       "claude_project": "InterviewOS",
       "codex_project": "aimoto",
@@ -5833,26 +5488,6 @@
       "codex_sha256": "0eb86ec9dfd821bf97f3e618593bd2b618c94ea5a0619acacd6f3480992d9ff4",
       "same_raw_hash": true,
       "issue": "ok_same_canonical"
-    },
-    {
-      "project": "InterviewOS",
-      "name": "next",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/next.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "d8748f094278830d296114bae585df296a441a80dec7db942ae69fff365afaf9",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
     },
     {
       "project": "InterviewOS",
@@ -6033,26 +5668,6 @@
       "codex_sha256": "2522be6d354a427533fb069cc5b6c540b33afe1b301e8922aa424b021c0d5a9d",
       "same_raw_hash": true,
       "issue": "ok_same_canonical"
-    },
-    {
-      "project": "InterviewOS",
-      "name": "update-strategy",
-      "claude_project": "InterviewOS",
-      "codex_project": null,
-      "claude_path": ".claude/commands/update-strategy.md",
-      "codex_path": null,
-      "claude_version": null,
-      "codex_version": null,
-      "claude_canonical_id": null,
-      "codex_canonical_id": null,
-      "claude_source_of_truth": null,
-      "codex_source_of_truth": null,
-      "claude_manifest_found": false,
-      "codex_manifest_found": null,
-      "claude_sha256": "574faead7c96be19b427b5a98a40ed29020bb52a3aa0fdaa770a6cd20e97749a",
-      "codex_sha256": null,
-      "same_raw_hash": null,
-      "issue": "missing_codex_skill"
     },
     {
       "project": "aimoto",
@@ -6498,7 +6113,7 @@
   "summary": {
     "counts": {
       "codex_skills": 22,
-      "claude_commands": 40,
+      "claude_commands": 34,
       "claude_rules": 8,
       "claude_strategy_profiles": 6,
       "claude_hooks": 6,
@@ -6509,7 +6124,6 @@
       "manifest_missing_exports": 0
     },
     "pair_counts": {
-      "missing_codex_skill": 6,
       "ok_same_canonical": 34
     },
     "projects": {
@@ -6524,17 +6138,17 @@
         "issues": 39
       },
       "InterviewOS": {
-        "artifacts": 27,
+        "artifacts": 21,
         "codex_skills": 0,
-        "claude_commands": 18,
+        "claude_commands": 12,
         "claude_rules": 4,
         "claude_hooks": 3,
         "codex_hooks": 0,
         "root_docs": 2,
-        "issues": 27
+        "issues": 9
       }
     },
-    "issues_count": 66,
+    "issues_count": 48,
     "issues": [
       {
         "project": "aimoto",
@@ -6889,84 +6503,12 @@
       },
       {
         "project": "InterviewOS",
-        "artifact": "analyse-signal",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/analyse-signal.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "article-review",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/article-review.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "bilan",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/bilan.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "edit-export-llm-report",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/edit-export-llm-report.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "edit-export-llm-report",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/edit-export-llm-report.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : par défaut"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "edit-export-llm-report",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/edit-export-llm-report.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : fallback"
-      },
-      {
-        "project": "InterviewOS",
         "artifact": "implement",
         "artifact_type": "claude_command",
         "path": ".claude/commands/implement.md",
         "severity": "warning",
         "code": "fallback_candidate",
         "message": "Pattern suspect détecté : fallback"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "next",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/next.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "next",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/next.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : par défaut"
       },
       {
         "project": "InterviewOS",
@@ -7033,102 +6575,12 @@
       },
       {
         "project": "InterviewOS",
-        "artifact": "update-strategy",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/update-strategy.md",
-        "severity": "warning",
-        "code": "missing_frontmatter",
-        "message": "Frontmatter YAML absent."
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "update-strategy",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/update-strategy.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : par défaut"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "update-strategy",
-        "artifact_type": "claude_command",
-        "path": ".claude/commands/update-strategy.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : fallback"
-      },
-      {
-        "project": "InterviewOS",
         "artifact": "project-config",
         "artifact_type": "project_config",
         "path": ".claude/project-config.md",
         "severity": "warning",
         "code": "fallback_candidate",
         "message": "Pattern suspect détecté : fallback"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "ARCHITECTURE",
-        "artifact_type": "architecture_file",
-        "path": "docs/ARCHITECTURE.md",
-        "severity": "warning",
-        "code": "fallback_candidate",
-        "message": "Pattern suspect détecté : par défaut"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "analyse-signal",
-        "artifact_type": "pair",
-        "path": ".claude/commands/analyse-signal.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "article-review",
-        "artifact_type": "pair",
-        "path": ".claude/commands/article-review.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "bilan",
-        "artifact_type": "pair",
-        "path": ".claude/commands/bilan.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "edit-export-llm-report",
-        "artifact_type": "pair",
-        "path": ".claude/commands/edit-export-llm-report.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "next",
-        "artifact_type": "pair",
-        "path": ".claude/commands/next.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
-      },
-      {
-        "project": "InterviewOS",
-        "artifact": "update-strategy",
-        "artifact_type": "pair",
-        "path": ".claude/commands/update-strategy.md",
-        "severity": "warning",
-        "code": "missing_codex_skill",
-        "message": "missing_codex_skill"
       }
     ]
   }

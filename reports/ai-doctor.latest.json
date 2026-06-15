@@ -1,59 +1,42 @@
 {
-  "generated_at": "2026-06-15T11:13:16",
+  "generated_at": "2026-06-15T11:42:10",
   "registry": "/Users/vincentdesbrosses/Documents/Misc/ai-system/skills-registry.yml",
   "inventory": "/Users/vincentdesbrosses/Documents/Misc/ai-system/reports/ai-inventory.latest.json",
   "summary": {
-    "total": 4,
-    "danger": 3,
-    "review": 1,
+    "total": 0,
+    "danger": 0,
+    "review": 0,
     "acceptable": 0,
-    "by_artifact_type": {
-      "architecture_file": 1,
-      "claude_command": 3
-    },
-    "by_pattern": {
-      "fallback": 3,
-      "par défaut": 1
-    },
-    "by_artifact": {
-      "architecture_file:ARCHITECTURE": {
-        "review": 1
-      },
-      "claude_command:update-strategy": {
-        "danger": 3
-      }
-    },
+    "by_artifact_type": {},
+    "by_pattern": {},
+    "by_artifact": {},
     "raw": {
-      "total": 101,
-      "danger": 3,
-      "review": 1,
-      "acceptable": 97,
+      "total": 90,
+      "danger": 0,
+      "review": 0,
+      "acceptable": 90,
       "by_artifact_type": {
         "agents_file": 1,
-        "architecture_file": 1,
-        "claude_command": 61,
+        "claude_command": 51,
         "claude_file": 1,
         "claude_strategy_profile": 2,
         "codex_skill": 33,
         "project_config": 2
       },
       "by_pattern": {
-        "fallback": 32,
-        "par défaut": 52,
+        "fallback": 27,
+        "par défaut": 46,
         "si absent": 17
       },
       "by_artifact": {
         "agents_file:AGENTS": {
           "acceptable": 1
         },
-        "architecture_file:ARCHITECTURE": {
-          "review": 1
-        },
         "claude_command:add-indicator": {
           "acceptable": 2
         },
         "claude_command:edit-export-llm-report": {
-          "acceptable": 6
+          "acceptable": 3
         },
         "claude_command:implement": {
           "acceptable": 2
@@ -62,7 +45,7 @@
           "acceptable": 2
         },
         "claude_command:next": {
-          "acceptable": 2
+          "acceptable": 1
         },
         "claude_command:optimize-claude-md": {
           "acceptable": 14
@@ -80,8 +63,7 @@
           "acceptable": 14
         },
         "claude_command:update-strategy": {
-          "acceptable": 10,
-          "danger": 3
+          "acceptable": 7
         },
         "claude_file:CLAUDE": {
           "acceptable": 1
@@ -131,59 +113,6 @@
       }
     }
   },
-  "findings": [
-    {
-      "project": "InterviewOS",
-      "artifact": "update-strategy",
-      "artifact_type": "claude_command",
-      "canonical_id": null,
-      "manifest_found": false,
-      "path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/update-strategy.md",
-      "inventory_path": ".claude/commands/update-strategy.md",
-      "classification": "danger",
-      "line": 126,
-      "pattern": "fallback",
-      "text": "3. **Fallback `_next_minor_ver(STRATEGY_VERSION_actuel)`** (calcul local) →"
-    },
-    {
-      "project": "InterviewOS",
-      "artifact": "update-strategy",
-      "artifact_type": "claude_command",
-      "canonical_id": null,
-      "manifest_found": false,
-      "path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/update-strategy.md",
-      "inventory_path": ".claude/commands/update-strategy.md",
-      "classification": "danger",
-      "line": 158,
-      "pattern": "fallback",
-      "text": "Valeurs possibles pour `source` : `arguments_override` | `llm_report.target_version` | `fallback_next_minor_ver`."
-    },
-    {
-      "project": "InterviewOS",
-      "artifact": "update-strategy",
-      "artifact_type": "claude_command",
-      "canonical_id": null,
-      "manifest_found": false,
-      "path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/.claude/commands/update-strategy.md",
-      "inventory_path": ".claude/commands/update-strategy.md",
-      "classification": "danger",
-      "line": 411,
-      "pattern": "fallback",
-      "text": "- STRATEGY_VERSION : v{ANCIEN} → v{X.Y.Z} (source: {arguments_override|llm_report.target_version|fallback_next_minor_ver})"
-    },
-    {
-      "project": "InterviewOS",
-      "artifact": "ARCHITECTURE",
-      "artifact_type": "architecture_file",
-      "canonical_id": null,
-      "manifest_found": false,
-      "path": "/Users/vincentdesbrosses/Documents/Misc/InterviewOS/docs/ARCHITECTURE.md",
-      "inventory_path": "docs/ARCHITECTURE.md",
-      "classification": "review",
-      "line": 62,
-      "pattern": "par défaut",
-      "text": "- Création : `title = deriveTitleFromSlug(slug)` (seuls `slug` + `title` sont requis ; les autres champs restent vides / par défaut)."
-    }
-  ],
-  "raw_findings_count": 101
+  "findings": [],
+  "raw_findings_count": 90
 }
