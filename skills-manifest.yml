@@ -318,8 +318,8 @@ artifacts:
     path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/spec-0-feedback/SKILL.md
 - canonical_id: shared.spec-1-intake
   name: spec-1-intake
-  description: Transform an idea or request into a structured intake for a specification workflow.
-  version: 1.0.0
+  description: Transform an idea or request into a structured intake for a specification workflow. Now includes workflow recommendation (plan vs. spec-1-intake→spec-5-revise vs. hybrid).
+  version: 1.2.0
   scope: shared
   project: null
   domain: specification

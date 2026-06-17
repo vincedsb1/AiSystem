@@ -4,6 +4,7 @@ from pathlib import Path
 
 from scripts.sync_skills import (
     manifest_codex_export_policy_error,
+    registry_shared_exports,
     registry_shared_codex_exports,
 )
 
@@ -101,6 +102,44 @@ class SharedSkillPolicyTests(unittest.TestCase):
         )
 
         self.assertIn("install_shared_skills", error)
+
+    def test_builds_project_local_claude_export_for_shared_skill(self):
+        with tempfile.TemporaryDirectory() as directory:
+            registry = {
+                "projects": [{
+                    "name": "intrai",
+                    "root": directory,
+                    "enabled": True,
+                    "install_shared_targets": ["codex", "claude"],
+                    "install_shared_skills": ["shared.implement"],
+                    "paths": {
+                        "codex_skills": ".agents/skills",
+                        "claude_commands": ".claude/commands",
+                    },
+                }],
+            }
+            manifest = {
+                "artifacts": [{
+                    "canonical_id": "shared.implement",
+                    "name": "implement",
+                    "scope": "shared",
+                    "compatibility": {"codex": True, "claude_code": True},
+                }],
+            }
+
+            exports, errors = registry_shared_exports(
+                registry,
+                manifest,
+                project_name="intrai",
+                targets={"claude"},
+            )
+
+            self.assertEqual(errors, [])
+            self.assertEqual(len(exports), 1)
+            self.assertEqual(
+                exports[0]["path"],
+                str(Path(directory) / ".claude/commands/implement.md"),
+            )
 
 
 if __name__ == "__main__":

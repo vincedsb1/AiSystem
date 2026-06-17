@@ -73,6 +73,9 @@ projects:
   - name: intrai
     root: /Users/vincentdesbrosses/Documents/Misc/intrai
     enabled: true
+    install_shared_targets:
+      - codex
+      - claude
     install_shared_skills:
       - shared.ai-post-task-review
       - shared.commit

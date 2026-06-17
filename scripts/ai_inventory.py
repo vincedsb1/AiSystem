@@ -202,9 +202,36 @@ def manifest_payload(
     }
 
 
-def expected_shared_codex_exports(
+def normalize_shared_targets(targets: Any) -> set[str]:
+    if targets is None:
+        return set()
+
+    if isinstance(targets, str):
+        raw = targets.replace(",", " ").split()
+    else:
+        raw = list(targets)
+
+    normalized = set()
+    for target in raw:
+        value = str(target).strip().lower()
+        if not value:
+            continue
+        if value == "both":
+            return {"claude", "codex"}
+        if value in {"claude", "codex"}:
+            normalized.add(value)
+    return normalized
+
+
+def project_shared_targets(project: dict[str, Any]) -> set[str]:
+    targets = normalize_shared_targets(project.get("install_shared_targets"))
+    return targets or {"codex"}
+
+
+def expected_shared_exports(
     registry: dict[str, Any],
     manifest: dict[str, Any],
+    target: str,
 ) -> list[dict[str, Any]]:
     artifacts_by_id = {
         artifact.get("canonical_id"): artifact
@@ -213,13 +240,32 @@ def expected_shared_codex_exports(
     }
     exports: list[dict[str, Any]] = []
 
+    if target == "codex":
+        export_target = "codex_skill"
+        export_path_key = "codex_skills"
+        export_filename = "SKILL.md"
+    elif target == "claude":
+        export_target = "claude_command"
+        export_path_key = "claude_commands"
+        export_filename = None
+    else:
+        export_target = target
+        export_path_key = ""
+        export_filename = None
+
+    compatibility_key = {
+        "codex": "codex",
+        "claude": "claude_code",
+    }.get(target, target)
+
     for project in registry.get("projects", []):
         if not project.get("enabled"):
             continue
 
         project_name = project.get("name")
         project_root = project.get("root")
-        codex_skills_path = project.get("paths", {}).get("codex_skills")
+        project_paths = project.get("paths", {})
+        export_base = project_paths.get(export_path_key) if export_path_key else None
 
         for canonical_id in project.get("install_shared_skills", []):
             artifact = artifacts_by_id.get(canonical_id)
@@ -227,9 +273,9 @@ def expected_shared_codex_exports(
                 str(canonical_id).startswith("shared.")
                 and artifact
                 and artifact.get("scope") == "shared"
-                and artifact.get("compatibility", {}).get("codex")
+                and artifact.get("compatibility", {}).get(compatibility_key)
                 and project_root
-                and codex_skills_path
+                and export_base
             )
 
             if not valid:
@@ -237,7 +283,7 @@ def expected_shared_codex_exports(
                     "canonical_id": canonical_id,
                     "name": artifact.get("name") if artifact else canonical_id,
                     "version": artifact.get("version") if artifact else None,
-                    "target": "codex_skill",
+                    "target": export_target,
                     "project": project_name,
                     "path": None,
                     "exists": False,
@@ -245,17 +291,24 @@ def expected_shared_codex_exports(
                 })
                 continue
 
-            export_path = (
-                Path(project_root)
-                / codex_skills_path
-                / artifact["name"]
-                / "SKILL.md"
-            )
+            if target == "claude":
+                export_path = (
+                    Path(project_root)
+                    / export_base
+                    / f"{artifact['name']}.md"
+                )
+            else:
+                export_path = (
+                    Path(project_root)
+                    / export_base
+                    / artifact["name"]
+                    / (export_filename or f"{artifact['name']}.md")
+                )
             exports.append({
                 "canonical_id": canonical_id,
                 "name": artifact.get("name"),
                 "version": artifact.get("version"),
-                "target": "codex_skill",
+                "target": export_target,
                 "project": project_name,
                 "path": str(export_path),
                 "exists": export_path.exists(),
@@ -263,6 +316,20 @@ def expected_shared_codex_exports(
             })
 
     return exports
+
+
+def expected_shared_codex_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> list[dict[str, Any]]:
+    return expected_shared_exports(registry, manifest, "codex")
+
+
+def expected_shared_claude_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> list[dict[str, Any]]:
+    return expected_shared_exports(registry, manifest, "claude")
 
 
 def build_manifest_index(
@@ -299,20 +366,28 @@ def build_manifest_index(
             for key in path_index_keys(export_path):
                 index[key] = payload
 
-    for export in expected_shared_codex_exports(registry, manifest):
-        artifact = export.get("artifact")
-        raw_path = export.get("path")
-        if not artifact or not raw_path:
+    for project in registry.get("projects", []):
+        if not project.get("enabled"):
             continue
+        for target in sorted(project_shared_targets(project)):
+            for export in expected_shared_exports(
+                {"projects": [project]},
+                manifest,
+                target,
+            ):
+                artifact = export.get("artifact")
+                raw_path = export.get("path")
+                if not artifact or not raw_path:
+                    continue
 
-        export_path = Path(raw_path)
-        payload = manifest_payload(
-            artifact,
-            export_target="codex_skill",
-            export_path=export_path,
-        )
-        for key in path_index_keys(export_path):
-            index[key] = payload
+                export_path = Path(raw_path)
+                payload = manifest_payload(
+                    artifact,
+                    export_target=export["target"],
+                    export_path=export_path,
+                )
+                for key in path_index_keys(export_path):
+                    index[key] = payload
 
     return index
 
@@ -394,14 +469,22 @@ def manifest_declared_exports(
         for export in exports
         if export.get("path")
     }
-    for export in expected_shared_codex_exports(registry, manifest):
-        if export.get("path") in existing_paths:
+    for project in registry.get("projects", []):
+        if not project.get("enabled"):
             continue
-        exports.append({
-            key: value
-            for key, value in export.items()
-            if key != "artifact"
-        })
+        for target in sorted(project_shared_targets(project)):
+            for export in expected_shared_exports(
+                {"projects": [project]},
+                manifest,
+                target,
+            ):
+                if export.get("path") in existing_paths:
+                    continue
+                exports.append({
+                    key: value
+                    for key, value in export.items()
+                    if key != "artifact"
+                })
 
     return exports
 

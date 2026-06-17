@@ -157,21 +157,112 @@ def manifest_by_canonical_id(manifest: dict[str, Any]) -> dict[str, dict[str, An
     }
 
 
-def registry_shared_codex_exports(
+def normalize_shared_targets(targets: Any) -> set[str]:
+    if targets is None:
+        return set()
+
+    if isinstance(targets, str):
+        raw = targets.replace(",", " ").split()
+    else:
+        raw = list(targets)
+
+    normalized = set()
+    for target in raw:
+        value = str(target).strip().lower()
+        if not value:
+            continue
+        if value == "both":
+            return {"claude", "codex"}
+        if value in {"claude", "codex"}:
+            normalized.add(value)
+    return normalized
+
+
+def project_shared_targets(project: dict[str, Any]) -> set[str]:
+    targets = normalize_shared_targets(project.get("install_shared_targets"))
+    return targets or {"codex"}
+
+
+def shared_export_descriptor(
+    *,
+    project: dict[str, Any],
+    artifact: dict[str, Any],
+    target: str,
+) -> dict[str, Any] | None:
+    project_root = project.get("root")
+    project_name = project.get("name")
+    project_paths = project.get("paths", {})
+
+    if target == "codex":
+        target_path = project_paths.get("codex_skills")
+        if not project_root or not target_path:
+            return {
+                "status": "error",
+                "canonical_id": artifact.get("canonical_id"),
+                "target": "codex_skill",
+                "path": "",
+                "message": f"{project_name}: missing root or paths.codex_skills",
+            }
+
+        return {
+            "canonical_id": artifact.get("canonical_id"),
+            "artifact": artifact,
+            "project": project_name,
+            "target": "codex_skill",
+            "path": str(
+                Path(project_root)
+                / target_path
+                / artifact["name"]
+                / "SKILL.md"
+            ),
+        }
+
+    if target == "claude":
+        target_path = project_paths.get("claude_commands")
+        if not project_root or not target_path:
+            return {
+                "status": "error",
+                "canonical_id": artifact.get("canonical_id"),
+                "target": "claude_command",
+                "path": "",
+                "message": f"{project_name}: missing root or paths.claude_commands",
+            }
+
+        return {
+            "canonical_id": artifact.get("canonical_id"),
+            "artifact": artifact,
+            "project": project_name,
+            "target": "claude_command",
+            "path": str(Path(project_root) / target_path / f"{artifact['name']}.md"),
+        }
+
+    return {
+        "status": "error",
+        "canonical_id": artifact.get("canonical_id"),
+        "target": target,
+        "path": "",
+        "message": f"{project_name}: unsupported shared target {target}",
+    }
+
+
+def registry_shared_exports(
     registry: dict[str, Any],
     manifest: dict[str, Any],
+    *,
+    project_name: str | None = None,
+    targets: Any = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     artifacts_by_id = manifest_by_canonical_id(manifest)
     exports: list[dict[str, Any]] = []
     errors: list[dict[str, Any]] = []
+    requested_targets = normalize_shared_targets(targets) or {"codex"}
 
     for project in registry.get("projects", []):
         if not project.get("enabled"):
             continue
-
-        project_name = project.get("name")
-        project_root = project.get("root")
-        codex_skills_path = project.get("paths", {}).get("codex_skills")
+        if project_name and project.get("name") != project_name:
+            continue
+        project_label = project.get("name")
 
         for canonical_id in project.get("install_shared_skills", []):
             artifact = artifacts_by_id.get(canonical_id)
@@ -180,10 +271,10 @@ def registry_shared_codex_exports(
                 errors.append({
                     "status": "error",
                     "canonical_id": canonical_id,
-                    "target": "codex_skill",
+                    "target": "shared_export",
                     "path": "",
                     "message": (
-                        f"{project_name}: install_shared_skills only accepts shared.* canonicals"
+                        f"{project_label}: install_shared_skills only accepts shared.* canonicals"
                     ),
                 })
                 continue
@@ -192,9 +283,9 @@ def registry_shared_codex_exports(
                 errors.append({
                     "status": "error",
                     "canonical_id": canonical_id,
-                    "target": "codex_skill",
+                    "target": "shared_export",
                     "path": "",
-                    "message": f"{project_name}: canonical not found in manifest",
+                    "message": f"{project_label}: canonical not found in manifest",
                 })
                 continue
 
@@ -202,46 +293,60 @@ def registry_shared_codex_exports(
                 errors.append({
                     "status": "error",
                     "canonical_id": canonical_id,
-                    "target": "codex_skill",
+                    "target": "shared_export",
                     "path": "",
-                    "message": f"{project_name}: canonical scope is not shared",
+                    "message": f"{project_label}: canonical scope is not shared",
                 })
                 continue
 
-            if not artifact.get("compatibility", {}).get("codex"):
-                errors.append({
-                    "status": "error",
-                    "canonical_id": canonical_id,
-                    "target": "codex_skill",
-                    "path": "",
-                    "message": f"{project_name}: canonical is not Codex-compatible",
-                })
-                continue
+            allowed_targets = project_shared_targets(project)
+            for target in sorted(requested_targets & allowed_targets):
+                if target == "codex" and not artifact.get("compatibility", {}).get("codex"):
+                    errors.append({
+                        "status": "error",
+                        "canonical_id": canonical_id,
+                        "target": "codex_skill",
+                        "path": "",
+                        "message": f"{project_label}: canonical is not Codex-compatible",
+                    })
+                    continue
 
-            if not project_root or not codex_skills_path:
-                errors.append({
-                    "status": "error",
-                    "canonical_id": canonical_id,
-                    "target": "codex_skill",
-                    "path": "",
-                    "message": f"{project_name}: missing root or paths.codex_skills",
-                })
-                continue
+                if target == "claude" and not artifact.get("compatibility", {}).get("claude_code"):
+                    errors.append({
+                        "status": "error",
+                        "canonical_id": canonical_id,
+                        "target": "claude_command",
+                        "path": "",
+                        "message": f"{project_label}: canonical is not Claude-compatible",
+                    })
+                    continue
 
-            exports.append({
-                "canonical_id": canonical_id,
-                "artifact": artifact,
-                "project": project_name,
-                "target": "codex_skill",
-                "path": str(
-                    Path(project_root)
-                    / codex_skills_path
-                    / artifact["name"]
-                    / "SKILL.md"
-                ),
-            })
+                descriptor = shared_export_descriptor(
+                    project=project,
+                    artifact=artifact,
+                    target=target,
+                )
+                if descriptor and descriptor.get("status") == "error":
+                    errors.append(descriptor)
+                    continue
+                if descriptor:
+                    exports.append(descriptor)
 
     return exports, errors
+
+
+def registry_shared_codex_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    return registry_shared_exports(registry, manifest, targets={"codex"})
+
+
+def registry_shared_claude_exports(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    return registry_shared_exports(registry, manifest, targets={"claude"})
 
 
 def path_is_within(path: Path, root: Path) -> bool:

@@ -1,23 +1,23 @@
 # AI Inventory Report
 
-Generated: 2026-06-15T16:49:34
+Generated: 2026-06-17T11:04:04
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
 | codex_skills | 139 |
-| claude_commands | 121 |
+| claude_commands | 134 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
 | claude_hooks | 6 |
 | codex_hooks | 3 |
 | root_docs | 17 |
-| manifest_covered_artifacts | 230 |
-| manifest_declared_exports | 161 |
+| manifest_covered_artifacts | 243 |
+| manifest_declared_exports | 174 |
 | manifest_missing_exports | 0 |
 | action_required | 0 |
-| accepted_findings | 206 |
+| accepted_findings | 214 |
 | expected_exceptions | 30 |
 | doctor_danger | 0 |
 | doctor_review | 0 |
@@ -30,7 +30,7 @@ Generated: 2026-06-15T16:49:34
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 0 | 39 | 0 |
 | InterviewOS | 13 | 12 | 4 | 3 | 0 | 2 | 0 | 17 | 0 |
-| intrai | 13 | 0 | 0 | 0 | 0 | 1 | 0 | 8 | 0 |
+| intrai | 13 | 13 | 0 | 0 | 0 | 1 | 0 | 16 | 0 |
 | linkedin-ia-comments | 13 | 0 | 0 | 0 | 0 | 1 | 0 | 8 | 0 |
 | Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 0 | 28 | 6 |
 | Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 0 | 25 | 6 |
@@ -56,7 +56,7 @@ Generated: 2026-06-15T16:49:34
 | InterviewOS | implement | InterviewOS | .claude/commands/implement.md | InterviewOS | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | InterviewOS | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | InterviewOS | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| InterviewOS | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | InterviewOS | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | InterviewOS | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | InterviewOS | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | InterviewOS | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | InterviewOS | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | InterviewOS | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -73,7 +73,7 @@ Generated: 2026-06-15T16:49:34
 | Pylaa | next-step | Pylaa | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
 | Pylaa | optimize-claude-md | Pylaa | .claude/commands/optimize-claude-md.md | Pylaa | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | Pylaa | spec-0-feedback | Pylaa | .claude/commands/spec-0-feedback.md | Pylaa | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| Pylaa | spec-1-intake | Pylaa | .claude/commands/spec-1-intake.md | Pylaa | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Pylaa | spec-1-intake | Pylaa | .claude/commands/spec-1-intake.md | Pylaa | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | Pylaa | spec-2-draft | Pylaa | .claude/commands/spec-2-draft.md | Pylaa | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | Pylaa | spec-3-audit | Pylaa | .claude/commands/spec-3-audit.md | Pylaa | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | Pylaa | spec-4-challenge | Pylaa | .claude/commands/spec-4-challenge.md | Pylaa | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -92,7 +92,7 @@ Generated: 2026-06-15T16:49:34
 | Pylot | next-step | Pylot | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
 | Pylot | optimize-claude-md | Pylot | .claude/commands/optimize-claude-md.md | Pylot | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | Pylot | spec-0-feedback | Pylot | .claude/commands/spec-0-feedback.md | Pylot | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| Pylot | spec-1-intake | Pylot | .claude/commands/spec-1-intake.md | Pylot | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Pylot | spec-1-intake | Pylot | .claude/commands/spec-1-intake.md | Pylot | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | Pylot | spec-2-draft | Pylot | .claude/commands/spec-2-draft.md | Pylot | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | Pylot | spec-3-audit | Pylot | .claude/commands/spec-3-audit.md | Pylot | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | Pylot | spec-4-challenge | Pylot | .claude/commands/spec-4-challenge.md | Pylot | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -111,7 +111,7 @@ Generated: 2026-06-15T16:49:34
 | Skriipt | next-step | Skriipt | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
 | Skriipt | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | Skriipt | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | Skriipt | spec-0-feedback | Skriipt | .claude/commands/spec-0-feedback.md | Skriipt | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| Skriipt | spec-1-intake | Skriipt | .claude/commands/spec-1-intake.md | Skriipt | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Skriipt | spec-1-intake | Skriipt | .claude/commands/spec-1-intake.md | Skriipt | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | Skriipt | spec-2-draft | Skriipt | .claude/commands/spec-2-draft.md | Skriipt | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | Skriipt | spec-3-audit | Skriipt | .claude/commands/spec-3-audit.md | Skriipt | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | Skriipt | spec-4-challenge | Skriipt | .claude/commands/spec-4-challenge.md | Skriipt | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -126,7 +126,7 @@ Generated: 2026-06-15T16:49:34
 | Spotter | implement | InterviewOS | .claude/commands/implement.md | Spotter | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
 | Spotter | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | Spotter | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | Spotter | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | Spotter | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| Spotter | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | Spotter | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| Spotter | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | Spotter | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | Spotter | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | Spotter | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | Spotter | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | Spotter | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | Spotter | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | Spotter | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -147,7 +147,7 @@ Generated: 2026-06-15T16:49:34
 | aimoto | next | aimoto | .claude/commands/next.md | aimoto | .agents/skills/next/SKILL.md | aimoto.next | 1.0.0 | true | ok_same_canonical |
 | aimoto | optimize-claude-md | aimoto | .claude/commands/optimize-claude-md.md | aimoto | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | aimoto | spec-0-feedback | aimoto | .claude/commands/spec-0-feedback.md | aimoto | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| aimoto | spec-1-intake | aimoto | .claude/commands/spec-1-intake.md | aimoto | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| aimoto | spec-1-intake | aimoto | .claude/commands/spec-1-intake.md | aimoto | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | aimoto | spec-2-draft | aimoto | .claude/commands/spec-2-draft.md | aimoto | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | aimoto | spec-3-audit | aimoto | .claude/commands/spec-3-audit.md | aimoto | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | aimoto | spec-4-challenge | aimoto | .claude/commands/spec-4-challenge.md | aimoto | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -155,26 +155,26 @@ Generated: 2026-06-15T16:49:34
 | aimoto | test | aimoto | .claude/commands/test.md | aimoto | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | aimoto | ui-review | aimoto | .claude/commands/ui-review.md | aimoto | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | update-strategy | aimoto | .claude/commands/update-strategy.md | aimoto | .agents/skills/update-strategy/SKILL.md | aimoto.update-strategy | 1.0.0 | true | ok_same_canonical |
-| intrai | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | intrai | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
-| intrai | commit | InterviewOS | .claude/commands/commit.md | intrai | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
-| intrai | create-doc | InterviewOS | .claude/commands/create-doc.md | intrai | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
-| intrai | implement | InterviewOS | .claude/commands/implement.md | intrai | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
-| intrai | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | intrai | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | intrai | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | intrai | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | intrai | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | intrai | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | intrai | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
-| intrai | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | intrai | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
-| intrai | test | InterviewOS | .claude/commands/test.md | intrai | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
-| intrai | ui-review | InterviewOS | .claude/commands/ui-review.md | intrai | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| intrai | ai-post-task-review | intrai | .claude/commands/ai-post-task-review.md | intrai | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| intrai | commit | intrai | .claude/commands/commit.md | intrai | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| intrai | create-doc | intrai | .claude/commands/create-doc.md | intrai | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| intrai | implement | intrai | .claude/commands/implement.md | intrai | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| intrai | optimize-claude-md | intrai | .claude/commands/optimize-claude-md.md | intrai | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| intrai | spec-0-feedback | intrai | .claude/commands/spec-0-feedback.md | intrai | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| intrai | spec-1-intake | intrai | .claude/commands/spec-1-intake.md | intrai | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
+| intrai | spec-2-draft | intrai | .claude/commands/spec-2-draft.md | intrai | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| intrai | spec-3-audit | intrai | .claude/commands/spec-3-audit.md | intrai | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| intrai | spec-4-challenge | intrai | .claude/commands/spec-4-challenge.md | intrai | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| intrai | spec-5-revise | intrai | .claude/commands/spec-5-revise.md | intrai | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| intrai | test | intrai | .claude/commands/test.md | intrai | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| intrai | ui-review | intrai | .claude/commands/ui-review.md | intrai | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | linkedin-ia-comments | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | commit | InterviewOS | .claude/commands/commit.md | linkedin-ia-comments | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | create-doc | InterviewOS | .claude/commands/create-doc.md | linkedin-ia-comments | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | implement | InterviewOS | .claude/commands/implement.md | linkedin-ia-comments | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | optimize-claude-md | InterviewOS | .claude/commands/optimize-claude-md.md | linkedin-ia-comments | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | spec-0-feedback | InterviewOS | .claude/commands/spec-0-feedback.md | linkedin-ia-comments | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| linkedin-ia-comments | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | linkedin-ia-comments | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | spec-1-intake | InterviewOS | .claude/commands/spec-1-intake.md | linkedin-ia-comments | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | linkedin-ia-comments | spec-2-draft | InterviewOS | .claude/commands/spec-2-draft.md | linkedin-ia-comments | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | spec-3-audit | InterviewOS | .claude/commands/spec-3-audit.md | linkedin-ia-comments | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | spec-4-challenge | InterviewOS | .claude/commands/spec-4-challenge.md | linkedin-ia-comments | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -191,7 +191,7 @@ Generated: 2026-06-15T16:49:34
 | suggst | next-step | suggst | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
 | suggst | optimize-claude-md | suggst | .claude/commands/optimize-claude-md.md | suggst | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | suggst | spec-0-feedback | suggst | .claude/commands/spec-0-feedback.md | suggst | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-1-intake | suggst | .claude/commands/spec-1-intake.md | suggst | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| suggst | spec-1-intake | suggst | .claude/commands/spec-1-intake.md | suggst | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | suggst | spec-2-draft | suggst | .claude/commands/spec-2-draft.md | suggst | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | suggst | spec-3-audit | suggst | .claude/commands/spec-3-audit.md | suggst | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | suggst | spec-4-challenge | suggst | .claude/commands/spec-4-challenge.md | suggst | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -210,7 +210,7 @@ Generated: 2026-06-15T16:49:34
 | truthify | next-step | truthify | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
 | truthify | optimize-claude-md | truthify | .claude/commands/optimize-claude-md.md | truthify | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
 | truthify | spec-0-feedback | truthify | .claude/commands/spec-0-feedback.md | truthify | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| truthify | spec-1-intake | truthify | .claude/commands/spec-1-intake.md | truthify | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.0.0 | true | ok_same_canonical |
+| truthify | spec-1-intake | truthify | .claude/commands/spec-1-intake.md | truthify | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
 | truthify | spec-2-draft | truthify | .claude/commands/spec-2-draft.md | truthify | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
 | truthify | spec-3-audit | truthify | .claude/commands/spec-3-audit.md | truthify | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
 | truthify | spec-4-challenge | truthify | .claude/commands/spec-4-challenge.md | truthify | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
@@ -281,6 +281,19 @@ Generated: 2026-06-15T16:49:34
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/ai-post-task-review.md | true |
+| shared.commit | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/commit.md | true |
+| shared.create-doc | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/create-doc.md | true |
+| shared.implement | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/implement.md | true |
+| shared.optimize-claude-md | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/optimize-claude-md.md | true |
+| shared.spec-0-feedback | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-0-feedback.md | true |
+| shared.spec-1-intake | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-1-intake.md | true |
+| shared.spec-2-draft | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-2-draft.md | true |
+| shared.spec-3-audit | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-3-audit.md | true |
+| shared.spec-4-challenge | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-4-challenge.md | true |
+| shared.spec-5-revise | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/spec-5-revise.md | true |
+| shared.test | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/test.md | true |
+| shared.ui-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/intrai/.claude/commands/ui-review.md | true |
 | shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/ai-post-task-review/SKILL.md | true |
 | shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/commit/SKILL.md | true |
 | shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/intrai/.agents/skills/create-doc/SKILL.md | true |
@@ -462,6 +475,14 @@ These findings remain visible for auditability. Fallback candidates in this sect
 | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | implement | .claude/commands/implement.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | optimize-claude-md | .claude/commands/optimize-claude-md.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-1-intake | .claude/commands/spec-1-intake.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | spec-3-audit | .claude/commands/spec-3-audit.md | acceptable | Pattern suspect détecté : si absent |
+| fallback_candidate | spec-5-revise | .claude/commands/spec-5-revise.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
 | fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
 | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |

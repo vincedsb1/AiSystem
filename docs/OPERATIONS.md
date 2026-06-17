@@ -2,14 +2,31 @@
 
 ## Commandes
 
+### Validation et diagnostic
+
 ```bash
-make check
-make inventory
-make doctor
+make check                                      # Validation complète (inventaire + doctor + checks)
+make inventory                                  # Inventaire des skills
+make doctor                                     # Audit des risques et incohérences
+```
+
+### Gestion des exports
+
+```bash
+make update-projects TARGETS=both               # Mettre à jour tous les projets (Claude + Codex)
+make update-projects TARGETS=codex              # Mettre à jour Codex uniquement
+make update-projects TARGETS=claude             # Mettre à jour Claude uniquement
+make install-project PROJECT=intrai TARGETS=both  # Mettre à jour un seul projet
 ```
 
 `make check` exécute la validation globale. `make inventory` et `make doctor`
 restent disponibles pour isoler un diagnostic.
+
+`make update-projects` installe les exports partagés de **tous les projets enabled**
+en une seule commande. Respecte les targets autorisées de chaque projet
+(`install_shared_targets` dans `skills-registry.yml`).
+
+`make install-project` installe les exports partagés d'**un seul projet**.
 
 ## Hook Git local
 

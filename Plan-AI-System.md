@@ -425,3 +425,47 @@ Contenu attendu :
 - hook pre-commit local ;
 - validation CI GitHub Actions ;
 - documentation opératoire disponible.
+
+
+## Phase 19 — Installation ciblée des exports projet — TERMINÉE
+
+Objectif :
+installer les exports partagés d'un projet sans lister les skills un par un.
+
+Livrables :
+
+- `scripts/install_project_exports.py`
+- `make install-project`
+
+Contenu attendu :
+
+- sélection du projet via `PROJECT` ;
+- sélection des targets via `TARGETS` (`codex`, `claude`, `both`) ;
+- génération des exports partagés depuis `install_shared_skills` ;
+- compatibilité avec les projets Codex-only et les projets qui installent aussi
+  les commandes Claude locales ;
+- inventaire capable de reconnaître ces exports comme attendus.
+
+
+## Phase 20 — Mise à jour globale des projets — TERMINÉE
+
+Objectif :
+mettre à jour les exports partagés de **tous les projets enabled** en une seule
+commande, sans répéter plusieurs appels à `make install-project`.
+
+Livrables :
+
+- `scripts/update_project_exports.py`
+- `make update-projects`
+- documentation dans `docs/OPERATIONS.md` et `docs/PROJECT-ONBOARDING.md`
+
+Contenu attendu :
+
+- parcourir tous les projets `enabled: true` dans `skills-registry.yml` ;
+- pour chaque projet, respecter les targets autorisées via `install_shared_targets` ;
+- sélection des targets via `TARGETS` (`codex`, `claude`, `both`) ;
+- intersection entre targets demandées et targets autorisées par projet ;
+- gestion des projets Codex-only : ne pas échouer si `TARGETS=both` ;
+- résumé par projet : targets appliquées, nombre updated/unchanged/error ;
+- exit code non nul si au moins une erreur survient ;
+- idempotence garantie.

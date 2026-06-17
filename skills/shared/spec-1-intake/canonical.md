@@ -148,7 +148,56 @@ Fournis des blocs prêts à copier-coller (l’utilisateur supprime ce qui ne s�
 
 ---
 
-## 7) Slug & Next
+## 7) Recommandation de workflow
+
+En fonction du scope et du risque identifiés, tu proposes une trajectoire adaptée.
+
+### Critères pour `/plan`
+- Scope limité ou bien isolé
+- Peu de fichiers ou fichiers clairement identifiés
+- Changement attendu court, mécanique ou localisé
+- Faible incertitude fonctionnelle
+- Rollback simple
+- Pas de trace documentaire forte requise
+- Pas de migration DB
+- Pas de breaking change API
+- Pas de logique métier complexe
+- Pas de sécurité/auth/paiement/données critiques
+
+### Critères pour le workflow complet (`/spec-1-intake` → `/spec-5-revise`)
+- Changement full-stack
+- Migration DB
+- API publique ou breaking change
+- Risque de régression élevé
+- Logique métier complexe
+- Sécurité/auth/paiement/données sensibles
+- Besoin d'audit, de challenge ou de validation métier
+- Décision à archiver/documenter
+
+### Critères pour un mode hybride
+- `/plan` d'abord pour évaluer rapidement
+- Puis `/spec-2-draft` ou workflow partiel si une spec archivable, un audit ou un challenge devient nécessaire
+
+### Recommandation proposée
+
+**Risque estimé :** faible | moyen | élevé
+
+**Décision recommandée :**
+- `[ ] /plan` - pour une approche rapide et directe
+- `[ ] workflow complet (/spec-1-intake → /spec-5-revise)` - pour un changement structurant
+- `[ ] hybride` - pour une évaluation progressive
+
+**Raison principale :**
+(Justifie en 1-2 lignes selon le contexte du feature brief, le scope et les risques identifiés)
+
+**Commande suggérée :**
+- Si `/plan` : `/plan <résumé court de la tâche>` dans Claude Code ou Codex
+- Si workflow complet : `/spec-2-draft` après validation de l'intake
+- Si hybride : `/plan <résumé court de la tâche>` puis `/spec-2-draft` si une spec archivable est nécessaire
+
+---
+
+## 8) Slug & Next
 ### Slug proposé
 - `YYYY-MM-DD__<scope>__<feature-slug>` (propose-en un)
 
@@ -156,4 +205,5 @@ Fournis des blocs prêts à copier-coller (l’utilisateur supprime ce qui ne s�
 - `docs/specs/<slug>/`
 
 ### Next
-- Lance **/spec-2-draft**
+- Lance **/spec-2-draft** (si workflow complet/partiel)
+- Ou lance **/plan** (si workflow léger)
