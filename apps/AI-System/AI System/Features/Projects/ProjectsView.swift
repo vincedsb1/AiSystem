@@ -2,14 +2,13 @@ import AppKit
 import SwiftUI
 
 /// Projets — select a project, understand its state, inspect its skills.
-/// Read-only for UX-04: mutations arrive with UX-05.
 struct ProjectsView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
     @State private var model = ProjectsViewModel()
     @AppStorage("selectedProjectName") private var savedProjectName = ""
 
-    /// Project handed over by the Overview (FR-NAV-02).
+    /// Project handed over by the Overview.
     @Binding var pendingSelection: String?
 
     @State private var isAddingProject = false
@@ -18,7 +17,7 @@ struct ProjectsView: View {
     var body: some View {
         HSplitView {
             projectList
-                .frame(minWidth: 220, idealWidth: 260, maxWidth: 340)
+                .frame(minWidth: 220, idealWidth: 270, maxWidth: 320)
 
             detail
                 .frame(minWidth: 420, maxWidth: .infinity)
@@ -69,7 +68,9 @@ struct ProjectsView: View {
                 isRunning: model.operationState(for: skill).isRunning,
                 onCancel: { model.importCandidate = nil },
                 onConfirm: { source in
-                    Task { await model.importSkill(skill, source: source, recordingIn: activityStore) }
+                    Task {
+                        await model.importSkill(skill, source: source, recordingIn: activityStore)
+                    }
                 }
             )
         }
@@ -80,7 +81,7 @@ struct ProjectsView: View {
         }
     }
 
-    /// FR-PROJ-02: the last selection is restored at launch when it still exists.
+    /// FR-PROJ-02: restore the last project when it still exists.
     private func restoreSelection() {
         guard model.selectedProjectName == nil,
               !savedProjectName.isEmpty,
@@ -102,16 +103,6 @@ struct ProjectsView: View {
             .help("Ajouter un projet (⌘N)")
             .keyboardShortcut("n", modifiers: .command)
         }
-
-        ToolbarItem(placement: .primaryAction) {
-            Button {
-                Task { await model.refreshAll() }
-            } label: {
-                Label("Actualiser", systemImage: "arrow.clockwise")
-            }
-            .disabled(model.isBusy)
-            .help("Recharger la liste et analyser le projet sélectionné")
-        }
     }
 
     // MARK: - Project list
@@ -120,13 +111,12 @@ struct ProjectsView: View {
         VStack(spacing: 0) {
             if let message = model.projectsError {
                 InlineFeedbackView(type: .error, message: message)
-                    .padding(Spacing.related)
+                    .padding(Spacing.sm)
             }
 
             if model.isLoadingProjects && model.projects.isEmpty {
                 LoadingStateView(message: "Chargement des projets…")
             } else if model.isEmpty {
-                // FR-PROJ-04
                 EmptyStateView(
                     symbolName: "folder.badge.questionmark",
                     title: "Aucun projet actif",
@@ -149,7 +139,6 @@ struct ProjectsView: View {
     @ViewBuilder
     private var detail: some View {
         if model.selectedProject == nil {
-            // FR-PROJ-03
             EmptyStateView(
                 symbolName: "sidebar.left",
                 title: "Aucun projet sélectionné",
@@ -157,118 +146,120 @@ struct ProjectsView: View {
             )
         } else {
             ScrollView {
-                VStack(alignment: .leading, spacing: Spacing.sectionGap) {
-                    header
+                AdaptiveContentContainer {
+                    VStack(alignment: .leading, spacing: Spacing.lg) {
+                        header
 
-                    if let summary = model.lastActionSummary {
-                        InlineFeedbackView(
-                            type: model.lastActionSucceeded ? .success : .error,
-                            message: summary,
-                            actionLabel: "Masquer",
-                            action: { model.dismissActionSummary() }
-                        )
-                        .padding(.horizontal, Spacing.standard)
+                        if let summary = model.lastActionSummary {
+                            InlineFeedbackView(
+                                type: model.lastActionSucceeded ? .success : .error,
+                                message: summary,
+                                actionLabel: "Masquer",
+                                action: { model.dismissActionSummary() }
+                            )
+                        }
+
+                        if let message = model.scanError {
+                            InlineFeedbackView(
+                                type: .error,
+                                message: message,
+                                actionLabel: "Réessayer",
+                                action: { Task { await model.scanSelectedProject() } }
+                            )
+                        }
+
+                        summarySection
+                        skillsSection
                     }
-
-                    if let message = model.scanError {
-                        InlineFeedbackView(
-                            type: .error,
-                            message: message,
-                            actionLabel: "Réessayer",
-                            action: { Task { await model.scanSelectedProject() } }
-                        )
-                        .padding(.horizontal, Spacing.standard)
-                    }
-
-                    summarySection
-                    skillsSection
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.vertical, Spacing.standard)
             }
         }
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            HStack(alignment: .top, spacing: Spacing.grouped) {
-                Image(systemName: model.detailState.symbolName)
-                    .font(.system(size: 24))
-                    .foregroundStyle(model.detailState.tint)
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: Spacing.micro) {
-                    Text(model.selectedProject?.name ?? "")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-
-                    Text(headerSubtitle)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text(model.lastScanText.map { "Dernière analyse : \($0)" }
-                        ?? "Pas encore analysé")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer(minLength: 0)
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: Spacing.lg) {
+                headerInfo
+                Spacer(minLength: Spacing.lg)
+                headerActions
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(
-                "\(model.selectedProject?.name ?? ""). \(model.detailState.displayName). \(headerSubtitle)"
-            )
+            .frame(minWidth: 640, alignment: .leading)
 
-            HStack(spacing: Spacing.grouped) {
-                Button {
-                    Task { await model.scanSelectedProject() }
-                } label: {
-                    if model.isScanning {
-                        HStack(spacing: Spacing.micro) {
-                            ProgressView().controlSize(.small)
-                            Text("Analyse…")
-                        }
-                    } else {
-                        Text(model.primaryActionTitle)
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(model.isScanning)
-
-                if model.canSyncProject() {
-                    Button {
-                        Task { await model.syncSelectedProject(recordingIn: activityStore) }
-                    } label: {
-                        if model.isSyncing {
-                            HStack(spacing: Spacing.micro) {
-                                ProgressView().controlSize(.small)
-                                Text("Synchronisation…")
-                            }
-                        } else {
-                            Text("Synchroniser")
-                        }
-                    }
-                    .disabled(model.isMutating)
-                }
-
-                secondaryMenu
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                headerInfo
+                headerActions
             }
         }
-        .padding(.horizontal, Spacing.standard)
+        .accessibilityElement(children: .contain)
     }
 
-    private var headerSubtitle: String {
-        guard let summary = model.summary else {
-            return model.isScanning ? "Analyse en cours…" : "Skills non vérifiés"
+    private var headerInfo: some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            Image(systemName: model.detailState.symbolName)
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(model.detailState.tint)
+                .frame(width: 32, height: 32)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                Text(model.selectedProject?.name ?? "")
+                    .font(.system(size: 22, weight: .semibold))
+
+                Text(model.headerSummaryText)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(model.lastScanText.map { "Vérifié \($0)" } ?? "Pas encore vérifié")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
-        let managed = "\(summary.managed) \(summary.managed <= 1 ? "skill géré" : "skills gérés")"
-        if summary.actionRequired == 0 {
-            return "\(managed) sur \(summary.total) — aucune action requise"
+        .accessibilityLabel(headerAccessibilityLabel)
+    }
+
+    private var headerAccessibilityLabel: String {
+        let name = model.selectedProject?.name ?? ""
+        return name + ". " + model.detailState.displayName + ". " + model.headerSummaryText
+    }
+
+    @ViewBuilder
+    private var headerActions: some View {
+        HStack(spacing: Spacing.sm) {
+            Button {
+                Task { await model.scanSelectedProject() }
+            } label: {
+                if model.isScanning {
+                    HStack(spacing: Spacing.xxs) {
+                        ProgressView().controlSize(.small)
+                        Text("Analyse…")
+                    }
+                } else {
+                    Text(model.primaryActionTitle)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(model.isScanning)
+
+            if model.canSyncProject() {
+                Button {
+                    Task { await model.syncSelectedProject(recordingIn: activityStore) }
+                } label: {
+                    if model.isSyncing {
+                        HStack(spacing: Spacing.xxs) {
+                            ProgressView().controlSize(.small)
+                            Text("Synchronisation…")
+                        }
+                    } else {
+                        Text("Synchroniser")
+                    }
+                }
+                .disabled(model.isMutating)
+            }
+
+            secondaryMenu
         }
-        let actions = summary.actionRequired == 1
-            ? "1 action requise"
-            : "\(summary.actionRequired) actions requises"
-        return "\(managed) sur \(summary.total) — \(actions)"
     }
 
     private var secondaryMenu: some View {
@@ -277,68 +268,105 @@ struct ProjectsView: View {
             Button("Ouvrir dans Terminal") { openInTerminal() }
             Button("Copier le chemin") { copyPath() }
         } label: {
-            Label("Actions secondaires", systemImage: "ellipsis.circle")
+            Label("Plus d’actions", systemImage: "ellipsis.circle")
+                .labelStyle(.iconOnly)
         }
         .menuStyle(.borderlessButton)
         .fixedSize()
         .disabled(model.selectedProject?.root == nil)
-        .help("Autres actions sur ce projet")
+        .help("Plus d’actions pour \(model.selectedProject?.name ?? "ce projet")")
+        .accessibilityLabel("Plus d’actions pour \(model.selectedProject?.name ?? "ce projet")")
     }
 
     // MARK: - Summary
 
     private var summarySection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SectionHeader(title: "Résumé")
-
+        SectionSurface(title: "Résumé") {
             if let summary = model.summary {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 132), spacing: Spacing.standard)],
-                    alignment: .leading,
-                    spacing: Spacing.grouped
-                ) {
-                    SummaryItem(label: "Partagés", value: "\(summary.shared)")
-                    SummaryItem(label: "Spécifiques", value: "\(summary.projectSpecific)")
-                    SummaryItem(label: "Synchronisés", value: "\(summary.managed)")
-                    SummaryItem(
-                        label: "Actions requises",
-                        value: "\(summary.actionRequired)",
-                        tint: summary.actionRequired > 0 ? .orange : nil
-                    )
-                    SummaryItem(label: "Exceptions attendues", value: "\(summary.expectedExceptions)")
-                    SummaryItem(
-                        label: "Conflits",
-                        value: "\(summary.conflicts)",
-                        tint: summary.conflicts > 0 ? .red : nil
-                    )
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: Spacing.lg) {
+                        summaryMetrics(summary)
+                    }
+                    .frame(minWidth: 640, alignment: .leading)
+
+                    LazyVGrid(
+                        columns: [GridItem(.flexible()), GridItem(.flexible())],
+                        alignment: .leading,
+                        spacing: Spacing.md
+                    ) {
+                        summaryMetrics(summary)
+                    }
                 }
-                .padding(.horizontal, Spacing.standard)
+
+                if let composition = model.compositionText {
+                    Text(composition)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, Spacing.xxs)
+                }
+
+                if summary.conflicts > 0 {
+                    Label(
+                        "\(summary.conflicts) conflit\(summary.conflicts == 1 ? "" : "s") à examiner",
+                        systemImage: "exclamationmark.triangle"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+                    .padding(.top, Spacing.xxs)
+                }
             } else {
-                // Spec 10.6: an unavailable value reads as unverified, never as
-                // a confirmed zero.
                 Text("Non vérifié")
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, Spacing.standard)
             }
         }
+    }
+
+    @ViewBuilder
+    private func summaryMetrics(_ summary: SkillSummary) -> some View {
+        MetricItemView(
+            label: "Total",
+            value: "\(summary.total)",
+            symbolName: "square.grid.2x2",
+            tint: nil
+        )
+        MetricItemView(
+            label: "Synchronisés",
+            value: "\(summary.managed)",
+            symbolName: "checkmark.circle",
+            tint: summary.managed > 0 ? .green : nil
+        )
+        MetricItemView(
+            label: "Exceptions",
+            value: "\(summary.expectedExceptions)",
+            symbolName: "info.circle",
+            tint: nil
+        )
+        MetricItemView(
+            label: "À examiner",
+            value: "\(summary.actionRequired)",
+            symbolName: "exclamationmark.triangle",
+            tint: summary.actionRequired > 0 ? .orange : nil
+        )
     }
 
     // MARK: - Skills
 
     private var skillsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SectionHeader(
-                title: "Skills",
-                subtitle: model.scan == nil
-                    ? nil
-                    : "\(model.visibleSkills.count) résultat\(model.visibleSkills.count <= 1 ? "" : "s")"
-            )
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Skills")
+                    .font(.title3.weight(.semibold))
+                if model.scan != nil {
+                    Text("\(model.visibleSkills.count) résultat\(model.visibleSkills.count == 1 ? "" : "s")")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
 
             if model.scan != nil {
                 filterBar
-                    .padding(.horizontal, Spacing.standard)
-                    .padding(.bottom, Spacing.grouped)
             }
 
             if model.isScanning && model.scan == nil {
@@ -356,12 +384,10 @@ struct ProjectsView: View {
             } else if model.visibleSkills.isEmpty {
                 EmptyStateView(
                     symbolName: "line.3.horizontal.decrease.circle",
-                    title: "Aucun résultat",
-                    description: model.hasActiveFilter
-                        ? "Aucun skill ne correspond au filtre actuel."
-                        : "Ce projet ne déclare aucun skill.",
-                    actionLabel: model.hasActiveFilter ? "Effacer le filtre" : nil,
-                    action: model.hasActiveFilter ? { model.clearFilters() } : nil
+                    title: model.emptyStateTitle,
+                    description: model.emptyStateDescription,
+                    actionLabel: model.emptyStateActionTitle,
+                    action: model.emptyStateActionTitle == nil ? nil : { model.clearEmptyState() }
                 )
                 .frame(minHeight: 200)
             } else {
@@ -371,47 +397,77 @@ struct ProjectsView: View {
     }
 
     private var filterBar: some View {
-        HStack(spacing: Spacing.grouped) {
-            Picker("Filtre", selection: $model.filter) {
-                ForEach(SkillFilter.allCases) { option in
-                    Text("\(option.displayName) (\(model.count(for: option)))")
-                        .tag(option)
-                }
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .fixedSize()
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: Spacing.sm) {
+                segmentedFilterPicker
+                    .frame(maxWidth: .infinity)
 
-            TextField("Rechercher un skill", text: $model.searchText)
-                .textFieldStyle(.roundedBorder)
-                .frame(maxWidth: 260)
-                .focused($isSearchFocused)
-                .accessibilityLabel("Rechercher un skill par nom ou identifiant canonical")
+                searchField
+                    .frame(width: 250)
+            }
+            .frame(minWidth: 620)
+
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                menuFilterPicker
+                searchField
+                    .frame(maxWidth: .infinity)
+            }
         }
+    }
+
+    private var segmentedFilterPicker: some View {
+        Picker("Filtrer les skills", selection: $model.filter) {
+            ForEach(SkillFilter.allCases) { option in
+                Text("\(option.displayName) (\(model.count(for: option)))")
+                    .tag(option)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .accessibilityLabel("Filtrer les skills")
+    }
+
+    private var menuFilterPicker: some View {
+        Picker("Filtrer les skills", selection: $model.filter) {
+            ForEach(SkillFilter.allCases) { option in
+                Text("\(option.displayName) (\(model.count(for: option)))")
+                    .tag(option)
+            }
+        }
+        .pickerStyle(.menu)
+        .accessibilityLabel("Filtrer les skills")
+    }
+
+    private var searchField: some View {
+        TextField("Rechercher un skill", text: $model.searchText)
+            .textFieldStyle(.roundedBorder)
+            .focused($isSearchFocused)
+            .accessibilityLabel("Rechercher un skill par nom ou identifiant canonical")
     }
 
     private var skillsTable: some View {
-        VStack(spacing: 0) {
-            ForEach(model.visibleSkills) { skill in
-                SkillRowView(
-                    skill: skill,
-                    sharedTargets: model.sharedTargets,
-                    operation: model.operationState(for: skill),
-                    canImport: model.canImport(skill),
-                    onImport: { model.importCandidate = skill }
-                )
-                if skill.id != model.visibleSkills.last?.id {
-                    Divider().padding(.leading, Spacing.standard)
+        SemanticSurface {
+            VStack(spacing: 0) {
+                SkillTableHeader()
+                Divider()
+
+                ForEach(model.visibleSkills) { skill in
+                    SkillRowView(
+                        skill: skill,
+                        sharedTargets: model.sharedTargets,
+                        operation: model.operationState(for: skill),
+                        canImport: model.canImport(skill),
+                        onImport: { model.importCandidate = skill }
+                    )
+                    if skill.id != model.visibleSkills.last?.id {
+                        Divider().padding(.leading, Spacing.standard)
+                    }
                 }
             }
         }
-        .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-        .padding(.horizontal, Spacing.standard)
     }
 
     // MARK: - Secondary actions
-    // Opening a folder is a presentation concern, so it stays in SwiftUI. The
-    // path always comes from the backend, never from user input.
 
     private func openInFinder() {
         guard let root = model.selectedProject?.root else { return }
@@ -438,48 +494,82 @@ struct ProjectsView: View {
     }
 }
 
-// MARK: - Rows
+// MARK: - Project list row
 
 private struct ProjectListRow: View {
     let project: OverviewProject
 
     var body: some View {
-        HStack(spacing: Spacing.related) {
+        HStack(spacing: Spacing.sm) {
             Image(systemName: project.state.symbolName)
+                .font(.caption)
                 .foregroundStyle(project.state.tint)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: Spacing.xxs) {
                 Text(project.name)
+                    .font(.body.weight(.medium))
                     .lineLimit(1)
                     .truncationMode(.middle)
+
                 Text(subtitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
 
-            Spacer(minLength: Spacing.micro)
-
-            if project.summary.actionRequired > 0 {
-                Text("\(project.summary.actionRequired)")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(project.state.tint.opacity(0.18), in: Capsule())
-                    .foregroundStyle(project.state.tint)
-            }
+            Spacer(minLength: Spacing.xxs)
         }
-        .padding(.vertical, 2)
+        .frame(minHeight: 48, alignment: .leading)
+        .padding(.horizontal, Spacing.xs)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(project.name). \(project.state.displayName). \(subtitle)")
+        .accessibilityLabel("\(project.name). \(subtitle)")
     }
 
     private var subtitle: String {
         if project.error != nil { return "Analyse impossible" }
-        let count = project.summary.actionRequired
-        if count == 0 { return project.state.displayName }
-        return count == 1 ? "1 action requise" : "\(count) actions requises"
+
+        switch project.state {
+        case .healthy:
+            return "À jour"
+        case .attention, .error:
+            let count = project.summary.actionRequired
+            return count == 1 ? "1 élément à examiner" : "\(count) éléments à examiner"
+        case .unknown:
+            return "Non vérifié"
+        case .disabled:
+            return "Désactivé"
+        }
+    }
+}
+
+// MARK: - Skills table
+
+private struct SkillTableHeader: View {
+    var body: some View {
+        HStack(spacing: Spacing.sm) {
+            Color.clear
+                .frame(width: 18, height: 1)
+
+            Text("Skill")
+                .frame(minWidth: 160, alignment: .leading)
+
+            Spacer(minLength: Spacing.xs)
+
+            Text("Type")
+                .frame(width: 84, alignment: .leading)
+            Text("Claude")
+                .frame(width: 56)
+            Text("Codex")
+                .frame(width: 56)
+            Text("État")
+                .frame(width: 96, alignment: .trailing)
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.sm)
+        .accessibilityHidden(true)
     }
 }
 
@@ -491,13 +581,14 @@ private struct SkillRowView: View {
     let onImport: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: Spacing.grouped) {
-            Image(systemName: skill.status.symbolName)
-                .foregroundStyle(skill.status.tint)
+        HStack(alignment: .center, spacing: Spacing.sm) {
+            Image(systemName: statusSymbol)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(statusTint)
                 .frame(width: 18)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.xxs) {
                 Text(skill.name)
                     .font(.body)
                     .lineLimit(1)
@@ -510,7 +601,7 @@ private struct SkillRowView: View {
             }
             .frame(minWidth: 160, alignment: .leading)
 
-            Spacer(minLength: Spacing.related)
+            Spacer(minLength: Spacing.xs)
 
             Text(scopeLabel)
                 .font(.caption)
@@ -523,13 +614,20 @@ private struct SkillRowView: View {
             action
                 .frame(width: 96, alignment: .trailing)
         }
-        .padding(.horizontal, Spacing.standard)
-        .padding(.vertical, Spacing.grouped)
+        .padding(.horizontal, Spacing.md)
+        .padding(.vertical, Spacing.sm)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
     }
 
-    /// Only the row running an operation shows progress (spec 22.3).
+    private var statusSymbol: String {
+        skill.status.requiresAction ? skill.status.symbolName : "checkmark"
+    }
+
+    private var statusTint: Color {
+        skill.status.requiresAction ? skill.status.tint : .secondary
+    }
+
     @ViewBuilder
     private var action: some View {
         switch operation {
@@ -544,8 +642,6 @@ private struct SkillRowView: View {
                 .foregroundStyle(.red)
                 .help(message)
         case .idle:
-            // The action is offered only when the backend declared it allowed
-            // (spec 11.2).
             if canImport {
                 Button("Importer", action: onImport)
                     .buttonStyle(.bordered)
@@ -562,10 +658,16 @@ private struct SkillRowView: View {
         }
     }
 
-    /// A platform the project does not target is "non concerné", not "absent".
+    /// A platform the project does not target is "non requis", not absent.
     private func presence(for target: String) -> PresenceBadge.State {
+        if skill.status == .expectedClaudeOnly, target == "codex" {
+            return .notRequired
+        }
+        if skill.status == .expectedCodexOnly, target == "claude" {
+            return .notRequired
+        }
         if skill.scope == "shared" && !sharedTargets.contains(target) {
-            return .notTargeted
+            return .notRequired
         }
         let present = target == "claude" ? skill.presence.claude : skill.presence.codex
         return present ? .present : .absent
@@ -586,21 +688,20 @@ private struct PresenceBadge: View {
     enum State {
         case present
         case absent
-        case notTargeted
+        case notRequired
 
         var symbolName: String {
             switch self {
-            case .present: return "checkmark.circle.fill"
+            case .present: return "checkmark"
             case .absent: return "circle.dashed"
-            case .notTargeted: return "minus.circle"
+            case .notRequired: return "minus"
             }
         }
 
         var tint: Color {
             switch self {
             case .present: return .green
-            case .absent: return .secondary
-            case .notTargeted: return .secondary
+            case .absent, .notRequired: return .secondary
             }
         }
 
@@ -608,7 +709,15 @@ private struct PresenceBadge: View {
             switch self {
             case .present: return "présent"
             case .absent: return "absent"
-            case .notTargeted: return "non concerné"
+            case .notRequired: return "non requis"
+            }
+        }
+
+        var shortLabel: String {
+            switch self {
+            case .present: return "Présent"
+            case .absent: return "Absent"
+            case .notRequired: return "Non requis"
             }
         }
     }
@@ -619,33 +728,19 @@ private struct PresenceBadge: View {
     var body: some View {
         VStack(spacing: 1) {
             Image(systemName: state.symbolName)
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(state.tint)
-            Text(label)
+            Text(state.shortLabel)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(width: 56)
         .help("\(label) : \(state.accessibilityLabel)")
     }
 }
 
-private struct SummaryItem: View {
-    let label: String
-    let value: String
-    var tint: Color?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundStyle(tint ?? .primary)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label) : \(value)")
-    }
+#Preview {
+    ContentView()
 }

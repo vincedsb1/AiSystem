@@ -38,6 +38,7 @@ enum ProjectsFixture {
     static func scan(
         project: String = "Suggst",
         sharedTargets: [String] = ["claude", "codex"],
+        expectedExceptions: Int = 0,
         skills: [String]
     ) -> String {
         let targets = sharedTargets.map { "\"\($0)\"" }.joined(separator: ",")
@@ -51,7 +52,7 @@ enum ProjectsFixture {
           "summary":{"total":\(skills.count),"managed":\(skills.count),"unmanaged":0,
             "shared":1,"projectSpecific":\(max(0, skills.count - 1)),
             "missingClaude":0,"missingCodex":0,"drift":0,"conflicts":0,
-            "expectedExceptions":0,"actionRequired":0},
+            "expectedExceptions":\(expectedExceptions),"actionRequired":0},
           "skills":[\(skills.joined(separator: ","))],
           "error":null
         }
@@ -232,7 +233,7 @@ struct ProjectDetailTests {
 
     @Test("Expected exceptions are not counted as pending actions")
     func exceptionsAreNotActions() async {
-        let sut = await loadedModel(scan: ProjectsFixture.scan(skills: [
+        let sut = await loadedModel(scan: ProjectsFixture.scan(expectedExceptions: 1, skills: [
             ProjectsFixture.skill(name: "synced", status: "managed_synced"),
             ProjectsFixture.skill(name: "claude-only", status: "expected_claude_only", codex: false)
         ]))
@@ -299,6 +300,38 @@ struct ProjectDetailTests {
         sut.clearFilters()
         #expect(sut.visibleSkills.count == 2)
         #expect(!sut.hasActiveFilter)
+    }
+
+    @Test("Empty states explain the active filter or search")
+    func emptyStatesAreContextual() async {
+        let sut = await loadedModel(scan: ProjectsFixture.scan(skills: [
+            ProjectsFixture.skill(name: "synced", status: "managed_synced")
+        ]))
+
+        sut.filter = .toReview
+        #expect(sut.emptyStateTitle == "Aucun skill à examiner")
+        #expect(sut.emptyStateDescription == "Ce projet ne demande aucune action.")
+        #expect(sut.emptyStateActionTitle == "Afficher tous les skills")
+
+        sut.filter = .all
+        sut.searchText = "introuvable"
+        #expect(sut.emptyStateTitle.contains("introuvable"))
+        #expect(sut.emptyStateActionTitle == "Effacer la recherche")
+
+        sut.clearEmptyState()
+        #expect(sut.searchText.isEmpty)
+    }
+
+    @Test("Project header copy separates synchronized skills and exceptions")
+    func headerCopyIsHumanReadable() async {
+        let sut = await loadedModel(scan: ProjectsFixture.scan(expectedExceptions: 1, skills: [
+            ProjectsFixture.skill(name: "synced", status: "managed_synced"),
+            ProjectsFixture.skill(name: "claude-only", status: "expected_claude_only", codex: false)
+        ]))
+
+        #expect(sut.headerSummaryText.contains("synchronisé"))
+        #expect(sut.headerSummaryText.contains("exception attendue"))
+        #expect(sut.compositionText?.contains("Composition") == true)
     }
 
     @Test("Opening from a required action preselects the review filter")

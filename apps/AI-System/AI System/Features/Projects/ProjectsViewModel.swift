@@ -147,6 +147,66 @@ final class ProjectsViewModel {
         filter != .all || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    var emptyStateTitle: String {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            return "Aucun skill ne correspond à “" + query + "”"
+        }
+
+        switch filter {
+        case .all:
+            return "Aucun skill dans ce projet"
+        case .toReview:
+            return "Aucun skill à examiner"
+        case .synced:
+            return "Aucun skill synchronisé"
+        case .exceptions:
+            return "Aucune exception attendue"
+        }
+    }
+
+    var emptyStateDescription: String {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            return "Modifiez votre recherche ou effacez-la."
+        }
+
+        switch filter {
+        case .all:
+            return "Ce projet ne déclare aucun skill."
+        case .toReview:
+            return "Ce projet ne demande aucune action."
+        case .synced:
+            return "Aucun skill n’est actuellement synchronisé."
+        case .exceptions:
+            return "Ce projet ne déclare aucune exception attendue."
+        }
+    }
+
+    var emptyStateActionTitle: String? {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty || filter == .toReview {
+            return filter == .toReview && query.isEmpty
+                ? "Afficher tous les skills"
+                : "Effacer la recherche"
+        }
+        return nil
+    }
+
+    var headerSummaryText: String {
+        guard let summary else { return "Skills non vérifiés" }
+        let skills = "\(summary.managed) "
+            + (summary.managed == 1 ? "skill synchronisé" : "skills synchronisés")
+        let exceptions = "\(summary.expectedExceptions) "
+            + (summary.expectedExceptions == 1 ? "exception attendue" : "exceptions attendues")
+        return skills + " · " + exceptions
+    }
+
+    var compositionText: String? {
+        guard let summary else { return nil }
+        return "Composition : \(summary.shared) partagés · \(summary.projectSpecific) spécifiques"
+    }
+
     func count(for filter: SkillFilter) -> Int {
         allSkills.filter(filter.matches).count
     }
@@ -176,10 +236,7 @@ final class ProjectsViewModel {
         guard let generatedAt = scan?.generatedAt,
               let date = ISO8601DateFormatter().date(from: generatedAt)
         else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+        return AppFormatters.observationDate(date)
     }
 
     var isBusy: Bool { isLoadingProjects || isScanning }
@@ -279,6 +336,15 @@ final class ProjectsViewModel {
     func clearFilters() {
         searchText = ""
         filter = .all
+    }
+
+    func clearEmptyState() {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            searchText = ""
+        } else {
+            filter = .all
+        }
     }
 
     func dismissScanError() {
