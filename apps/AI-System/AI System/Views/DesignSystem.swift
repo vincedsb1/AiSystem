@@ -60,6 +60,21 @@ extension OperationStatus {
     }
 }
 
+extension SkillStatus {
+    var tint: Color {
+        switch self {
+        case .managedSynced:
+            return .green
+        case .expectedClaudeOnly, .expectedCodexOnly:
+            return .secondary
+        case .conflict, .manifestError:
+            return .red
+        default:
+            return .orange
+        }
+    }
+}
+
 extension ActionSeverity {
     var tint: Color {
         switch self {

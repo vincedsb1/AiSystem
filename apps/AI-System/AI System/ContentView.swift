@@ -55,7 +55,7 @@ struct ContentView: View {
         case .overview:
             OverviewView(onOpenProject: openProject)
         case .projects:
-            ProjectsPlaceholderView()
+            ProjectsView(pendingSelection: $pendingProjectSelection)
         case .activity:
             ActivityPlaceholderView()
         }
@@ -63,42 +63,6 @@ struct ContentView: View {
 }
 
 // MARK: - Placeholder Views for UX-02
-
-struct ProjectsPlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "folder.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-
-            Text("Projets")
-                .font(.headline)
-
-            Text("Consultation et gestion des projets (UX-04, UX-05, UX-06)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-                .padding(.vertical, 8)
-
-            Text("À implémenter:")
-                .font(.caption)
-                .fontWeight(.semibold)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("• UX-04: Liste projets, détail, skills (lecture seule)")
-                Text("• UX-05: Import et synchronisation")
-                Text("• UX-06: Ajout guidé de projet")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-}
 
 struct ActivityPlaceholderView: View {
     var body: some View {

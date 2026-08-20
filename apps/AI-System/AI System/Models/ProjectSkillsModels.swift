@@ -339,4 +339,55 @@ enum SkillStatus: String, Codable, Equatable, CaseIterable {
             return true
         }
     }
+
+    /// Expected exceptions are neither errors nor pending actions
+    /// (FR-STATE-05).
+    var isExpectedException: Bool {
+        self == .expectedClaudeOnly || self == .expectedCodexOnly
+    }
+
+    var symbolName: String {
+        switch self {
+        case .managedSynced:
+            return "checkmark.circle.fill"
+        case .expectedClaudeOnly, .expectedCodexOnly:
+            return "checkmark.circle"
+        case .conflict, .manifestError:
+            return "xmark.octagon.fill"
+        case .canonicalDrift:
+            return "arrow.triangle.branch"
+        case .missingClaude, .missingCodex:
+            return "arrow.triangle.2.circlepath"
+        case .localCodexOnly, .localClaudeOnly, .localBothUnmanaged:
+            return "tray.and.arrow.down"
+        }
+    }
+
+    /// Human explanation shown under the title (spec 10.9).
+    var explanation: String {
+        switch self {
+        case .managedSynced:
+            return "Claude et Codex correspondent à la source gérée."
+        case .localCodexOnly:
+            return "Ce skill n'est pas encore géré par AI System."
+        case .localClaudeOnly:
+            return "Cette commande n'est pas encore gérée par AI System."
+        case .localBothUnmanaged:
+            return "Les deux versions existent hors source gérée."
+        case .missingClaude:
+            return "La source gérée existe mais l'export Claude est absent."
+        case .missingCodex:
+            return "La source gérée existe mais l'export Codex est absent."
+        case .canonicalDrift:
+            return "Un export ne correspond plus à la source gérée."
+        case .manifestError:
+            return "Le backend ne peut pas déterminer une configuration valide."
+        case .conflict:
+            return "Plusieurs sources ou destinations sont incompatibles."
+        case .expectedClaudeOnly:
+            return "Cette exception est déclarée et ne nécessite aucune action."
+        case .expectedCodexOnly:
+            return "Cette exception est déclarée et ne nécessite aucune action."
+        }
+    }
 }
