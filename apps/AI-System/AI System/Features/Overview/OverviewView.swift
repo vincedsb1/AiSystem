@@ -1,40 +1,43 @@
 import SwiftUI
 
-/// Vue d'ensemble — the conclusion first, technical output never (FR-OV-05).
+/// Vue d'ensemble — a clear conclusion first, with technical detail kept in
+/// the Activity destination.
 struct OverviewView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
     @State private var model = OverviewViewModel()
 
-    /// Lets the Overview hand a project over to the Projects destination
-    /// (FR-NAV-02).
+    /// Lets the Overview hand a project over to the Projects destination.
     var onOpenProject: (String) -> Void = { _ in }
 
-    /// Opens one activity in the Activité destination (FR-NAV-03).
+    /// Opens one activity in the Activité destination.
     var onOpenActivity: (UUID) -> Void = { _ in }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.sectionGap) {
-                summarySection
+            AdaptiveContentContainer {
+                VStack(alignment: .leading, spacing: Spacing.lg) {
+                    hero
 
-                if let message = model.errorMessage {
-                    InlineFeedbackView(
-                        type: .error,
-                        message: message
-                    )
-                    .padding(.horizontal, Spacing.standard)
+                    if let message = model.errorMessage, model.overview != nil {
+                        InlineFeedbackView(type: .error, message: message)
+                    }
+
+                    if let summary = model.summary {
+                        ProjectHealthSummaryView(
+                            summary: summary,
+                            onOpenAttention: openFirstActionProject
+                        )
+                    }
+
+                    if !model.topActions.isEmpty {
+                        requiredActions
+                    }
+
+                    recentActivity
                 }
-
-                if !model.topActions.isEmpty {
-                    actionsSection
-                }
-
-                projectsSection
-
-                recentActivitySection
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.vertical, Spacing.standard)
         }
         .functionalAnimation(model.displayState, reduceMotion: reduceMotion)
         .toolbar { toolbarContent }
@@ -48,392 +51,454 @@ struct OverviewView: View {
         }
     }
 
-    // MARK: - Toolbar
+    // MARK: - Hero
 
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Button {
-                Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
-            } label: {
-                Label("Vérifier maintenant", systemImage: "checkmark.shield")
-            }
-            .disabled(model.isBusy)
-            .help("Lancer la vérification globale du système")
+    private var hero: some View {
+        HealthHeroView(
+            state: model.displayState,
+            title: model.stateTitle,
+            description: model.stateDescription,
+            lastObservation: model.lastObservationText,
+            actionTitle: heroActionTitle,
+            isBusy: model.isBusy,
+            onPrimaryAction: heroPrimaryAction,
+            secondaryActionTitle: model.displayState == .error
+                && activityStore.recent(1).first != nil
+                ? "Afficher l’activité"
+                : nil,
+            onSecondaryAction: openLatestActivity
+        )
+    }
+
+    private var heroActionTitle: String? {
+        switch model.displayState {
+        case .checking:
+            return nil
+        case .healthy:
+            return "Vérifier à nouveau"
+        case .attention:
+            return model.topActions.isEmpty ? "Vérifier maintenant" : "Examiner les actions"
+        case .error:
+            return "Réessayer"
+        case .unknown:
+            return "Vérifier maintenant"
         }
+    }
 
-        ToolbarItem {
-            Menu {
-                Button("Actualiser l'état") {
-                    Task { await model.load() }
-                }
-                .disabled(model.isBusy)
-
-                Divider()
-
-                Button("Ouvrir le rapport Inventory") {
-                    open(action: "open-inventory")
-                }
-                Button("Ouvrir le rapport Doctor") {
-                    open(action: "open-doctor")
-                }
-            } label: {
-                Label("Actions secondaires", systemImage: "ellipsis.circle")
-            }
-            .help("Autres actions")
+    private func heroPrimaryAction() {
+        if model.displayState == .attention, !model.topActions.isEmpty {
+            openFirstActionProject()
+        } else {
+            Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
         }
+    }
+
+    private func openFirstActionProject() {
+        guard let first = model.topActions.first else { return }
+        onOpenProject(first.project)
+    }
+
+    private func openLatestActivity() {
+        guard let latest = activityStore.recent(1).first else { return }
+        onOpenActivity(latest.id)
     }
 
     // MARK: - Sections
 
-    private var summarySection: some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            SystemStateHeader(
-                state: model.displayState,
-                title: model.stateTitle,
-                description: model.stateDescription,
-                lastObservation: model.lastObservationText
-            )
-
-            HStack(spacing: Spacing.grouped) {
-                Button {
-                    Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
-                } label: {
-                    if model.isBusy {
-                        HStack(spacing: Spacing.micro) {
-                            ProgressView().controlSize(.small)
-                            Text("Vérification…")
-                        }
-                    } else {
-                        Text(primaryActionTitle)
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(model.isBusy)
-
-                if model.remainingActionCount > 0 || !model.topActions.isEmpty {
-                    Button("Examiner les actions") {
-                        if let first = model.topActions.first {
-                            onOpenProject(first.project)
-                        }
-                    }
-                    .disabled(model.topActions.isEmpty)
-                }
-            }
-        }
-        .padding(.horizontal, Spacing.standard)
-    }
-
-    private var primaryActionTitle: String {
-        switch model.displayState {
-        case .unknown: return "Vérifier maintenant"
-        case .error: return "Réessayer"
-        default: return "Vérifier maintenant"
-        }
-    }
-
-    private var actionsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SectionHeaderView(
-                title: "Actions requises",
-                subtitle: model.remainingActionCount > 0
-                    ? "\(model.topActions.count) sur \(model.actions.count)"
-                    : nil
-            )
-
+    private var requiredActions: some View {
+        SectionSurface(
+            title: "Actions requises",
+            subtitle: "Les éléments qui demandent votre attention",
+            tone: .attention
+        ) {
             VStack(spacing: 0) {
-                ForEach(model.topActions) { action in
-                    ActionRow(action: action) {
+                ForEach(Array(model.topActions.prefix(3))) { action in
+                    RequiredActionRow(action: action) {
                         onOpenProject(action.project)
                     }
-                    if action.id != model.topActions.last?.id {
-                        Divider().padding(.leading, Spacing.standard)
-                    }
-                }
-            }
-            .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-            .padding(.horizontal, Spacing.standard)
 
-            if model.remainingActionCount > 0 {
-                Button("Voir les \(model.remainingActionCount) autres actions") {
-                    if let first = model.actions.first {
-                        onOpenProject(first.project)
+                    if action.id != model.topActions.prefix(3).last?.id {
+                        Divider()
                     }
                 }
-                .buttonStyle(.link)
-                .padding(.horizontal, Spacing.standard)
-                .padding(.top, Spacing.related)
             }
         }
     }
 
-    private var projectsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SectionHeaderView(title: "Projets", subtitle: nil)
-
-            if let summary = model.summary {
-                HStack(spacing: Spacing.sectionGap) {
-                    CountItem(label: "Actifs", value: "\(summary.projectsTotal)", state: nil)
-                    CountItem(label: "Sains", value: "\(summary.projectsHealthy)", state: .healthy)
-                    CountItem(label: "Attention", value: "\(summary.projectsAttention)", state: .attention)
-                    CountItem(label: "Erreur", value: "\(summary.projectsError)", state: .error)
-                    Spacer()
-                }
-                .padding(.horizontal, Spacing.standard)
-            } else {
-                Text("Non vérifié")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, Spacing.standard)
-            }
-
-            if !model.projectsNeedingAttention.isEmpty {
-                VStack(spacing: 0) {
-                    ForEach(model.projectsNeedingAttention) { project in
-                        ProjectRow(project: project) {
-                            onOpenProject(project.name)
-                        }
-                        if project.id != model.projectsNeedingAttention.last?.id {
-                            Divider().padding(.leading, Spacing.standard)
-                        }
-                    }
-                }
-                .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-                .padding(.horizontal, Spacing.standard)
-                .padding(.top, Spacing.related)
-            }
-        }
-    }
-
-    private var recentActivitySection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SectionHeaderView(title: "Activité récente", subtitle: nil)
-
-            let recent = activityStore.recent(4)
+    private var recentActivity: some View {
+        SectionSurface(
+            title: "Activité récente",
+            subtitle: "Les dernières opérations de cette session"
+        ) {
+            let recent = activityStore.recent(3)
             if recent.isEmpty {
-                Text("Aucune opération lancée pendant cette session.")
+                Text("Les vérifications et synchronisations apparaîtront ici.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, Spacing.standard)
+                    .padding(.vertical, Spacing.xs)
             } else {
                 VStack(spacing: 0) {
                     ForEach(recent) { activity in
                         RecentActivityRow(activity: activity) {
                             onOpenActivity(activity.id)
                         }
+
                         if activity.id != recent.last?.id {
-                            Divider().padding(.leading, Spacing.standard)
+                            Divider()
                         }
                     }
                 }
-                .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
-                .padding(.horizontal, Spacing.standard)
             }
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Toolbar
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem {
+            Menu {
+                Button("Ouvrir Inventory") {
+                    open(action: "open-inventory")
+                }
+                Button("Ouvrir Doctor") {
+                    open(action: "open-doctor")
+                }
+            } label: {
+                Label("Actions secondaires", systemImage: "ellipsis.circle")
+                    .labelStyle(.iconOnly)
+            }
+            .help("Rapports et actions secondaires")
+            .accessibilityLabel("Rapports et actions secondaires")
+        }
+    }
 
     private func open(action: String) {
         Task { await ProjectSkillsService().openResource(action) }
     }
 }
 
-// MARK: - Header
+// MARK: - Health hero
 
-private struct SystemStateHeader: View {
+struct HealthHeroView: View {
     let state: SystemState
     let title: String
     let description: String
     let lastObservation: String?
+    let actionTitle: String?
+    let isBusy: Bool
+    let onPrimaryAction: () -> Void
+    let secondaryActionTitle: String?
+    let onSecondaryAction: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.grouped) {
-            Image(systemName: state.symbolName)
-                .font(.system(size: 28))
-                .foregroundStyle(state.tint)
-                .accessibilityHidden(true)
+        SemanticSurface(tone: state.surfaceTone, cornerRadius: AppRadius.hero) {
+            ViewThatFits(in: .horizontal) {
+                horizontalContent
+                verticalContent
+            }
+            .padding(Spacing.lg)
+        }
+        .accessibilityElement(children: .contain)
+    }
 
-            VStack(alignment: .leading, spacing: Spacing.micro) {
+    private var horizontalContent: some View {
+        HStack(alignment: .top, spacing: Spacing.lg) {
+            heroText
+            Spacer(minLength: Spacing.lg)
+            actionControls
+        }
+        .frame(minWidth: 640, alignment: .leading)
+    }
+
+    private var verticalContent: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            heroText
+            actionControls
+        }
+    }
+
+    private var heroText: some View {
+        HStack(alignment: .top, spacing: Spacing.md) {
+            statusIcon
+
+            VStack(alignment: .leading, spacing: Spacing.xs) {
                 Text(title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 28, weight: .semibold))
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Text(description)
-                    .font(.callout)
+                    .font(.body)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(lastObservation.map { "Dernière observation : \($0)" }
-                    ?? "Aucune observation datée")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.top, Spacing.micro)
+                if let observation = lastObservation {
+                    Text("Vérifié " + observation.lowercased())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                } else if state == .checking {
+                    Text("Votre dernière observation reste visible pendant l’actualisation.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
-
-            Spacer(minLength: 0)
         }
-        // The status is announced as text, never carried by colour alone.
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title). \(description)")
+        .accessibilityLabel(
+            [title, description, lastObservation.map { "Vérifié \($0)" }]
+                .compactMap { $0 }
+                .joined(separator: ". ")
+        )
+    }
+
+    private var statusIcon: some View {
+        ZStack {
+            Circle()
+                .fill(state.tint.opacity(0.14))
+
+            if isBusy {
+                ProgressView()
+                    .controlSize(.small)
+                    .tint(state.tint)
+            } else {
+                Image(systemName: state.symbolName)
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(state.tint)
+            }
+        }
+        .frame(width: 52, height: 52)
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private var actionControls: some View {
+        if let actionTitle {
+            VStack(alignment: .trailing, spacing: Spacing.xs) {
+                if state == .healthy {
+                    Button(actionTitle, action: onPrimaryAction)
+                        .buttonStyle(.bordered)
+                        .disabled(isBusy)
+                } else {
+                    Button(actionTitle, action: onPrimaryAction)
+                        .buttonStyle(.borderedProminent)
+                        .disabled(isBusy)
+                }
+
+                if let secondaryActionTitle {
+                    Button(secondaryActionTitle, action: onSecondaryAction)
+                        .buttonStyle(.link)
+                        .disabled(isBusy)
+                }
+            }
+            .fixedSize(horizontal: true, vertical: false)
+        } else {
+            ProgressView("Vérification en cours…")
+                .controlSize(.small)
+                .fixedSize(horizontal: true, vertical: false)
+        }
     }
 }
 
-// MARK: - Rows
+// MARK: - Project health summary
 
-private struct ActionRow: View {
+struct ProjectHealthSummaryView: View {
+    let summary: OverviewSummary
+    let onOpenAttention: () -> Void
+
+    private var metrics: [OverviewMetric] {
+        [
+            OverviewMetric(
+                id: "projects",
+                label: "Projets",
+                value: summary.projectsTotal,
+                symbolName: "folder",
+                tint: nil,
+                isInteractive: false
+            ),
+            OverviewMetric(
+                id: "healthy",
+                label: "Sains",
+                value: summary.projectsHealthy,
+                symbolName: "checkmark.circle",
+                tint: summary.projectsHealthy > 0 ? .green : nil,
+                isInteractive: false
+            ),
+            OverviewMetric(
+                id: "attention",
+                label: "À examiner",
+                value: summary.projectsAttention,
+                symbolName: "exclamationmark.triangle",
+                tint: summary.projectsAttention > 0 ? .orange : nil,
+                isInteractive: summary.projectsAttention > 0
+            ),
+            OverviewMetric(
+                id: "error",
+                label: "En erreur",
+                value: summary.projectsError,
+                symbolName: "xmark.octagon",
+                tint: summary.projectsError > 0 ? .red : nil,
+                isInteractive: summary.projectsError > 0
+            )
+        ]
+    }
+
+    var body: some View {
+        SectionSurface(title: "Résumé des projets") {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: Spacing.lg) {
+                    ForEach(metrics) { metric in
+                        metricView(metric)
+                    }
+                }
+                .frame(minWidth: 640, alignment: .leading)
+
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    alignment: .leading,
+                    spacing: Spacing.md
+                ) {
+                    ForEach(metrics) { metric in
+                        metricView(metric)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func metricView(_ metric: OverviewMetric) -> some View {
+        if metric.isInteractive {
+            Button(action: onOpenAttention) {
+                MetricItemView(
+                    label: metric.label,
+                    value: "\(metric.value)",
+                    symbolName: metric.symbolName,
+                    tint: metric.tint
+                )
+            }
+            .buttonStyle(.plain)
+            .help("Ouvrir les projets à examiner")
+        } else {
+            MetricItemView(
+                label: metric.label,
+                value: "\(metric.value)",
+                symbolName: metric.symbolName,
+                tint: metric.tint
+            )
+        }
+    }
+}
+
+private struct OverviewMetric: Identifiable {
+    let id: String
+    let label: String
+    let value: Int
+    let symbolName: String
+    let tint: Color?
+    let isInteractive: Bool
+}
+
+// MARK: - Required actions and recent activity
+
+struct RequiredActionRow: View {
     let action: OverviewAction
     let open: () -> Void
 
     var body: some View {
-        HStack(spacing: Spacing.grouped) {
-            Image(systemName: action.severity.symbolName)
-                .foregroundStyle(action.severity == .error ? .red : .orange)
-                .accessibilityHidden(true)
+        Button(action: open) {
+            HStack(spacing: Spacing.md) {
+                Image(systemName: action.severity.symbolName)
+                    .foregroundStyle(action.severity == .error ? .red : .orange)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(action.project) · \(action.skill)")
-                    .font(.body)
-                Text(action.status.displayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    Text(action.skill)
+                        .font(.body.weight(.medium))
+                    Text("\(action.project) · \(action.status.displayName)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: Spacing.md)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
             }
-
-            Spacer(minLength: Spacing.grouped)
-
-            Button("Ouvrir", action: open)
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, Spacing.standard)
-        .padding(.vertical, Spacing.grouped)
-        .accessibilityElement(children: .combine)
+        .buttonStyle(.plain)
+        .padding(.vertical, Spacing.sm)
         .accessibilityLabel(
-            "\(action.skill) dans \(action.project). \(action.status.displayName). \(action.severity.displayName)."
+            "(action.skill) dans (action.project). "
+            + "(action.status.displayName). (action.severity.displayName)."
         )
     }
 }
 
-private struct ProjectRow: View {
-    let project: OverviewProject
-    let open: () -> Void
-
-    var body: some View {
-        HStack(spacing: Spacing.grouped) {
-            Image(systemName: project.state.symbolName)
-                .foregroundStyle(project.state.tint)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(project.name)
-                    .font(.body)
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer(minLength: Spacing.grouped)
-
-            Button("Ouvrir", action: open)
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-        }
-        .padding(.horizontal, Spacing.standard)
-        .padding(.vertical, Spacing.grouped)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(project.name). \(project.state.displayName). \(subtitle)")
-    }
-
-    private var subtitle: String {
-        if let error = project.error {
-            return error.message
-        }
-        let count = project.summary.actionRequired
-        return count == 1 ? "1 action requise" : "\(count) actions requises"
-    }
-}
-
-private struct CountItem: View {
-    let label: String
-    let value: String
-    let state: ProjectState?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundStyle(state?.tint ?? .primary)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label) : \(value)")
-    }
-}
-
-private struct SectionHeaderView: View {
-    let title: String
-    let subtitle: String?
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(title)
-                .font(.headline)
-            if let subtitle {
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-        }
-        .padding(.horizontal, Spacing.standard)
-        .padding(.bottom, Spacing.related)
-    }
-}
-
-// MARK: - Recent activity row
-
-private struct RecentActivityRow: View {
+struct RecentActivityRow: View {
     let activity: Activity
     let open: () -> Void
 
     var body: some View {
-        HStack(spacing: Spacing.grouped) {
-            Image(systemName: activity.status.symbolName)
-                .foregroundStyle(activity.status.tint)
-                .accessibilityHidden(true)
+        Button(action: open) {
+            HStack(alignment: .top, spacing: Spacing.md) {
+                Image(systemName: activity.status.symbolName)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(activity.status.tint)
+                    .frame(width: 20)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(activity.displayName)
-                    .font(.body)
-                Text(activity.targetDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    Text(activity.displayName)
+                        .font(.body.weight(.medium))
+                        .lineLimit(1)
 
-            Spacer(minLength: Spacing.grouped)
+                    Text(activity.summary.isEmpty ? activity.targetDescription : activity.summary)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
 
-            if let duration = activity.durationDescription {
-                Text(duration)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+                Spacer(minLength: Spacing.md)
 
-            Text(activity.startedAt, style: .relative)
+                HStack(spacing: Spacing.xs) {
+                    Text(AppFormatters.relativeDate(activity.startedAt))
+                    if let duration = activity.duration {
+                        Text("·")
+                        Text(AppFormatters.duration(duration))
+                    }
+                }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
 
-            Button("Voir", action: open)
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+                    .padding(.top, 2)
+            }
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, Spacing.standard)
-        .padding(.vertical, Spacing.grouped)
+        .buttonStyle(.plain)
+        .padding(.vertical, Spacing.sm)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-            "\(activity.displayName). \(activity.targetDescription). \(activity.status.displayName)."
+            "(activity.displayName). (activity.summary). "
+            + "(activity.status.displayName), (AppFormatters.relativeDate(activity.startedAt))."
         )
     }
+}
+
+private extension SystemState {
+    var surfaceTone: SemanticSurfaceTone {
+        switch self {
+        case .unknown, .checking: return .neutral
+        case .healthy: return .success
+        case .attention: return .attention
+        case .error: return .error
+        }
+    }
+}
+
+#Preview {
+    ContentView()
 }

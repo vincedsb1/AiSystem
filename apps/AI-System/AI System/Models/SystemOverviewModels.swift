@@ -89,9 +89,9 @@ enum SystemState: String, Codable, Equatable {
 
     var title: String {
         switch self {
-        case .unknown: return "État du système inconnu"
+        case .unknown: return "Vérifiez votre environnement IA"
         case .checking: return "Vérification en cours…"
-        case .healthy: return "Tout est à jour"
+        case .healthy: return "Tout est synchronisé"
         case .attention: return "Des éléments demandent votre attention"
         case .error: return "La vérification n'a pas pu être terminée"
         }

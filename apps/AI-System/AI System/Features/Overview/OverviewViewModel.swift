@@ -71,25 +71,22 @@ final class OverviewViewModel {
 
     var lastObservationText: String? {
         guard let date = overview?.observedAt else { return nil }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+        return AppFormatters.observationDate(date)
     }
 
     /// Header description, expressed in business terms rather than mechanics.
     var stateDescription: String {
         switch displayState {
         case .unknown:
-            return "Une vérification est nécessaire pour analyser les projets et les skills."
+            return "Analysez les projets et leurs skills pour connaître leur état."
         case .checking:
             return overview == nil
                 ? "Analyse des projets et des skills en cours…"
-                : "Actualisation de l'état du système…"
+                : "Actualisation de l’état du système…"
         case .healthy:
             guard let summary else { return "Aucune action requise." }
-            return "\(summary.projectsTotal) \(pluralize(summary.projectsTotal, "projet", "projets")) vérifiés, "
-                + "\(summary.skillsManaged) skills gérés, aucune action requise."
+            return "\(summary.projectsTotal) \(pluralize(summary.projectsTotal, "projet", "projets")) vérifiés et "
+                + "\(summary.skillsManaged) skills gérés. Aucune action n’est requise."
         case .attention:
             guard let summary else { return "Des éléments demandent votre attention." }
             var parts: [String] = []
@@ -99,8 +96,8 @@ final class OverviewViewModel {
             if summary.conflicts > 0 {
                 parts.append("\(summary.conflicts) \(pluralize(summary.conflicts, "conflit", "conflits"))")
             }
-            let detail = parts.isEmpty ? "" : " — " + parts.joined(separator: ", ")
-            return "\(summary.actionRequired) \(pluralize(summary.actionRequired, "élément", "éléments")) à traiter\(detail)."
+            let detail = parts.isEmpty ? "" : " : " + parts.joined(separator: ", ")
+            return "\(summary.actionRequired) \(pluralize(summary.actionRequired, "élément", "éléments")) à examiner\(detail)."
         case .error:
             return errorMessage ?? "Le backend n'a pas pu produire un état exploitable."
         }

@@ -236,7 +236,7 @@ struct OverviewViewModelTests {
         await sut.load()
 
         #expect(sut.displayState == .healthy)
-        #expect(sut.stateTitle == "Tout est à jour")
+        #expect(sut.stateTitle == "Tout est synchronisé")
         #expect(sut.actions.isEmpty)
         #expect(sut.errorMessage == nil)
         #expect(sut.lastObservationText != nil)
@@ -340,6 +340,6 @@ struct OverviewViewModelTests {
         #expect(sut.displayState == .unknown)
         #expect(sut.summary == nil)
         // The description invites a check rather than reporting a failure.
-        #expect(sut.stateDescription.contains("vérification"))
+        #expect(sut.stateDescription.contains("Analysez"))
     }
 }

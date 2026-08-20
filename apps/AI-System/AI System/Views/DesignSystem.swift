@@ -119,6 +119,17 @@ enum AppFormatters {
         )
     }
 
+    static func observationDate(_ date: Date, now: Date = Date()) -> String {
+        if Calendar.current.isDate(date, inSameDayAs: now) {
+            let time = date.formatted(
+                Date.FormatStyle(date: .omitted, time: .shortened)
+                    .locale(frenchLocale)
+            )
+            return "aujourd’hui à \(time)"
+        }
+        return absoluteDate(date)
+    }
+
     static func relativeDate(_ date: Date) -> String {
         date.formatted(
             .relative(presentation: .named, unitsStyle: .abbreviated)
@@ -238,6 +249,7 @@ struct SectionSurface<Content: View>: View {
 
                 content
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Spacing.md)
         }
     }

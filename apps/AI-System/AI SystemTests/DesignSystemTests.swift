@@ -15,6 +15,18 @@ struct DesignSystemTests {
         #expect(formatted.contains("21:18"))
     }
 
+    @Test("Today's observation uses a concise localized label")
+    func todayObservationIsConcise() {
+        let now = Date()
+        let formatted = AppFormatters.observationDate(
+            now.addingTimeInterval(-60),
+            now: now
+        )
+
+        #expect(formatted.contains("aujourd’hui"))
+        #expect(formatted.contains(":"))
+    }
+
     @Test("Relative dates use a human French expression")
     func relativeDateIsFrench() {
         let formatted = AppFormatters.relativeDate(Date(timeIntervalSinceNow: -240))

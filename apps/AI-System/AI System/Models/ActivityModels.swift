@@ -81,10 +81,7 @@ struct Activity: Identifiable, Equatable {
 
     var durationDescription: String? {
         guard let duration else { return nil }
-        if duration < 1 {
-            return String(format: "%.0f ms", duration * 1000)
-        }
-        return String(format: "%.1f s", duration)
+        return AppFormatters.duration(duration)
     }
 }
 
