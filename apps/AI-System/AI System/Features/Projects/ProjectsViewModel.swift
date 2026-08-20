@@ -72,6 +72,19 @@ final class ProjectsViewModel {
     var searchText = ""
     var filter: SkillFilter = .all
 
+    // MARK: Mutating operations
+
+    /// Operation state per skill, so only the affected row shows progress and
+    /// a second submission is impossible (spec 11.4 / 22.3).
+    private(set) var skillOperations: [String: SkillOperationState] = [:]
+
+    /// Skill the import sheet is confirming, if any.
+    var importCandidate: SkillRow?
+
+    private(set) var isSyncing = false
+    private(set) var lastActionSummary: String?
+    private(set) var lastActionSucceeded = true
+
     init(service: ProjectSkillsService = ProjectSkillsService()) {
         self.service = service
     }
@@ -171,6 +184,38 @@ final class ProjectsViewModel {
 
     var isBusy: Bool { isLoadingProjects || isScanning }
 
+    /// True while any mutating operation runs. Navigation and reading stay
+    /// available; only incompatible operations are blocked (spec 22.3).
+    var isMutating: Bool {
+        isSyncing || skillOperations.values.contains { $0.isRunning }
+    }
+
+    func operationState(for skill: SkillRow) -> SkillOperationState {
+        skillOperations[skill.name] ?? .idle
+    }
+
+    /// The interface only offers what the backend declared allowed.
+    func canImport(_ skill: SkillRow) -> Bool {
+        skill.importable
+            && skill.allowedActions.contains("import")
+            && !isMutating
+    }
+
+    func canSyncProject() -> Bool {
+        guard let summary else { return false }
+        let repairable = allSkills.contains { skill in
+            skill.allowedActions.contains("sync")
+        }
+        return repairable && summary.conflicts == 0 && !isMutating
+    }
+
+    /// Source the backend detected for an importable skill.
+    func importSource(for skill: SkillRow) -> ImportSource? {
+        if skill.presence.codex && !skill.presence.claude { return .codex }
+        if skill.presence.claude && !skill.presence.codex { return .claude }
+        return nil
+    }
+
     // MARK: - Loading
 
     /// Loads the project list. The selection is preserved when the project
@@ -238,5 +283,71 @@ final class ProjectsViewModel {
 
     func dismissScanError() {
         scanError = nil
+    }
+
+    func dismissActionSummary() {
+        lastActionSummary = nil
+    }
+
+    // MARK: - Import
+
+    /// Imports a skill, then rescans so the row reflects its final state
+    /// (spec 11.5). A double submission is refused up front.
+    func importSkill(_ skill: SkillRow, source: ImportSource) async {
+        guard let project = selectedProjectName else { return }
+        guard operationState(for: skill) != .running, !isMutating else { return }
+
+        skillOperations[skill.name] = .running
+        importCandidate = nil
+
+        let result = await service.importSkill(
+            project: project,
+            skill: skill.name,
+            source: source
+        )
+
+        switch result {
+        case .success(let response):
+            skillOperations[skill.name] = .succeeded(response.summary)
+            lastActionSummary = response.summary
+            lastActionSucceeded = true
+            await scanSelectedProject()
+        case .failure(let error):
+            skillOperations[skill.name] = .failed(failureMessage(for: error))
+            lastActionSummary = failureMessage(for: error)
+            lastActionSucceeded = false
+        }
+    }
+
+    // MARK: - Sync
+
+    /// Synchronises the selected project, then rescans.
+    func syncSelectedProject() async {
+        guard let project = selectedProjectName, !isMutating else { return }
+        isSyncing = true
+
+        let result = await service.syncProject(project: project)
+        isSyncing = false
+
+        switch result {
+        case .success(let response):
+            lastActionSummary = response.summary
+            lastActionSucceeded = response.outcome.isSuccess
+            await scanSelectedProject()
+            await loadProjects()
+        case .failure(let error):
+            lastActionSummary = failureMessage(for: error)
+            lastActionSucceeded = false
+        }
+    }
+
+    /// Failure copy always states whether files were modified (spec 17.3).
+    private func failureMessage(for error: ProjectSkillsServiceError) -> String {
+        let reason = error.errorDescription ?? "Erreur inconnue."
+        guard case .backend(let backendError) = error,
+              let raw = backendError.writeState,
+              let state = ActionWriteState(rawValue: raw)
+        else { return reason }
+        return "\(reason) \(state.description)"
     }
 }

@@ -32,6 +32,19 @@ struct ProjectsView: View {
             pendingSelection = nil
             Task { await model.scanSelectedProject() }
         }
+        .sheet(item: $model.importCandidate) { skill in
+            ImportSkillSheet(
+                skill: skill,
+                projectName: model.selectedProjectName ?? "",
+                source: model.importSource(for: skill) ?? .codex,
+                sharedTargets: model.sharedTargets,
+                isRunning: model.operationState(for: skill).isRunning,
+                onCancel: { model.importCandidate = nil },
+                onConfirm: { source in
+                    Task { await model.importSkill(skill, source: source) }
+                }
+            )
+        }
         .onChange(of: model.selectedProjectName) { _, name in
             savedProjectName = name ?? ""
             guard name != nil else { return }
@@ -107,6 +120,16 @@ struct ProjectsView: View {
                 VStack(alignment: .leading, spacing: Spacing.sectionGap) {
                     header
 
+                    if let summary = model.lastActionSummary {
+                        InlineFeedbackView(
+                            type: model.lastActionSucceeded ? .success : .error,
+                            message: summary,
+                            actionLabel: "Masquer",
+                            action: { model.dismissActionSummary() }
+                        )
+                        .padding(.horizontal, Spacing.standard)
+                    }
+
                     if let message = model.scanError {
                         InlineFeedbackView(
                             type: .error,
@@ -171,6 +194,22 @@ struct ProjectsView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(model.isScanning)
+
+                if model.canSyncProject() {
+                    Button {
+                        Task { await model.syncSelectedProject() }
+                    } label: {
+                        if model.isSyncing {
+                            HStack(spacing: Spacing.micro) {
+                                ProgressView().controlSize(.small)
+                                Text("Synchronisation…")
+                            }
+                        } else {
+                            Text("Synchroniser")
+                        }
+                    }
+                    .disabled(model.isMutating)
+                }
 
                 secondaryMenu
             }
@@ -313,7 +352,13 @@ struct ProjectsView: View {
     private var skillsTable: some View {
         VStack(spacing: 0) {
             ForEach(model.visibleSkills) { skill in
-                SkillRowView(skill: skill, sharedTargets: model.sharedTargets)
+                SkillRowView(
+                    skill: skill,
+                    sharedTargets: model.sharedTargets,
+                    operation: model.operationState(for: skill),
+                    canImport: model.canImport(skill),
+                    onImport: { model.importCandidate = skill }
+                )
                 if skill.id != model.visibleSkills.last?.id {
                     Divider().padding(.leading, Spacing.standard)
                 }
@@ -400,6 +445,9 @@ private struct ProjectListRow: View {
 private struct SkillRowView: View {
     let skill: SkillRow
     let sharedTargets: [String]
+    let operation: SkillOperationState
+    let canImport: Bool
+    let onImport: () -> Void
 
     var body: some View {
         HStack(alignment: .center, spacing: Spacing.grouped) {
@@ -430,11 +478,39 @@ private struct SkillRowView: View {
 
             PresenceBadge(label: "Claude", state: presence(for: "claude"))
             PresenceBadge(label: "Codex", state: presence(for: "codex"))
+
+            action
+                .frame(width: 96, alignment: .trailing)
         }
         .padding(.horizontal, Spacing.standard)
         .padding(.vertical, Spacing.grouped)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
+    }
+
+    /// Only the row running an operation shows progress (spec 22.3).
+    @ViewBuilder
+    private var action: some View {
+        switch operation {
+        case .running:
+            ProgressView().controlSize(.small)
+        case .succeeded:
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+                .help("Import terminé")
+        case .failed(let message):
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.red)
+                .help(message)
+        case .idle:
+            // The action is offered only when the backend declared it allowed
+            // (spec 11.2).
+            if canImport {
+                Button("Importer", action: onImport)
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+            }
+        }
     }
 
     private var scopeLabel: String {

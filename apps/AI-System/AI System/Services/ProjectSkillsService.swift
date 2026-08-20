@@ -114,6 +114,35 @@ struct ProjectSkillsService {
         }
     }
 
+    // MARK: Mutating routes
+
+    /// Imports an unmanaged skill. Each value stays a separate argv item.
+    func importSkill(
+        project: String,
+        skill: String,
+        source: ImportSource
+    ) async -> Result<ProjectActionResponse, ProjectSkillsServiceError> {
+        await load(
+            action: "project-import",
+            args: [project, skill, source.rawValue]
+        ) { data in
+            decoder.decode(ProjectActionResponse.self, from: data)
+        }
+    }
+
+    /// Synchronises a project's exports. `dryRun` asks the backend for a
+    /// preview and guarantees no write (spec 12.3).
+    func syncProject(
+        project: String,
+        dryRun: Bool = false
+    ) async -> Result<ProjectActionResponse, ProjectSkillsServiceError> {
+        var args = [project]
+        if dryRun { args.append("--dry-run") }
+        return await load(action: "project-sync", args: args) { data in
+            decoder.decode(ProjectActionResponse.self, from: data)
+        }
+    }
+
     /// Runs the official global check. Returns the raw result: the caller owns
     /// it, and no other view observes it (spec 20.5).
     func runFullCheck() async -> CommandResult {
