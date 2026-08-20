@@ -52,6 +52,3 @@ enum AppSection: String, CaseIterable, Identifiable, Codable {
         }
     }
 }
-
-// Note: SidebarSection is defined in BackendAction.swift for backward compatibility.
-// New code should use AppSection instead.

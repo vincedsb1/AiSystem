@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var center = CommandCenter()
     @State private var activityStore = ActivityStore()
     @State private var selection: AppSection = .overview
     @AppStorage("selectedAppSection") private var savedSelection: String = AppSection.overview.rawValue
@@ -29,7 +28,6 @@ struct ContentView: View {
             detailView
                 .navigationTitle(selection.navigationTitle)
         }
-        .environment(center)
         .environment(activityStore)
         .frame(minWidth: 900, minHeight: 620)
         .onAppear {

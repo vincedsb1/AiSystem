@@ -488,3 +488,33 @@ L'interface AppleScript gère proprement les annulations :
 - Aucune erreur `User cancelled. (-128)` n'apparaît
 - Fermer un dialogue annule l'action en cours
 - Le script n'affiche jamais de stack trace en cas d'annulation
+
+## Routes machine (interface SwiftUI)
+
+Toutes renvoient du JSON `schemaVersion: 1` sur stdout ; les diagnostics vont
+sur stderr. Chaque argument reste un élément argv séparé : aucune valeur
+utilisateur n'est interprétée par le shell.
+
+### Lecture seule
+
+```bash
+scripts/ai_system_action.sh project-list
+scripts/ai_system_action.sh project-scan <PROJET>
+scripts/ai_system_action.sh project-overview
+scripts/ai_system_action.sh project-inspect-folder <CHEMIN>
+```
+
+### Écriture
+
+```bash
+scripts/ai_system_action.sh project-add <PROJET> <CHEMIN> <codex|claude|both>
+scripts/ai_system_action.sh project-import <PROJET> <SKILL> <codex|claude>
+scripts/ai_system_action.sh project-sync <PROJET> [--dry-run]
+```
+
+Chaque réponse d'écriture porte `writeState` : `no_changes`, `applied`,
+`partial_changes` ou `rolled_back`. `--dry-run` sur `project-sync` est une
+prévisualisation réelle : elle compte les changements sans rien écrire.
+
+Les écritures sont atomiques et idempotentes. Un canonical existant au contenu
+différent produit un `canonical_conflict` : rien n'est écrasé silencieusement.

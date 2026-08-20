@@ -65,3 +65,25 @@ open ~/Applications/"AI System.app"  # (ancienne version)
 - ne pas modifier les exports à la main ;
 - ne pas masquer un drift par exception ;
 - ne pas exporter un skill project-specific dans un autre projet.
+
+## Interface macOS
+
+L'application `AI System` (SwiftUI, macOS) expose trois destinations :
+
+| Destination | Rôle |
+|---|---|
+| Vue d'ensemble | état global du système, actions requises, activité récente |
+| Projets | consultation des projets et skills, import, synchronisation, ajout |
+| Activité | résultats contextualisés, rapports et détails techniques |
+
+Les fonctions secondaires (documentation, rapports, outils, emplacements)
+vivent dans **Réglages** (`⌘,`). Raccourcis : `⌘N` nouveau projet,
+`⌘R` actualiser, `⌘F` rechercher.
+
+L'interface ne contient aucune logique métier : elle consomme les contrats
+JSON versionnés de `scripts/project_skills.py` (lecture) et
+`scripts/project_actions.py` (écriture). Voir `docs/UX-10-CLOSURE.md`.
+
+Construction : `make build-swift-app`.
+Le lanceur AppleScript reste disponible via `make build-gui-app`.
+
