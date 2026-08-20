@@ -29,7 +29,7 @@ workflows métier.
 | UX2-03 | d5f6528 | Projets, résumé, filtres et tableau |
 | UX2-04 | 3336af0 | Activité, résultat, ressources et technique |
 | UX2-05 | 551ddcc | Accessibilité et localisation |
-| UX2-06 | à créer après ce rapport | Validation finale et clôture |
+| UX2-06 | e5a9365 | Validation finale et clôture |
 
 ## Validation automatisée
 
