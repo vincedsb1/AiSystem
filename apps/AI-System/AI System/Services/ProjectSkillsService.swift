@@ -143,6 +143,32 @@ struct ProjectSkillsService {
         }
     }
 
+    /// Describes a candidate folder so the add-project form can prefill.
+    func inspectFolder(
+        path: String
+    ) async -> Result<FolderInspection, ProjectSkillsServiceError> {
+        await load(action: "project-inspect-folder", args: [path]) { data in
+            decoder.decode(FolderInspection.self, from: data)
+        }
+    }
+
+    /// Declares a new project. Validation stays backend-side (spec 13.3).
+    func addProject(
+        name: String,
+        path: String,
+        targets: Set<String>
+    ) async -> Result<ProjectActionResponse, ProjectSkillsServiceError> {
+        let value: String
+        if targets.contains("codex") && targets.contains("claude") {
+            value = "both"
+        } else {
+            value = targets.contains("claude") ? "claude" : "codex"
+        }
+        return await load(action: "project-add", args: [name, path, value]) { data in
+            decoder.decode(ProjectActionResponse.self, from: data)
+        }
+    }
+
     /// Runs the official global check. Returns the raw result: the caller owns
     /// it, and no other view observes it (spec 20.5).
     func runFullCheck() async -> CommandResult {

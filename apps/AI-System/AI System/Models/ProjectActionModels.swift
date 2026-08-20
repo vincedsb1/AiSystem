@@ -24,6 +24,7 @@ struct ProjectActionResponse: Codable, Equatable, VersionedBackendPayload {
 
 enum ActionOutcome: String, Codable, Equatable {
     case imported
+    case added
     case alreadyManaged = "already_managed"
     case synced
     case planned
@@ -33,7 +34,7 @@ enum ActionOutcome: String, Codable, Equatable {
     /// Whether the outcome should read as a success to the user.
     var isSuccess: Bool {
         switch self {
-        case .imported, .alreadyManaged, .synced, .planned:
+        case .imported, .added, .alreadyManaged, .synced, .planned:
             return true
         case .partial, .failed:
             return false

@@ -590,6 +590,224 @@ def sync_project(
 
 
 # --------------------------------------------------------------------------
+# Add project
+# --------------------------------------------------------------------------
+
+DEFAULT_CODEX_PATH = ".agents/skills"
+DEFAULT_CLAUDE_PATH = ".claude/commands"
+
+# The existing CLI defaults INSTALL_NOW to false. That default is preserved
+# rather than changed during the redesign (spec 13.3).
+DEFAULT_INSTALL_NOW = False
+
+
+def inspect_folder(registry: dict[str, Any], raw_path: str) -> dict[str, Any]:
+    """Describe a candidate folder so the interface can prefill its form.
+
+    Read-only: this never touches the registry.
+    """
+    validate_registry_shape(registry)
+
+    candidate = Path(raw_path).expanduser()
+    if not candidate.is_absolute():
+        raise ProjectActionError(
+            "invalid_path",
+            "Le chemin du projet doit être absolu.",
+            {"path": raw_path},
+        )
+
+    resolved = candidate.resolve(strict=False)
+    if not resolved.is_dir():
+        raise ProjectActionError(
+            "folder_unreadable",
+            f"Dossier introuvable ou inaccessible : {resolved}",
+            {"path": str(resolved)},
+        )
+    if not os.access(resolved, os.R_OK):
+        raise ProjectActionError(
+            "folder_unreadable",
+            f"Dossier illisible : {resolved}",
+            {"path": str(resolved)},
+        )
+
+    suggested_name = resolved.name
+    detected = []
+    if (resolved / DEFAULT_CODEX_PATH).is_dir():
+        detected.append("codex")
+    if (resolved / DEFAULT_CLAUDE_PATH).is_dir():
+        detected.append("claude")
+
+    existing = None
+    for project in registry.get("projects", []):
+        same_name = str(project.get("name", "")).casefold() == suggested_name.casefold()
+        same_root = project.get("root") and Path(
+            str(project["root"])
+        ).expanduser().resolve(strict=False) == resolved
+        if same_name or same_root:
+            existing = {
+                "name": project.get("name"),
+                "enabled": bool(project.get("enabled")),
+                "reason": "same_root" if same_root else "same_name",
+            }
+            break
+
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "status": "ok",
+        "generatedAt": generated_at(),
+        "action": "inspect-folder",
+        "path": str(resolved),
+        "suggestedName": suggested_name,
+        "detectedTargets": detected,
+        # Codex-only is the backend default when nothing is detected.
+        "proposedTargets": detected or ["codex"],
+        "alreadyRegistered": existing,
+        "defaultInstallNow": DEFAULT_INSTALL_NOW,
+        "error": None,
+    }
+
+
+def validate_new_project_name(registry: dict[str, Any], name: str) -> None:
+    if not isinstance(name, str) or not name.strip():
+        raise ProjectActionError(
+            "invalid_name",
+            "Le nom du projet ne peut pas être vide.",
+            {"project": name},
+        )
+    if name != name.strip():
+        raise ProjectActionError(
+            "invalid_name",
+            "Le nom du projet ne doit pas commencer ou finir par une espace.",
+            {"project": name},
+        )
+    if "/" in name or "\\" in name:
+        raise ProjectActionError(
+            "invalid_name",
+            "Le nom du projet ne peut pas contenir de séparateur de chemin.",
+            {"project": name},
+        )
+
+    try:
+        normalize_project_slug(name)
+    except ProjectSkillsError as exc:
+        raise ProjectActionError(
+            "invalid_name",
+            f"Ce nom ne produit pas d'identifiant utilisable : {name}",
+            {"project": name},
+        ) from exc
+
+    for project in registry.get("projects", []):
+        if str(project.get("name", "")).casefold() == name.casefold():
+            raise ProjectActionError(
+                "project_exists",
+                f"Un projet porte déjà ce nom : {project.get('name')}",
+                {"project": name},
+                suggested_action="choose_another_name",
+            )
+
+
+def add_project(
+    registry: dict[str, Any],
+    registry_path: Path,
+    name: str,
+    raw_path: str,
+    targets: list[str],
+) -> dict[str, Any]:
+    """Declare a new project in the registry.
+
+    Validation is authoritative here: the interface never writes the registry.
+    """
+    validate_registry_shape(registry)
+
+    inspection = inspect_folder(registry, raw_path)
+    root = Path(inspection["path"])
+
+    if inspection["alreadyRegistered"]:
+        raise ProjectActionError(
+            "project_exists",
+            "Ce dossier est déjà déclaré comme projet.",
+            {"path": str(root), "existing": inspection["alreadyRegistered"]},
+            suggested_action="open_existing_project",
+        )
+
+    validate_new_project_name(registry, name)
+
+    normalized = sorted({str(target).strip().lower() for target in targets})
+    if not normalized or any(target not in {"codex", "claude"} for target in normalized):
+        raise ProjectActionError(
+            "invalid_targets",
+            "Les cibles doivent être codex, claude ou les deux.",
+            {"targets": targets},
+        )
+
+    entry = {
+        "name": name,
+        "root": str(root),
+        "enabled": True,
+        "install_shared_targets": normalized,
+        "install_shared_skills": default_shared_skills(registry),
+        "paths": {
+            "codex_skills": DEFAULT_CODEX_PATH,
+            "claude_commands": DEFAULT_CLAUDE_PATH,
+        },
+    }
+
+    updated = {**registry, "projects": list(registry.get("projects", [])) + [entry]}
+
+    # Refuse to persist a registry the reader would reject.
+    validate_registry_shape(updated)
+
+    try:
+        atomic_write_text(
+            registry_path,
+            yaml.safe_dump(updated, sort_keys=False, allow_unicode=True, width=100),
+        )
+    except OSError as exc:
+        raise ProjectActionError(
+            "registry_write_failed",
+            "Le registry n'a pas pu être écrit ; le projet n'a pas été ajouté.",
+            {"path": str(registry_path), "reason": str(exc)},
+            write_state=WRITE_NO_CHANGES,
+            retryable=True,
+        ) from exc
+
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "status": "ok",
+        "generatedAt": generated_at(),
+        "action": "add-project",
+        "project": name,
+        "skill": None,
+        "outcome": "added",
+        "writeState": WRITE_APPLIED,
+        "summary": f"Le projet {name} a été ajouté.",
+        "changes": {
+            "created": 1,
+            "updated": 0,
+            "unchanged": 0,
+            "root": str(root),
+            "targets": normalized,
+            "sharedSkills": len(entry["install_shared_skills"]),
+        },
+        "error": None,
+    }
+
+
+def default_shared_skills(registry: dict[str, Any]) -> list[str]:
+    """Shared skills a new project receives, taken from what the system
+    already installs everywhere rather than a hardcoded list."""
+    counts: dict[str, int] = {}
+    projects = [p for p in registry.get("projects", []) if p.get("enabled")]
+    for project in projects:
+        for artifact_id in project.get("install_shared_skills", []):
+            counts[str(artifact_id)] = counts.get(str(artifact_id), 0) + 1
+    if not projects:
+        return []
+    threshold = max(1, len(projects) // 2)
+    return sorted(key for key, count in counts.items() if count >= threshold)
+
+
+# --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
 
@@ -607,6 +825,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     import_parser.add_argument("--skill", required=True)
     import_parser.add_argument("--source", required=True, choices=sorted(IMPORTABLE_SOURCES))
     import_parser.add_argument("--json", action="store_true")
+
+    inspect_parser = subparsers.add_parser("inspect-folder")
+    inspect_parser.add_argument("--path", required=True)
+    inspect_parser.add_argument("--json", action="store_true")
+
+    add_parser = subparsers.add_parser("add-project")
+    add_parser.add_argument("--project", required=True)
+    add_parser.add_argument("--path", required=True)
+    add_parser.add_argument(
+        "--targets", required=True, choices=["codex", "claude", "both"]
+    )
+    add_parser.add_argument("--json", action="store_true")
 
     sync_parser = subparsers.add_parser("sync")
     sync_parser.add_argument("--project", required=True)
@@ -626,6 +856,18 @@ def execute(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     try:
         registry_path = resolve_path(args.registry)
         registry = read_yaml_document(registry_path, error_code="invalid_registry")
+
+        if args.command == "inspect-folder":
+            return inspect_folder(registry, args.path), 0
+
+        if args.command == "add-project":
+            targets = (
+                ["codex", "claude"] if args.targets == "both" else [args.targets]
+            )
+            return add_project(
+                registry, registry_path, args.project, args.path, targets
+            ), 0
+
         manifest_path = load_manifest_path(registry, args.manifest)
         manifest = read_yaml_document(manifest_path, error_code="invalid_manifest")
 

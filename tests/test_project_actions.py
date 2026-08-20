@@ -352,3 +352,158 @@ class ActionCliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AddProjectTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.fixture = ActionFixture()
+        self.candidate = Path(self.fixture.base) / "NewProject"
+        (self.candidate / ".agents" / "skills").mkdir(parents=True)
+
+    def tearDown(self) -> None:
+        self.fixture.close()
+
+    def inspect(self, path: str) -> dict:
+        from scripts.project_actions import inspect_folder
+
+        return inspect_folder(self.fixture.registry, path)
+
+    def add(self, name: str, path: str, targets: list[str]) -> dict:
+        from scripts.project_actions import add_project
+
+        self.fixture.write_configs()
+        registry = yaml.safe_load(
+            self.fixture.registry_path.read_text(encoding="utf-8")
+        )
+        payload = add_project(
+            registry, self.fixture.registry_path, name, path, targets
+        )
+        self.fixture.registry = yaml.safe_load(
+            self.fixture.registry_path.read_text(encoding="utf-8")
+        )
+        return payload
+
+    def test_inspect_suggests_name_and_detects_targets(self):
+        payload = self.inspect(str(self.candidate))
+
+        self.assertEqual(payload["suggestedName"], "NewProject")
+        self.assertEqual(payload["detectedTargets"], ["codex"])
+        self.assertEqual(payload["proposedTargets"], ["codex"])
+        self.assertIsNone(payload["alreadyRegistered"])
+
+    def test_inspect_preserves_the_existing_install_now_default(self):
+        payload = self.inspect(str(self.candidate))
+
+        self.assertFalse(payload["defaultInstallNow"])
+
+    def test_inspect_detects_both_runtimes(self):
+        (self.candidate / ".claude" / "commands").mkdir(parents=True)
+
+        payload = self.inspect(str(self.candidate))
+
+        self.assertEqual(sorted(payload["detectedTargets"]), ["claude", "codex"])
+
+    def test_inspect_falls_back_to_codex_when_nothing_is_detected(self):
+        bare = Path(self.fixture.base) / "Bare"
+        bare.mkdir()
+
+        payload = self.inspect(str(bare))
+
+        self.assertEqual(payload["detectedTargets"], [])
+        self.assertEqual(payload["proposedTargets"], ["codex"])
+
+    def test_inspect_reports_an_already_registered_root(self):
+        payload = self.inspect(str(self.fixture.project_root))
+
+        self.assertIsNotNone(payload["alreadyRegistered"])
+        self.assertEqual(payload["alreadyRegistered"]["reason"], "same_root")
+
+    def test_inspect_rejects_a_relative_path(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.inspect("relative/path")
+
+        self.assertEqual(raised.exception.code, "invalid_path")
+
+    def test_inspect_rejects_a_missing_folder(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.inspect(str(Path(self.fixture.base) / "ghost"))
+
+        self.assertEqual(raised.exception.code, "folder_unreadable")
+
+    def test_add_writes_the_project_to_the_registry(self):
+        payload = self.add("NewProject", str(self.candidate), ["codex"])
+
+        self.assertEqual(payload["outcome"], "added")
+        self.assertEqual(payload["writeState"], "applied")
+
+        names = [project["name"] for project in self.fixture.registry["projects"]]
+        self.assertIn("NewProject", names)
+
+        entry = next(
+            project
+            for project in self.fixture.registry["projects"]
+            if project["name"] == "NewProject"
+        )
+        self.assertTrue(entry["enabled"])
+        self.assertEqual(entry["install_shared_targets"], ["codex"])
+        self.assertEqual(entry["paths"]["codex_skills"], ".agents/skills")
+
+    def test_add_accepts_a_path_with_spaces(self):
+        spaced = Path(self.fixture.base) / "My Project"
+        (spaced / ".agents" / "skills").mkdir(parents=True)
+
+        payload = self.add("My Project", str(spaced), ["codex"])
+
+        self.assertEqual(payload["outcome"], "added")
+        # The backend resolves the path, so /var becomes /private/var on macOS.
+        self.assertEqual(
+            Path(payload["changes"]["root"]), spaced.resolve(strict=False)
+        )
+
+    def test_add_rejects_a_duplicate_name(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.add("Suggst", str(self.candidate), ["codex"])
+
+        self.assertEqual(raised.exception.code, "project_exists")
+        self.assertEqual(raised.exception.write_state, "no_changes")
+
+    def test_add_rejects_a_duplicate_root(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.add("Another", str(self.fixture.project_root), ["codex"])
+
+        self.assertEqual(raised.exception.code, "project_exists")
+
+    def test_add_rejects_an_empty_name(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.add("   ", str(self.candidate), ["codex"])
+
+        self.assertEqual(raised.exception.code, "invalid_name")
+
+    def test_add_rejects_a_name_with_a_path_separator(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.add("a/b", str(self.candidate), ["codex"])
+
+        self.assertEqual(raised.exception.code, "invalid_name")
+
+    def test_add_rejects_invalid_targets(self):
+        with self.assertRaises(ProjectActionError) as raised:
+            self.add("NewProject", str(self.candidate), ["bogus"])
+
+        self.assertEqual(raised.exception.code, "invalid_targets")
+
+    def test_failed_add_leaves_the_registry_untouched(self):
+        self.fixture.write_configs()
+        before = self.fixture.registry_path.read_bytes()
+
+        with self.assertRaises(ProjectActionError):
+            self.add("Suggst", str(self.candidate), ["codex"])
+
+        self.assertEqual(self.fixture.registry_path.read_bytes(), before)
+
+    def test_added_project_is_immediately_scannable(self):
+        self.add("NewProject", str(self.candidate), ["codex"])
+
+        from scripts.project_skills import list_projects
+
+        names = [project["name"] for project in list_projects(self.fixture.registry)]
+        self.assertIn("NewProject", names)

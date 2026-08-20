@@ -10,6 +10,8 @@ struct ProjectsView: View {
     /// Project handed over by the Overview (FR-NAV-02).
     @Binding var pendingSelection: String?
 
+    @State private var isAddingProject = false
+
     var body: some View {
         HSplitView {
             projectList
@@ -31,6 +33,19 @@ struct ProjectsView: View {
             model.select(projectNamed: name, focusActions: true)
             pendingSelection = nil
             Task { await model.scanSelectedProject() }
+        }
+        .sheet(isPresented: $isAddingProject) {
+            AddProjectSheet(
+                onCancel: { isAddingProject = false },
+                onAdded: { name in
+                    isAddingProject = false
+                    Task {
+                        await model.loadProjects()
+                        model.select(projectNamed: name, focusActions: false)
+                        await model.scanSelectedProject()
+                    }
+                }
+            )
         }
         .sheet(item: $model.importCandidate) { skill in
             ImportSkillSheet(
@@ -67,6 +82,16 @@ struct ProjectsView: View {
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
+                isAddingProject = true
+            } label: {
+                Label("Ajouter un projet", systemImage: "plus")
+            }
+            .help("Ajouter un projet (⌘N)")
+            .keyboardShortcut("n", modifiers: .command)
+        }
+
+        ToolbarItem(placement: .primaryAction) {
+            Button {
                 Task { await model.refreshAll() }
             } label: {
                 Label("Actualiser", systemImage: "arrow.clockwise")
@@ -92,7 +117,9 @@ struct ProjectsView: View {
                 EmptyStateView(
                     symbolName: "folder.badge.questionmark",
                     title: "Aucun projet actif",
-                    description: "Ajoutez un projet pour commencer à gérer ses skills."
+                    description: "Ajoutez un projet pour commencer à gérer ses skills.",
+                    actionLabel: "Ajouter un projet",
+                    action: { isAddingProject = true }
                 )
             } else {
                 List(model.sortedProjects, selection: $model.selectedProjectName) { project in

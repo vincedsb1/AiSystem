@@ -247,6 +247,8 @@ Project Management:
   project-list       List active registered projects as JSON
   project-scan       Scan one registered project as JSON (read-only)
   project-overview   Aggregate every enabled project into one system snapshot (read-only)
+  project-inspect-folder  Describe a candidate project folder as JSON (read-only)
+  project-add        Declare a new project (requires PROJECT PATH TARGETS)
   project-import     Import an unmanaged skill (requires PROJECT SKILL SOURCE)
   project-sync       Sync a project's exports (requires PROJECT, optional --dry-run)
 
@@ -437,6 +439,26 @@ action_project_sync() {
   fi
 }
 
+action_project_inspect_folder() {
+  if [[ $# -ne 1 || -z "$1" ]]; then
+    echo "Error: project-inspect-folder requires exactly one PATH argument" >&2
+    exit 1
+  fi
+  run_project_action "inspect-folder" "--path" "$1"
+}
+
+action_project_add() {
+  if [[ $# -ne 3 || -z "$1" || -z "$2" || -z "$3" ]]; then
+    echo "Error: project-add requires PROJECT PATH TARGETS arguments" >&2
+    exit 1
+  fi
+  if [[ ! "$3" =~ ^(codex|claude|both)$ ]]; then
+    echo "Error: TARGETS must be one of: codex, claude, both" >&2
+    exit 1
+  fi
+  run_project_action "add-project" "--project" "$1" "--path" "$2" "--targets" "$3"
+}
+
 action_project_overview() {
   if [[ $# -ne 0 ]]; then
     echo "Error: project-overview does not accept arguments" >&2
@@ -546,6 +568,12 @@ case "$action" in
     ;;
   project-overview)
     action_project_overview "$@"
+    ;;
+  project-inspect-folder)
+    action_project_inspect_folder "$@"
+    ;;
+  project-add)
+    action_project_add "$@"
     ;;
   project-import)
     action_project_import "$@"
