@@ -38,6 +38,7 @@ struct OverviewView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity)
         }
         .functionalAnimation(model.displayState, reduceMotion: reduceMotion)
         .toolbar { toolbarContent }

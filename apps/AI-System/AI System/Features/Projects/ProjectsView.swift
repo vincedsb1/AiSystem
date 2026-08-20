@@ -17,7 +17,7 @@ struct ProjectsView: View {
     var body: some View {
         HSplitView {
             projectList
-                .frame(minWidth: 220, idealWidth: 270, maxWidth: 320)
+                .frame(minWidth: 200, idealWidth: 260, maxWidth: 280)
 
             detail
                 .frame(minWidth: 420, maxWidth: .infinity)
@@ -173,6 +173,7 @@ struct ProjectsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -446,6 +447,17 @@ struct ProjectsView: View {
     }
 
     private var skillsTable: some View {
+        ViewThatFits(in: .horizontal) {
+            skillsTableSurface
+
+            ScrollView(.horizontal, showsIndicators: true) {
+                skillsTableSurface
+                    .frame(minWidth: 520, alignment: .leading)
+            }
+        }
+    }
+
+    private var skillsTableSurface: some View {
         SemanticSurface {
             VStack(spacing: 0) {
                 SkillTableHeader()
@@ -545,30 +557,36 @@ private struct ProjectListRow: View {
 
 // MARK: - Skills table
 
+private enum SkillTableLayout {
+    static var columns: [GridItem] {
+        [
+            GridItem(.flexible(minimum: 80), alignment: .leading),
+            GridItem(.fixed(60), alignment: .leading),
+            GridItem(.fixed(40), alignment: .center),
+            GridItem(.fixed(40), alignment: .center),
+            GridItem(.fixed(64), alignment: .trailing)
+        ]
+    }
+}
+
 private struct SkillTableHeader: View {
     var body: some View {
-        HStack(spacing: Spacing.sm) {
-            Color.clear
-                .frame(width: 18, height: 1)
-
+        LazyVGrid(
+            columns: SkillTableLayout.columns,
+            alignment: .leading,
+            spacing: 0
+        ) {
             Text("Skill")
-                .frame(minWidth: 160, alignment: .leading)
-
-            Spacer(minLength: Spacing.xs)
-
             Text("Type")
-                .frame(width: 84, alignment: .leading)
-            Text("Claude")
-                .frame(width: 56)
-            Text("Codex")
-                .frame(width: 56)
-            Text("État")
-                .frame(width: 96, alignment: .trailing)
+            Text("Claude").frame(maxWidth: .infinity)
+            Text("Codex").frame(maxWidth: .infinity)
+            Text("État").frame(maxWidth: .infinity, alignment: .trailing)
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
         .padding(.horizontal, Spacing.md)
         .padding(.vertical, Spacing.sm)
+        .frame(maxWidth: .infinity)
         .accessibilityHidden(true)
     }
 }
@@ -581,39 +599,43 @@ private struct SkillRowView: View {
     let onImport: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: Spacing.sm) {
-            Image(systemName: statusSymbol)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(statusTint)
-                .frame(width: 18)
-                .accessibilityHidden(true)
+        LazyVGrid(
+            columns: SkillTableLayout.columns,
+            alignment: .leading,
+            spacing: 0
+        ) {
+            HStack(alignment: .center, spacing: Spacing.sm) {
+                Image(systemName: statusSymbol)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(statusTint)
+                    .frame(width: 18)
+                    .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: Spacing.xxs) {
-                Text(skill.name)
-                    .font(.body)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    Text(skill.name)
+                        .font(.body)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
 
-                Text(skill.status.displayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    Text(skill.status.displayName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(minWidth: 160, alignment: .leading)
-
-            Spacer(minLength: Spacing.xs)
 
             Text(scopeLabel)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .frame(width: 84, alignment: .leading)
 
             PresenceBadge(label: "Claude", state: presence(for: "claude"))
             PresenceBadge(label: "Codex", state: presence(for: "codex"))
 
             action
-                .frame(width: 96, alignment: .trailing)
+                .frame(width: 64, alignment: .trailing)
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, Spacing.md)
         .padding(.vertical, Spacing.sm)
         .accessibilityElement(children: .combine)
@@ -736,7 +758,7 @@ private struct PresenceBadge: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .frame(width: 56)
+        .frame(width: 40)
         .help("\(label) : \(state.accessibilityLabel)")
     }
 }

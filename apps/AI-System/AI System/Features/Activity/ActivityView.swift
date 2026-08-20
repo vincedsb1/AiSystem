@@ -220,6 +220,7 @@ struct ActivityDetailView: View {
                     technicalSection
                 }
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
