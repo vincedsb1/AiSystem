@@ -1,23 +1,23 @@
 # AI Inventory Report
 
-Generated: 2026-06-17T11:04:04
+Generated: 2026-08-20T19:38:19
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| codex_skills | 139 |
-| claude_commands | 134 |
+| codex_skills | 146 |
+| claude_commands | 142 |
 | claude_rules | 8 |
 | claude_strategy_profiles | 6 |
-| claude_hooks | 6 |
-| codex_hooks | 3 |
-| root_docs | 17 |
-| manifest_covered_artifacts | 243 |
-| manifest_declared_exports | 174 |
+| claude_hooks | 7 |
+| codex_hooks | 6 |
+| root_docs | 18 |
+| manifest_covered_artifacts | 258 |
+| manifest_declared_exports | 201 |
 | manifest_missing_exports | 0 |
 | action_required | 0 |
-| accepted_findings | 214 |
+| accepted_findings | 226 |
 | expected_exceptions | 30 |
 | doctor_danger | 0 |
 | doctor_review | 0 |
@@ -29,28 +29,28 @@ Generated: 2026-06-17T11:04:04
 | Project | Codex skills | Claude commands | Claude rules | Claude hooks | Codex hooks | Root docs | Action required | Accepted findings | Expected exceptions |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | aimoto | 22 | 22 | 4 | 3 | 3 | 4 | 0 | 39 | 0 |
-| InterviewOS | 13 | 12 | 4 | 3 | 0 | 2 | 0 | 17 | 0 |
+| InterviewOS | 13 | 12 | 4 | 3 | 3 | 2 | 0 | 17 | 0 |
 | intrai | 13 | 13 | 0 | 0 | 0 | 1 | 0 | 16 | 0 |
 | linkedin-ia-comments | 13 | 0 | 0 | 0 | 0 | 1 | 0 | 8 | 0 |
 | Pylaa | 13 | 18 | 0 | 0 | 0 | 3 | 0 | 28 | 6 |
 | Pylot | 13 | 18 | 0 | 0 | 0 | 2 | 0 | 25 | 6 |
 | Skriipt | 13 | 15 | 0 | 0 | 0 | 1 | 0 | 23 | 6 |
 | Spotter | 13 | 0 | 0 | 0 | 0 | 0 | 0 | 8 | 0 |
-| suggst | 13 | 18 | 0 | 0 | 0 | 2 | 0 | 25 | 6 |
 | truthify | 13 | 18 | 0 | 0 | 0 | 1 | 0 | 25 | 6 |
+| Suggst | 20 | 26 | 0 | 1 | 0 | 3 | 0 | 37 | 6 |
 
 ## Pair status summary
 
 | Pair status | Count | Meaning |
 |---|---:|---|
 | expected_claude_only | 30 | Project-specific Claude command intentionally has no Codex skill. |
-| ok_same_canonical | 139 | Claude and Codex are linked to the same canonical manifest entry. |
+| ok_same_canonical | 146 | Claude and Codex are linked to the same canonical manifest entry. |
 
 ## Claude ↔ Codex pairs
 
 | Project | Name | Claude project | Claude | Codex project | Codex | Canonical ID | Version | Same raw hash | Issue |
 |---|---|---|---|---|---|---|---|---|---|
-| InterviewOS | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | InterviewOS | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| InterviewOS | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | InterviewOS | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | commit | InterviewOS | .claude/commands/commit.md | InterviewOS | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | create-doc | InterviewOS | .claude/commands/create-doc.md | InterviewOS | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | implement | InterviewOS | .claude/commands/implement.md | InterviewOS | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
@@ -63,7 +63,7 @@ Generated: 2026-06-17T11:04:04
 | InterviewOS | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | InterviewOS | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | test | InterviewOS | .claude/commands/test.md | InterviewOS | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | InterviewOS | ui-review | InterviewOS | .claude/commands/ui-review.md | InterviewOS | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| Pylaa | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Pylaa | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Pylaa | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | Pylaa | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | Pylaa | commit | Pylaa | .claude/commands/commit.md | Pylaa | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | Pylaa | create-doc | Pylaa | .claude/commands/create-doc.md | Pylaa | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | Pylaa | data-slot-add | Pylaa | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
@@ -82,7 +82,7 @@ Generated: 2026-06-17T11:04:04
 | Pylaa | ui-fix-global | Pylaa | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
 | Pylaa | ui-review | Pylaa | .claude/commands/ui-review.md | Pylaa | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | Pylaa | ui-review-global | Pylaa | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
-| Pylot | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Pylot | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Pylot | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | Pylot | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | Pylot | commit | Pylot | .claude/commands/commit.md | Pylot | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | Pylot | create-doc | Pylot | .claude/commands/create-doc.md | Pylot | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | Pylot | data-slot-add | Pylot | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
@@ -101,7 +101,7 @@ Generated: 2026-06-17T11:04:04
 | Pylot | ui-fix-global | Pylot | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
 | Pylot | ui-review | Pylot | .claude/commands/ui-review.md | Pylot | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | Pylot | ui-review-global | Pylot | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
-| Skriipt | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Skriipt | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Skriipt | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | Skriipt | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | Skriipt | commit | Skriipt | .claude/commands/commit.md | Skriipt | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | Skriipt | create-doc | InterviewOS | .claude/commands/create-doc.md | Skriipt | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | Skriipt | data-slot-add | Skriipt | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
@@ -120,7 +120,7 @@ Generated: 2026-06-17T11:04:04
 | Skriipt | ui-fix-global | Skriipt | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
 | Skriipt | ui-review | Skriipt | .claude/commands/ui-review.md | Skriipt | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
 | Skriipt | ui-review-global | Skriipt | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
-| Spotter | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | Spotter | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Spotter | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | Spotter | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | Spotter | commit | InterviewOS | .claude/commands/commit.md | Spotter | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | Spotter | create-doc | InterviewOS | .claude/commands/create-doc.md | Spotter | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | Spotter | implement | InterviewOS | .claude/commands/implement.md | Spotter | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
@@ -133,6 +133,32 @@ Generated: 2026-06-17T11:04:04
 | Spotter | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | Spotter | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | Spotter | test | InterviewOS | .claude/commands/test.md | Spotter | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | Spotter | ui-review | InterviewOS | .claude/commands/ui-review.md | Spotter | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| Suggst | 01-spec | Suggst | .claude/commands/01-spec.md | Suggst | .agents/skills/01-spec/SKILL.md | suggst.01-spec | 1.0.0 | true | ok_same_canonical |
+| Suggst | 02-check | Suggst | .claude/commands/02-check.md | Suggst | .agents/skills/02-check/SKILL.md | suggst.02-check | 1.0.0 | true | ok_same_canonical |
+| Suggst | 03-split | Suggst | .claude/commands/03-split.md | Suggst | .agents/skills/03-split/SKILL.md | suggst.03-split | 1.0.0 | true | ok_same_canonical |
+| Suggst | 04-build | Suggst | .claude/commands/04-build.md | Suggst | .agents/skills/04-build/SKILL.md | suggst.04-build | 1.0.0 | true | ok_same_canonical |
+| Suggst | 05-finish | Suggst | .claude/commands/05-finish.md | Suggst | .agents/skills/05-finish/SKILL.md | suggst.05-finish | 1.0.0 | true | ok_same_canonical |
+| Suggst | 06-pivot | Suggst | .claude/commands/06-pivot.md | Suggst | .agents/skills/06-pivot/SKILL.md | suggst.06-pivot | 1.0.0 | true | ok_same_canonical |
+| Suggst | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | Suggst | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| Suggst | commit | Suggst | .claude/commands/commit.md | Suggst | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
+| Suggst | create-doc | Suggst | .claude/commands/create-doc.md | Suggst | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
+| Suggst | data-slot-add | Suggst | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
+| Suggst | design-audit-context | Suggst | .claude/commands/design-audit-context.md |  |  |  |  |  | expected_claude_only |
+| Suggst | implement | Suggst | .claude/commands/implement.md | Suggst | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
+| Suggst | landing-review | Suggst | .claude/commands/landing-review.md |  |  |  |  |  | expected_claude_only |
+| Suggst | next-step | Suggst | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
+| Suggst | optimize-claude-md | Suggst | .claude/commands/optimize-claude-md.md | Suggst | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
+| Suggst | spec-0-feedback | Suggst | .claude/commands/spec-0-feedback.md | Suggst | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
+| Suggst | spec-1-intake | Suggst | .claude/commands/spec-1-intake.md | Suggst | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
+| Suggst | spec-2-draft | Suggst | .claude/commands/spec-2-draft.md | Suggst | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
+| Suggst | spec-3-audit | Suggst | .claude/commands/spec-3-audit.md | Suggst | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
+| Suggst | spec-4-challenge | Suggst | .claude/commands/spec-4-challenge.md | Suggst | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
+| Suggst | spec-5-revise | Suggst | .claude/commands/spec-5-revise.md | Suggst | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
+| Suggst | suggst-task | Suggst | .claude/commands/suggst-task.md | Suggst | .agents/skills/suggst-task/SKILL.md | suggst.suggst-task | 1.0.0 | true | ok_same_canonical |
+| Suggst | test | Suggst | .claude/commands/test.md | Suggst | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
+| Suggst | ui-fix-global | Suggst | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
+| Suggst | ui-review | Suggst | .claude/commands/ui-review.md | Suggst | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
+| Suggst | ui-review-global | Suggst | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
 | aimoto | add-indicator | aimoto | .claude/commands/add-indicator.md | aimoto | .agents/skills/add-indicator/SKILL.md | aimoto.add-indicator | 1.0.0 | true | ok_same_canonical |
 | aimoto | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | aimoto | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | aimoto | analyse-signal | aimoto | .claude/commands/analyse-signal.md | aimoto | .agents/skills/analyse-signal/SKILL.md | aimoto.analyse-signal | 1.0.0 | true | ok_same_canonical |
@@ -168,7 +194,7 @@ Generated: 2026-06-17T11:04:04
 | intrai | spec-5-revise | intrai | .claude/commands/spec-5-revise.md | intrai | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | intrai | test | intrai | .claude/commands/test.md | intrai | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | intrai | ui-review | intrai | .claude/commands/ui-review.md | intrai | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| linkedin-ia-comments | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | linkedin-ia-comments | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| linkedin-ia-comments | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | linkedin-ia-comments | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | commit | InterviewOS | .claude/commands/commit.md | linkedin-ia-comments | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | create-doc | InterviewOS | .claude/commands/create-doc.md | linkedin-ia-comments | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | implement | InterviewOS | .claude/commands/implement.md | linkedin-ia-comments | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
@@ -181,26 +207,7 @@ Generated: 2026-06-17T11:04:04
 | linkedin-ia-comments | spec-5-revise | InterviewOS | .claude/commands/spec-5-revise.md | linkedin-ia-comments | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | test | InterviewOS | .claude/commands/test.md | linkedin-ia-comments | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
 | linkedin-ia-comments | ui-review | InterviewOS | .claude/commands/ui-review.md | linkedin-ia-comments | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| suggst | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | suggst | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
-| suggst | commit | suggst | .claude/commands/commit.md | suggst | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
-| suggst | create-doc | suggst | .claude/commands/create-doc.md | suggst | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
-| suggst | data-slot-add | suggst | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
-| suggst | design-audit-context | suggst | .claude/commands/design-audit-context.md |  |  |  |  |  | expected_claude_only |
-| suggst | implement | suggst | .claude/commands/implement.md | suggst | .agents/skills/implement/SKILL.md | shared.implement | 1.0.0 | true | ok_same_canonical |
-| suggst | landing-review | suggst | .claude/commands/landing-review.md |  |  |  |  |  | expected_claude_only |
-| suggst | next-step | suggst | .claude/commands/next-step.md |  |  |  |  |  | expected_claude_only |
-| suggst | optimize-claude-md | suggst | .claude/commands/optimize-claude-md.md | suggst | .agents/skills/optimize-claude-md/SKILL.md | shared.optimize-claude-md | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-0-feedback | suggst | .claude/commands/spec-0-feedback.md | suggst | .agents/skills/spec-0-feedback/SKILL.md | shared.spec-0-feedback | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-1-intake | suggst | .claude/commands/spec-1-intake.md | suggst | .agents/skills/spec-1-intake/SKILL.md | shared.spec-1-intake | 1.2.0 | true | ok_same_canonical |
-| suggst | spec-2-draft | suggst | .claude/commands/spec-2-draft.md | suggst | .agents/skills/spec-2-draft/SKILL.md | shared.spec-2-draft | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-3-audit | suggst | .claude/commands/spec-3-audit.md | suggst | .agents/skills/spec-3-audit/SKILL.md | shared.spec-3-audit | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-4-challenge | suggst | .claude/commands/spec-4-challenge.md | suggst | .agents/skills/spec-4-challenge/SKILL.md | shared.spec-4-challenge | 1.0.0 | true | ok_same_canonical |
-| suggst | spec-5-revise | suggst | .claude/commands/spec-5-revise.md | suggst | .agents/skills/spec-5-revise/SKILL.md | shared.spec-5-revise | 1.0.0 | true | ok_same_canonical |
-| suggst | test | suggst | .claude/commands/test.md | suggst | .agents/skills/test/SKILL.md | shared.test | 1.0.0 | true | ok_same_canonical |
-| suggst | ui-fix-global | suggst | .claude/commands/ui-fix-global.md |  |  |  |  |  | expected_claude_only |
-| suggst | ui-review | suggst | .claude/commands/ui-review.md | suggst | .agents/skills/ui-review/SKILL.md | shared.ui-review | 1.0.0 | true | ok_same_canonical |
-| suggst | ui-review-global | suggst | .claude/commands/ui-review-global.md |  |  |  |  |  | expected_claude_only |
-| truthify | ai-post-task-review | aimoto | .claude/commands/ai-post-task-review.md | truthify | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
+| truthify | ai-post-task-review | Suggst | .claude/commands/ai-post-task-review.md | truthify | .agents/skills/ai-post-task-review/SKILL.md | shared.ai-post-task-review | 1.0.0 | true | ok_same_canonical |
 | truthify | commit | truthify | .claude/commands/commit.md | truthify | .agents/skills/commit/SKILL.md | shared.commit | 1.0.0 | true | ok_same_canonical |
 | truthify | create-doc | truthify | .claude/commands/create-doc.md | truthify | .agents/skills/create-doc/SKILL.md | shared.create-doc | 1.0.0 | true | ok_same_canonical |
 | truthify | data-slot-add | truthify | .claude/commands/data-slot-add.md |  |  |  |  |  | expected_claude_only |
@@ -268,6 +275,20 @@ Generated: 2026-06-17T11:04:04
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ui-review/SKILL.md | true |
 | shared.ai-post-task-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/claude-commands/ai-post-task-review.md | true |
 | shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ai-post-task-review/SKILL.md | true |
+| suggst.01-spec | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/01-spec.md | true |
+| suggst.01-spec | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/01-spec/SKILL.md | true |
+| suggst.02-check | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/02-check.md | true |
+| suggst.02-check | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/02-check/SKILL.md | true |
+| suggst.03-split | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/03-split.md | true |
+| suggst.03-split | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/03-split/SKILL.md | true |
+| suggst.04-build | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/04-build.md | true |
+| suggst.04-build | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/04-build/SKILL.md | true |
+| suggst.05-finish | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/05-finish.md | true |
+| suggst.05-finish | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/05-finish/SKILL.md | true |
+| suggst.06-pivot | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/06-pivot.md | true |
+| suggst.06-pivot | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/06-pivot/SKILL.md | true |
+| suggst.suggst-task | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/suggst-task.md | true |
+| suggst.suggst-task | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/suggst-task/SKILL.md | true |
 | shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/ai-post-task-review/SKILL.md | true |
 | shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/commit/SKILL.md | true |
 | shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/InterviewOS/.agents/skills/create-doc/SKILL.md | true |
@@ -372,19 +393,6 @@ Generated: 2026-06-17T11:04:04
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Spotter/.agents/skills/ui-review/SKILL.md | true |
-| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/ai-post-task-review/SKILL.md | true |
-| shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/commit/SKILL.md | true |
-| shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/create-doc/SKILL.md | true |
-| shared.implement | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/implement/SKILL.md | true |
-| shared.optimize-claude-md | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/optimize-claude-md/SKILL.md | true |
-| shared.spec-0-feedback | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-0-feedback/SKILL.md | true |
-| shared.spec-1-intake | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-1-intake/SKILL.md | true |
-| shared.spec-2-draft | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-2-draft/SKILL.md | true |
-| shared.spec-3-audit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-3-audit/SKILL.md | true |
-| shared.spec-4-challenge | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-4-challenge/SKILL.md | true |
-| shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/spec-5-revise/SKILL.md | true |
-| shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/test/SKILL.md | true |
-| shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/suggst/.agents/skills/ui-review/SKILL.md | true |
 | shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/ai-post-task-review/SKILL.md | true |
 | shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/commit/SKILL.md | true |
 | shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/create-doc/SKILL.md | true |
@@ -398,6 +406,32 @@ Generated: 2026-06-17T11:04:04
 | shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/spec-5-revise/SKILL.md | true |
 | shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/test/SKILL.md | true |
 | shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/truthify/.agents/skills/ui-review/SKILL.md | true |
+| shared.ai-post-task-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/ai-post-task-review.md | true |
+| shared.commit | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/commit.md | true |
+| shared.create-doc | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/create-doc.md | true |
+| shared.implement | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/implement.md | true |
+| shared.optimize-claude-md | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/optimize-claude-md.md | true |
+| shared.spec-0-feedback | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-0-feedback.md | true |
+| shared.spec-1-intake | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-1-intake.md | true |
+| shared.spec-2-draft | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-2-draft.md | true |
+| shared.spec-3-audit | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-3-audit.md | true |
+| shared.spec-4-challenge | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-4-challenge.md | true |
+| shared.spec-5-revise | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/spec-5-revise.md | true |
+| shared.test | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/test.md | true |
+| shared.ui-review | claude_command | /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/ui-review.md | true |
+| shared.ai-post-task-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/ai-post-task-review/SKILL.md | true |
+| shared.commit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/commit/SKILL.md | true |
+| shared.create-doc | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/create-doc/SKILL.md | true |
+| shared.implement | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/implement/SKILL.md | true |
+| shared.optimize-claude-md | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/optimize-claude-md/SKILL.md | true |
+| shared.spec-0-feedback | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-0-feedback/SKILL.md | true |
+| shared.spec-1-intake | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-1-intake/SKILL.md | true |
+| shared.spec-2-draft | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-2-draft/SKILL.md | true |
+| shared.spec-3-audit | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-3-audit/SKILL.md | true |
+| shared.spec-4-challenge | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-4-challenge/SKILL.md | true |
+| shared.spec-5-revise | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/spec-5-revise/SKILL.md | true |
+| shared.test | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/test/SKILL.md | true |
+| shared.ui-review | codex_skill | /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/ui-review/SKILL.md | true |
 
 ## Action required
 
@@ -599,7 +633,12 @@ These findings remain visible for auditability. Fallback candidates in this sect
 | missing_frontmatter | ui-review-global | .claude/commands/ui-review-global.md | advisory | Frontmatter YAML absent. |
 | fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
-| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | CLAUDE | CLAUDE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 02-check | .agents/skills/02-check/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | 04-build | .agents/skills/04-build/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | 04-build | .agents/skills/04-build/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 05-finish | .agents/skills/05-finish/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 06-pivot | .agents/skills/06-pivot/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | implement | .agents/skills/implement/SKILL.md | acceptable | Pattern suspect détecté : fallback |
 | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | optimize-claude-md | .agents/skills/optimize-claude-md/SKILL.md | acceptable | Pattern suspect détecté : si absent |
@@ -608,6 +647,11 @@ These findings remain visible for auditability. Fallback candidates in this sect
 | fallback_candidate | spec-5-revise | .agents/skills/spec-5-revise/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .agents/skills/ui-review/SKILL.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 02-check | .claude/commands/02-check.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | 04-build | .claude/commands/04-build.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | 04-build | .claude/commands/04-build.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 05-finish | .claude/commands/05-finish.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | 06-pivot | .claude/commands/06-pivot.md | acceptable | Pattern suspect détecté : par défaut |
 | missing_frontmatter | data-slot-add | .claude/commands/data-slot-add.md | advisory | Frontmatter YAML absent. |
 | missing_name | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : name |
 | missing_description | design-audit-context | .claude/commands/design-audit-context.md | advisory | Champ frontmatter manquant : description |
@@ -625,6 +669,8 @@ These findings remain visible for auditability. Fallback candidates in this sect
 | fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : par défaut |
 | fallback_candidate | ui-review | .claude/commands/ui-review.md | acceptable | Pattern suspect détecté : fallback |
 | fallback_candidate | CLAUDE | CLAUDE.md | acceptable | Pattern suspect détecté : fallback |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : par défaut |
+| fallback_candidate | ARCHITECTURE | docs/ARCHITECTURE.md | acceptable | Pattern suspect détecté : fallback |
 
 ## Expected pairing exceptions
 
@@ -648,12 +694,12 @@ These findings remain visible for auditability. Fallback candidates in this sect
 | Skriipt | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
 | Skriipt | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
 | Skriipt | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet Skriipt non convertie automatiquement en Codex skill. |
-| suggst | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet suggst non convertie automatiquement en Codex skill. |
-| suggst | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet suggst non convertie automatiquement en Codex skill. |
-| suggst | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet suggst non convertie automatiquement en Codex skill. |
-| suggst | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet suggst non convertie automatiquement en Codex skill. |
-| suggst | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
-| suggst | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | next-step | expected_claude_only | .claude/commands/next-step.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | ui-fix-global | expected_claude_only | .claude/commands/ui-fix-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
+| Suggst | ui-review-global | expected_claude_only | .claude/commands/ui-review-global.md | Commande projet suggst non convertie automatiquement en Codex skill. |
 | truthify | data-slot-add | expected_claude_only | .claude/commands/data-slot-add.md | Commande projet truthify non convertie automatiquement en Codex skill. |
 | truthify | design-audit-context | expected_claude_only | .claude/commands/design-audit-context.md | Commande projet truthify non convertie automatiquement en Codex skill. |
 | truthify | landing-review | expected_claude_only | .claude/commands/landing-review.md | Commande projet truthify non convertie automatiquement en Codex skill. |

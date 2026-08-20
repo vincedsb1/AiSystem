@@ -97,6 +97,14 @@ SAFE_CONTEXT_MARKERS = [
     "graceful fallbacks - continue operation even if non-critical parts fail",
     "60-second timeout per request with graceful fallbacks",
     "client-side session checks with graceful fallbacks",
+    "repère par défaut :",
+    "règle pratique par défaut :",
+    "par défaut, un seul contrôle structuré suffit",
+    "ne modifie pas par défaut :",
+    "par défaut, retourne le rapport dans la réponse",
+    "sans outil, fallback, conversation, retry automatique ni réparation",
+    "masque les contenus par défaut",
+    "reference_only` par défaut",
 ]
 
 PRIORITY_SAFE_CONTEXT_MARKERS = [

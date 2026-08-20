@@ -1,558 +1,546 @@
 version: 1
-
 settings:
   report_dir: /Users/vincentdesbrosses/Documents/Misc/ai-system/reports
   scan_backups: true
   scan_symlinks: true
   generate_markdown: true
   generate_json: true
-
-  # Manifest central contenant la metadata canonique.
-  # Les fichiers runtime Claude/Codex ne doivent contenir que name + description.
   skills_manifest: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills-manifest.yml
-
 projects:
-  - name: aimoto
-    root: /Users/vincentdesbrosses/Documents/Misc/aimoto
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: InterviewOS
-    root: /Users/vincentdesbrosses/Documents/Misc/InterviewOS
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: intrai
-    root: /Users/vincentdesbrosses/Documents/Misc/intrai
-    enabled: true
-    install_shared_targets:
-      - codex
-      - claude
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: ARCHITECTURE.md
-
-  - name: linkedin-ia-comments
-    root: /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: Pylaa
-    root: /Users/vincentdesbrosses/Documents/Misc/Pylaa
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: Pylot
-    root: /Users/vincentdesbrosses/Documents/Misc/Pylot
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: Skriipt
-    root: /Users/vincentdesbrosses/Documents/Misc/Skriipt
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: Spotter
-    root: /Users/vincentdesbrosses/Documents/Misc/Spotter
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: suggst
-    root: /Users/vincentdesbrosses/Documents/Misc/suggst
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
-  - name: truthify
-    root: /Users/vincentdesbrosses/Documents/Misc/truthify
-    enabled: true
-    install_shared_skills:
-      - shared.ai-post-task-review
-      - shared.commit
-      - shared.create-doc
-      - shared.implement
-      - shared.optimize-claude-md
-      - shared.spec-0-feedback
-      - shared.spec-1-intake
-      - shared.spec-2-draft
-      - shared.spec-3-audit
-      - shared.spec-4-challenge
-      - shared.spec-5-revise
-      - shared.test
-      - shared.ui-review
-    paths:
-      codex_skills: .agents/skills
-      claude_commands: .claude/commands
-      claude_rules: .claude/rules
-      claude_strategy_profiles: .claude/strategy-profiles
-      claude_hooks: .claude/hooks
-      codex_hooks: .codex/hooks
-      agents_file: AGENTS.md
-      claude_file: CLAUDE.md
-      project_config: .claude/project-config.md
-      architecture_file: docs/ARCHITECTURE.md
-
+- name: aimoto
+  root: /Users/vincentdesbrosses/Documents/Misc/aimoto
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: InterviewOS
+  root: /Users/vincentdesbrosses/Documents/Misc/InterviewOS
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: intrai
+  root: /Users/vincentdesbrosses/Documents/Misc/intrai
+  enabled: true
+  install_shared_targets:
+  - codex
+  - claude
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: ARCHITECTURE.md
+- name: linkedin-ia-comments
+  root: /Users/vincentdesbrosses/Documents/Misc/linkedin-ia-comments
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: Pylaa
+  root: /Users/vincentdesbrosses/Documents/Misc/Pylaa
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: Pylot
+  root: /Users/vincentdesbrosses/Documents/Misc/Pylot
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: Skriipt
+  root: /Users/vincentdesbrosses/Documents/Misc/Skriipt
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: Spotter
+  root: /Users/vincentdesbrosses/Documents/Misc/Spotter
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: suggst
+  root: /Users/vincentdesbrosses/Documents/Misc/suggst
+  enabled: false
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: truthify
+  root: /Users/vincentdesbrosses/Documents/Misc/truthify
+  enabled: true
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
+- name: Suggst
+  root: /Users/vincentdesbrosses/Documents/Misc/Suggst
+  enabled: true
+  install_shared_targets:
+  - codex
+  - claude
+  install_shared_skills:
+  - shared.ai-post-task-review
+  - shared.commit
+  - shared.create-doc
+  - shared.implement
+  - shared.optimize-claude-md
+  - shared.spec-0-feedback
+  - shared.spec-1-intake
+  - shared.spec-2-draft
+  - shared.spec-3-audit
+  - shared.spec-4-challenge
+  - shared.spec-5-revise
+  - shared.test
+  - shared.ui-review
+  paths:
+    codex_skills: .agents/skills
+    claude_commands: .claude/commands
+    claude_rules: .claude/rules
+    claude_strategy_profiles: .claude/strategy-profiles
+    claude_hooks: .claude/hooks
+    codex_hooks: .codex/hooks
+    agents_file: AGENTS.md
+    claude_file: CLAUDE.md
+    project_config: .claude/project-config.md
+    architecture_file: docs/ARCHITECTURE.md
 shared_sources:
-  - name: claude-commands
-    root: /Users/vincentdesbrosses/Documents/Misc/claude-commands
-    artifact_type: claude_command
-    enabled: true
-
+- name: claude-commands
+  root: /Users/vincentdesbrosses/Documents/Misc/claude-commands
+  artifact_type: claude_command
+  enabled: true
 matching:
   equivalent_pairs:
-    - claude_type: claude_command
-      codex_type: codex_skill
-      strategy: same_normalized_name
-
+  - claude_type: claude_command
+    codex_type: codex_skill
+    strategy: same_normalized_name
   name_normalization:
     strip_prefixes:
-      - "/"
+    - /
     strip_suffixes:
-      - ".md"
-      - "/SKILL.md"
-
+    - .md
+    - /SKILL.md
 pairing_exceptions:
-  - project: Pylaa
-    artifact_type: claude_command
-    name: data-slot-add
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylaa
-    artifact_type: claude_command
-    name: design-audit-context
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylaa
-    artifact_type: claude_command
-    name: landing-review
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylaa
-    artifact_type: claude_command
-    name: next-step
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylaa
-    artifact_type: claude_command
-    name: ui-fix-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylaa
-    artifact_type: claude_command
-    name: ui-review-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: data-slot-add
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: design-audit-context
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: landing-review
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: next-step
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: ui-fix-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Pylot
-    artifact_type: claude_command
-    name: ui-review-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Pylot non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: data-slot-add
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: design-audit-context
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: landing-review
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: next-step
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: ui-fix-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: Skriipt
-    artifact_type: claude_command
-    name: ui-review-global
-    expected_status: claude_only_project_command
-    reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: data-slot-add
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: design-audit-context
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: landing-review
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: next-step
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: ui-fix-global
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: suggst
-    artifact_type: claude_command
-    name: ui-review-global
-    expected_status: claude_only_project_command
-    reason: Commande projet suggst non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: data-slot-add
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: design-audit-context
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: landing-review
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: next-step
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: ui-fix-global
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-  - project: truthify
-    artifact_type: claude_command
-    name: ui-review-global
-    expected_status: claude_only_project_command
-    reason: Commande projet truthify non convertie automatiquement en Codex skill.
-
+- project: Pylaa
+  artifact_type: claude_command
+  name: data-slot-add
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylaa
+  artifact_type: claude_command
+  name: design-audit-context
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylaa
+  artifact_type: claude_command
+  name: landing-review
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylaa
+  artifact_type: claude_command
+  name: next-step
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylaa
+  artifact_type: claude_command
+  name: ui-fix-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylaa
+  artifact_type: claude_command
+  name: ui-review-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylaa non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: data-slot-add
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: design-audit-context
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: landing-review
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: next-step
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: ui-fix-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Pylot
+  artifact_type: claude_command
+  name: ui-review-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Pylot non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: data-slot-add
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: design-audit-context
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: landing-review
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: next-step
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: ui-fix-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Skriipt
+  artifact_type: claude_command
+  name: ui-review-global
+  expected_status: claude_only_project_command
+  reason: Commande projet Skriipt non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: data-slot-add
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: design-audit-context
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: landing-review
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: next-step
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: ui-fix-global
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: Suggst
+  artifact_type: claude_command
+  name: ui-review-global
+  expected_status: claude_only_project_command
+  reason: Commande projet suggst non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: data-slot-add
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: design-audit-context
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: landing-review
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: next-step
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: ui-fix-global
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
+- project: truthify
+  artifact_type: claude_command
+  name: ui-review-global
+  expected_status: claude_only_project_command
+  reason: Commande projet truthify non convertie automatiquement en Codex skill.
 quality_rules:
-  # Les fichiers runtime Claude/Codex doivent rester compatibles avec leurs outils.
-  # On exige donc uniquement un frontmatter minimal.
-  #
-  # Metadata complète déplacée dans :
-  # /Users/vincentdesbrosses/Documents/Misc/ai-system/skills-manifest.yml
   metadata_required_for:
-    - codex_skill
-    - claude_command
-
+  - codex_skill
+  - claude_command
   required_frontmatter_fields:
-    - name
-    - description
-
+  - name
+  - description
   recommended_frontmatter_fields: []
-
-  # Ces patterns ne prouvent pas une erreur.
-  # Ils signalent seulement un point à auditer manuellement ou via ai_doctor.py.
   forbidden_silent_fallback_patterns:
-    - "par défaut"
-    - "fallback"
-    - "default to"
-    - "si absent"
-    - "if absent"
-    - "dernière stratégie mentionnée"
-    - "latest mentioned strategy"
-    - "utiliser MMXM"
-    - "use MMXM"
-
+  - par défaut
+  - fallback
+  - default to
+  - si absent
+  - if absent
+  - dernière stratégie mentionnée
+  - latest mentioned strategy
+  - utiliser MMXM
+  - use MMXM
   project_specific_terms:
     aimoto:
-      - "aimoto"
-      - "aimoto-v2"
-      - "BTC"
-      - "BTCUSD"
-      - "BTC-USD"
-      - "MMXM"
-      - "silver_bullet"
-      - "backend/app/algo"
-      - ".claude/strategy-profiles"
-      - "walk_forward.py"
-
+    - aimoto
+    - aimoto-v2
+    - BTC
+    - BTCUSD
+    - BTC-USD
+    - MMXM
+    - silver_bullet
+    - backend/app/algo
+    - .claude/strategy-profiles
+    - walk_forward.py
   ignore_names:
-    - ".DS_Store"
-
+  - .DS_Store
   backup_patterns:
-    - ".backup"
-    - ".backup-project-specific"
-    - ".v3-backup"
-    - ".bak-ai-frontmatter"
-
+  - .backup
+  - .backup-project-specific
+  - .v3-backup
+  - .bak-ai-frontmatter
 pairing_rules:
-  # Les exports Claude/Codex n'ont pas besoin d'avoir le même hash.
-  # Ils peuvent être adaptés à leur runtime respectif.
-  #
-  # L'équivalence se fait via skills-manifest.yml :
-  # - canonical_id
-  # - version
-  # - source_of_truth
   compare_claude_codex_by:
-    - canonical_id
-    - version
-    - source_of_truth
-
+  - canonical_id
+  - version
+  - source_of_truth
   hash_policy:
     raw_export_hash_is_informational: true
     same_hash_required_only_for_same_export_target: true
-
 reporting:
   include:
-    - summary
-    - pair_status_summary
-    - claude_codex_pairs
-    - issues
-    - symlinks
-    - recommended_next_actions
-
+  - summary
+  - pair_status_summary
+  - claude_codex_pairs
+  - issues
+  - symlinks
+  - recommended_next_actions
   issue_severity_policy:
     missing_runtime_frontmatter: warning
     missing_runtime_name: warning

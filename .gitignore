@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Xcode
+apps/**/xcuserdata/
+apps/**/*.xcuserstate
+apps/**/build/
+apps/**/DerivedData/
+
+# Runtime logs (should not be versioned)
+logs/
+logs/*.log

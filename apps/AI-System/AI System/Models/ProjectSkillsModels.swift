@@ -1,0 +1,324 @@
+import Foundation
+
+// MARK: - Project Skills Backend Response Models
+
+/// Schema version for project skills API.
+/// Must be incremented when breaking changes are made.
+let PROJECT_SKILLS_SCHEMA_VERSION = 1
+
+// MARK: - List Projects Response
+
+struct ListProjectsResponse: Codable {
+    let schemaVersion: Int
+    let status: String
+    let generatedAt: String
+    let projects: [ProjectInfo]
+    let error: BackendError?
+
+    enum CodingKeys: String, CodingKey {
+        case schemaVersion
+        case status
+        case generatedAt
+        case projects
+        case error
+    }
+}
+
+struct ProjectInfo: Codable, Identifiable {
+    let name: String
+    let root: String
+    let enabled: Bool
+    let paths: ProjectPaths
+
+    var id: String { name }
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case root
+        case enabled
+        case paths
+    }
+}
+
+struct ProjectPaths: Codable {
+    let codexSkills: String
+    let claudeCommands: String
+
+    enum CodingKeys: String, CodingKey {
+        case codexSkills
+        case claudeCommands
+    }
+}
+
+// MARK: - Scan Project Response
+
+struct ScanProjectResponse: Codable {
+    let schemaVersion: Int
+    let status: String
+    let generatedAt: String
+    let project: ProjectInfo?
+    let summary: SkillSummary?
+    let skills: [SkillRow]
+    let error: BackendError?
+
+    enum CodingKeys: String, CodingKey {
+        case schemaVersion
+        case status
+        case generatedAt
+        case project
+        case summary
+        case skills
+        case error
+    }
+}
+
+struct SkillSummary: Codable {
+    let total: Int
+    let managed: Int
+    let unmanaged: Int
+    let shared: Int
+    let projectSpecific: Int
+    let missingClaude: Int
+    let missingCodex: Int
+    let drift: Int
+    let conflicts: Int
+    let expectedExceptions: Int
+    let actionRequired: Int
+
+    enum CodingKeys: String, CodingKey {
+        case total
+        case managed
+        case unmanaged
+        case shared
+        case projectSpecific
+        case missingClaude
+        case missingCodex
+        case drift
+        case conflicts
+        case expectedExceptions
+        case actionRequired
+    }
+}
+
+struct SkillRow: Codable, Identifiable {
+    let name: String
+    let canonicalId: String?
+    let candidateCanonicalId: String?
+    let scope: String?
+    let sourceOfTruth: String?
+    let description: String?
+    let managed: Bool
+    let importable: Bool
+    let presence: SkillPresence
+    let paths: SkillPaths
+    let status: String // One of: managed_synced, local_codex_only, local_claude_only, etc.
+    let exception: SkillException?
+    let conflict: SkillConflict?
+
+    var id: String { name }
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case canonicalId
+        case candidateCanonicalId
+        case scope
+        case sourceOfTruth
+        case description
+        case managed
+        case importable
+        case presence
+        case paths
+        case status
+        case exception
+        case conflict
+    }
+}
+
+struct SkillPresence: Codable {
+    let codex: Bool
+    let claude: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case codex
+        case claude
+    }
+}
+
+struct SkillPaths: Codable {
+    let codex: String?
+    let claude: String?
+    let canonical: String?
+
+    enum CodingKeys: String, CodingKey {
+        case codex
+        case claude
+        case canonical
+    }
+}
+
+struct SkillException: Codable {
+    let status: String
+    let reason: String?
+    let artifactType: String?
+    let name: String
+
+    enum CodingKeys: String, CodingKey {
+        case status
+        case reason
+        case artifactType
+        case name
+    }
+}
+
+struct SkillConflict: Codable {
+    let code: String
+    let message: String
+    let details: [String: AnyCodable]?
+
+    enum CodingKeys: String, CodingKey {
+        case code
+        case message
+        case details
+    }
+}
+
+// MARK: - Backend Error
+
+struct BackendError: Codable {
+    let code: String
+    let message: String
+    let details: [String: AnyCodable]?
+    let retryable: Bool?
+    let writeState: String?
+    let suggestedAction: String?
+
+    enum CodingKeys: String, CodingKey {
+        case code
+        case message
+        case details
+        case retryable
+        case writeState
+        case suggestedAction
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        code = try container.decode(String.self, forKey: .code)
+        message = try container.decode(String.self, forKey: .message)
+        details = try container.decodeIfPresent([String: AnyCodable].self, forKey: .details)
+        retryable = try container.decodeIfPresent(Bool.self, forKey: .retryable)
+        writeState = try container.decodeIfPresent(String.self, forKey: .writeState)
+        suggestedAction = try container.decodeIfPresent(String.self, forKey: .suggestedAction)
+    }
+}
+
+// MARK: - Helper: AnyCodable for flexible JSON
+
+/// A type-erased codable wrapper for flexible JSON dictionaries.
+enum AnyCodable: Codable {
+    case null
+    case bool(Bool)
+    case int(Int)
+    case double(Double)
+    case string(String)
+    case array([AnyCodable])
+    case object([String: AnyCodable])
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if container.decodeNil() {
+            self = .null
+        } else if let bool = try? container.decode(Bool.self) {
+            self = .bool(bool)
+        } else if let int = try? container.decode(Int.self) {
+            self = .int(int)
+        } else if let double = try? container.decode(Double.self) {
+            self = .double(double)
+        } else if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let array = try? container.decode([AnyCodable].self) {
+            self = .array(array)
+        } else if let object = try? container.decode([String: AnyCodable].self) {
+            self = .object(object)
+        } else {
+            throw Swift.DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Cannot decode AnyCodable"
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+
+        switch self {
+        case .null:
+            try container.encodeNil()
+        case .bool(let bool):
+            try container.encode(bool)
+        case .int(let int):
+            try container.encode(int)
+        case .double(let double):
+            try container.encode(double)
+        case .string(let string):
+            try container.encode(string)
+        case .array(let array):
+            try container.encode(array)
+        case .object(let object):
+            try container.encode(object)
+        }
+    }
+}
+
+// MARK: - Skill Status Enum
+
+enum SkillStatus: String, Codable, CaseIterable {
+    case managedSynced = "managed_synced"
+    case localCodexOnly = "local_codex_only"
+    case localClaudeOnly = "local_claude_only"
+    case localBothUnmanaged = "local_both_unmanaged"
+    case missingClaude = "missing_claude"
+    case missingCodex = "missing_codex"
+    case canonicalDrift = "canonical_drift"
+    case manifestError = "manifest_error"
+    case conflict = "conflict"
+    case expectedClaudeOnly = "expected_claude_only"
+    case expectedCodexOnly = "expected_codex_only"
+
+    var displayName: String {
+        switch self {
+        case .managedSynced:
+            return "Synchronisé"
+        case .localCodexOnly:
+            return "Présent uniquement dans Codex"
+        case .localClaudeOnly:
+            return "Présent uniquement dans Claude"
+        case .localBothUnmanaged:
+            return "Non géré"
+        case .missingClaude:
+            return "Export Claude manquant"
+        case .missingCodex:
+            return "Export Codex manquant"
+        case .canonicalDrift:
+            return "Différent de la source"
+        case .manifestError:
+            return "Configuration invalide"
+        case .conflict:
+            return "Conflit à résoudre"
+        case .expectedClaudeOnly:
+            return "Claude uniquement — attendu"
+        case .expectedCodexOnly:
+            return "Codex uniquement — attendu"
+        }
+    }
+
+    var requiresAction: Bool {
+        switch self {
+        case .managedSynced, .expectedClaudeOnly, .expectedCodexOnly:
+            return false
+        default:
+            return true
+        }
+    }
+}

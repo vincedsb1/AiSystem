@@ -469,3 +469,133 @@ Contenu attendu :
 - résumé par projet : targets appliquées, nombre updated/unchanged/error ;
 - exit code non nul si au moins une erreur survient ;
 - idempotence garantie.
+
+
+## Phase 21 — Couche d'actions locale pour GUI macOS — TERMINÉE
+
+Objectif :
+créer un point d'entrée unique et ergonomique pour une future interface graphique
+macOS, sans dumliquer la logique métier existante.
+
+Livrables :
+
+- Cibles Make `gui-*` : 24 cibles pour toutes les actions de l'interface
+- `scripts/ai_system_action.sh` : script backend central unique
+- Mise à jour de `docs/OPERATIONS.md` avec documentation des actions
+- Mise à jour du `Plan-AI-System.md` (cette phase)
+
+Contenu attendu :
+
+- Actions système : check, inventory, doctor (ouvrir dans Terminal)
+- Actions exports : update, update-codex, update-claude, install-project (ouvrir dans Terminal + make check)
+- Actions rapports : open-inventory, open-doctor (open directement)
+- Actions docs : open-readme, open-operations, open-skill-workflow, open-project-onboarding, open-plan, open-local-gui-design (open directement)
+- Actions config : install-hooks, git-status (Terminal)
+- Actions raccourcis : open-cursor, open-terminal, open-finder (ouvrir IDE/Terminal/Finder)
+- Validation des arguments (PROJECT + TARGETS pour install-project)
+- Terminal visible pour actions longues via osascript
+- `open` pour docs/rapports
+- Aucune nouvelle dépendance
+- Prêt pour interface AppleScript future
+
+## Phase 22 — Interface locale macOS AppleScript — TERMINÉE
+
+Objectif :
+créer une interface graphique interactive macOS pour piloter le système sans
+passer par le terminal.
+
+Livrables :
+
+- `scripts/ai_system_gui.applescript` : interface AppleScript interactive
+- Mise à jour de `docs/OPERATIONS.md` avec guide d'installation et d'usage
+- Mise à jour de `README.md` avec mention de l'interface
+- Export possible en application macOS (`AI System.app`)
+- Ajout possible au Dock
+
+Contenu attendu :
+
+- Menu principal avec 9 catégories
+- 7 sous-menus complets
+- Gestion des annulations AppleScript
+- Appels au backend `scripts/ai_system_action.sh`
+- Aucune duplication de logique
+- Notifications de confirmation après action
+- Retour au menu principal après chaque action
+- Support complet de toutes les actions :
+  - Validation (check, inventory, doctor)
+  - Exports (update, update-codex, update-claude, install-project)
+  - Rapports (open-inventory, open-doctor)
+  - Documentation (6 documents)
+  - Configuration (install-hooks, git-status)
+  - Raccourcis (Cursor, Terminal, Finder)
+- Terminal visible pour actions longues
+- Procédure d'export en app macOS documentée
+
+
+## Phase 23 — Amélioration UX de l'interface locale — TERMINÉE
+
+Objectif :
+refaire l'interface AppleScript pour qu'elle soit claire, en français, et sans
+ouvrir Terminal par défaut depuis l'app.
+
+Livrables :
+
+- `scripts/ai_system_gui.applescript` : interface refactorisée en français
+- `scripts/ai_system_action.sh` : support du mode app (sans Terminal) via variable `AI_SYSTEM_UI_MODE`
+- Dossier `logs/` : logs des actions exécutées en mode app
+- Mise à jour de `docs/OPERATIONS.md` avec documentation du mode app/terminal
+- Mise à jour de `README.md` avec mention des améliorations UX
+
+Contenu attendu :
+
+- Menu principal français clair sans tags techniques `[SYSTEM]`, `[DIAG]`, etc.
+- Texte français pour tous les libellés : "Vérifier que tout est OK", "Diffuser les mises à jour", etc.
+- Pas d'emojis couleur (instabilité AppleScript)
+- Mode app par défaut : pas d'ouverture de Terminal depuis l'interface
+- Variable d'environnement `AI_SYSTEM_UI_MODE` :
+  - `app` : exécution en arrière-plan, logs écrits, pas de Terminal
+  - `terminal` : comportement historique, Terminal visible
+- Logs dans `logs/ai-system-last-action.log`
+- Action "Ouvrir le dernier log" dans "Outils locaux"
+- Terminal reste accessible volontairement via "Ouvrir dans Terminal"
+- Messages de succès/erreur simples dans l'interface
+- Fallback vers log en cas d'erreur
+- Aucune stack trace inutile
+- Menu simplifié sans redondance
+
+
+## Phase 24 — Onboarding projet et application Dock — TERMINÉE
+
+Objectif :
+finaliser l'interface locale en permettant l'ajout de nouveaux projets,
+en corrigeant les annulations AppleScript, et en créant un build reproductible
+de l'application Dock avec icône.
+
+Livrables :
+
+- `scripts/ai_system_gui.applescript` : annulations propres, menu "Ajouter un nouveau projet"
+- `scripts/add_project.py` : script Python pour ajouter un projet au registre
+- `scripts/build_ai_system_app.sh` : script pour build l'app avec icône
+- `scripts/ai_system_action.sh` : actions `add-project` et `build-gui-app`
+- Cibles Make : `build-gui-app`, `add-project`
+- Mise à jour complète de la documentation
+
+Contenu attendu :
+
+- Annulations AppleScript gérées proprement (`User cancelled. (-128)` éliminé)
+- Menu principal inclut "Ajouter un nouveau projet"
+- Workflow guidé pour ajouter un projet :
+  1. Saisir nom
+  2. Saisir chemin absolu
+  3. Sélectionner cible (codex|claude|both)
+  4. Installer maintenant ou plus tard
+- Ajout au registre avec shared skills standards
+- Installation optionnelle des exports
+- Validation automatique (`make check`) après ajout
+- Build app avec icône (PNG ou ICNS)
+- Script build idempotent et reproductible
+- Action "Recréer l'application Dock" dans l'interface
+- `make check` reste OK
+- Aucune modification manuelle des exports
+- Aucun pairing_exception créé
+- Documentation mise à jour (OPERATIONS.md, README.md, Plan-AI-System.md)

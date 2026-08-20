@@ -318,7 +318,8 @@ artifacts:
     path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/spec-0-feedback/SKILL.md
 - canonical_id: shared.spec-1-intake
   name: spec-1-intake
-  description: Transform an idea or request into a structured intake for a specification workflow. Now includes workflow recommendation (plan vs. spec-1-intake→spec-5-revise vs. hybrid).
+  description: Transform an idea or request into a structured intake for a specification workflow. Now includes workflow recommendation
+    (plan vs. spec-1-intake→spec-5-revise vs. hybrid).
   version: 1.2.0
   scope: shared
   project: null
@@ -470,10 +471,10 @@ artifacts:
     path: /Users/vincentdesbrosses/Documents/Misc/claude-commands/ui-review.md
   - target: codex_skill
     path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ui-review/SKILL.md
-
 - canonical_id: shared.ai-post-task-review
   name: ai-post-task-review
-  description: Run a post-task review after a completed task to detect validation, documentation, context, skill, unsafe-assumption, sync, and commit-readiness obligations.
+  description: Run a post-task review after a completed task to detect validation, documentation, context, skill, unsafe-assumption,
+    sync, and commit-readiness obligations.
   version: 1.0.0
   scope: shared
   project: null
@@ -496,4 +497,122 @@ artifacts:
     path: /Users/vincentdesbrosses/Documents/Misc/claude-commands/ai-post-task-review.md
   - target: codex_skill
     path: /Users/vincentdesbrosses/Documents/Misc/aimoto/.agents/skills/ai-post-task-review/SKILL.md
-
+- canonical_id: suggst.01-spec
+  name: 01-spec
+  description: Créer ou réviser une spécification fonctionnelle Suggst, avec un périmètre MVP explicite et des critères d'acceptation
+    vérifiables sans sur-spécifier la solution.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/01-spec/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/01-spec.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/01-spec/SKILL.md
+- canonical_id: suggst.02-check
+  name: 02-check
+  description: Vérifier une spécification fonctionnelle Suggst, identifier les vrais blocages et donner un verdict READY,
+    REVISE ou BLOCKED sans imposer de sur-qualité au MVP.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/02-check/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/02-check.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/02-check/SKILL.md
+- canonical_id: suggst.03-split
+  name: 03-split
+  description: Découper une spécification Suggst validée en sous-étapes d'implémentation concrètes, indépendantes et adaptées
+    au niveau MVP ou alpha.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/03-split/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/03-split.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/03-split/SKILL.md
+- canonical_id: suggst.04-build
+  name: 04-build
+  description: Implémenter une seule sous-étape Suggst à la fois, avec des modifications minimales, une validation proportionnelle
+    et un arrêt clair en cas de blocage.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/04-build/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/04-build.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/04-build/SKILL.md
+- canonical_id: suggst.05-finish
+  name: 05-finish
+  description: Clôturer une fonctionnalité Suggst avec une validation proportionnelle, la documentation à jour, un état courant
+    cohérent et un commit uniquement s'il est demandé.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/05-finish/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/05-finish.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/05-finish/SKILL.md
+- canonical_id: suggst.06-pivot
+  name: 06-pivot
+  description: Prendre du recul face à un blocage Suggst, distinguer un vrai risque MVP d'une exigence excessive et choisir
+    une seule prochaine direction.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/06-pivot/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/06-pivot.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/06-pivot/SKILL.md
+- canonical_id: suggst.suggst-task
+  name: suggst-task
+  description: Execute development tasks on Suggst with lightweight, focused, minimal-token approach. Automatically applies
+    preservation, minimal reading, targeted validation, and recovery rules.
+  version: 1.0.0
+  scope: project
+  project: Suggst
+  status: active
+  source_of_truth: /Users/vincentdesbrosses/Documents/Misc/ai-system/skills/projects/suggst/suggst-task/canonical.md
+  compatibility:
+    claude_code: true
+    codex: true
+  exports:
+  - target: claude_command
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.claude/commands/suggst-task.md
+  - target: codex_skill
+    path: /Users/vincentdesbrosses/Documents/Misc/Suggst/.agents/skills/suggst-task/SKILL.md

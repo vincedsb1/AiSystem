@@ -18,6 +18,41 @@ make inventory
 make doctor
 ```
 
+## Interface locale macOS
+
+### SwiftUI App (Recommandée)
+
+Une interface graphique native macOS SwiftUI est maintenant l'interface principale pour piloter le système.
+
+**Installation et lancement :**
+
+```bash
+make build-swift-app
+open ~/Applications/"AI System.app"
+```
+
+**Caractéristiques :**
+- Interface native SwiftUI (macOS 13+)
+- Sidebar avec 7 sections : Tableau de bord, Diffusion, Projets, Rapports, Docs, Outils, Logs
+- Gestion des projets : ajouter, mettre à jour
+- Logs intégrés avec stdout/stderr séparés
+- Pas d'ouverture Terminal par défaut (mode `swift`)
+- Pas de dépendances externes
+- Entièrement local, pas de notarisation
+
+Voir [docs/OPERATIONS.md](docs/OPERATIONS.md) pour les détails complets.
+
+### AppleScript App (Fallback)
+
+L'ancienne interface AppleScript est conservée comme fallback pendant la transition.
+
+```bash
+osascript scripts/ai_system_gui.applescript
+# ou
+make build-gui-app
+open ~/Applications/"AI System.app"  # (ancienne version)
+```
+
 ## Docs utiles
 
 - [docs/OPERATIONS.md](docs/OPERATIONS.md)
