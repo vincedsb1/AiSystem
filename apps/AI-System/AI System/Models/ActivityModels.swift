@@ -205,3 +205,49 @@ enum ActivityFilter: String, CaseIterable, Identifiable {
         }
     }
 }
+
+enum ActivityPeriod: String, CaseIterable, Identifiable, Hashable {
+    case today
+    case yesterday
+    case thisWeek
+    case older
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .today: return "Aujourd’hui"
+        case .yesterday: return "Hier"
+        case .thisWeek: return "Cette semaine"
+        case .older: return "Plus anciennes"
+        }
+    }
+
+    static func resolve(
+        date: Date,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> ActivityPeriod {
+        if calendar.isDate(date, inSameDayAs: now) {
+            return .today
+        }
+
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: now),
+           calendar.isDate(date, inSameDayAs: yesterday) {
+            return .yesterday
+        }
+
+        if let week = calendar.dateInterval(of: .weekOfYear, for: now),
+           date >= week.start {
+            return .thisWeek
+        }
+
+        return .older
+    }
+}
+
+struct ActivityGroup: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let activities: [Activity]
+}

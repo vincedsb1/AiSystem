@@ -1,8 +1,8 @@
 import AppKit
 import SwiftUI
 
-/// Activité — every operation in context: conclusion first, technical output
-/// last and collapsed.
+/// Activité — the list answers "what happened"; the detail answers "what was
+/// the result" before exposing technical evidence.
 struct ActivityView: View {
     @Environment(ActivityStore.self) private var store
 
@@ -11,154 +11,190 @@ struct ActivityView: View {
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
-        @Bindable var store = store
-
         HSplitView {
-            list
-                .frame(minWidth: 280, idealWidth: 340, maxWidth: 460)
+            activityList
+                .frame(minWidth: 280, idealWidth: 350, maxWidth: 440)
 
             detail
                 .frame(minWidth: 380, maxWidth: .infinity)
         }
-        .toolbar { toolbarContent }
         .onReceive(NotificationCenter.default.publisher(for: .searchRequested)) { _ in
             isSearchFocused = true
         }
     }
 
-    private var visibleActivities: [Activity] {
-        store.filtered(by: filter, search: searchText)
-    }
+    private var detail: some View {
+        @Bindable var store = store
 
-    // MARK: - Toolbar
-
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
-            Picker("Filtre", selection: $filter) {
-                ForEach(ActivityFilter.allCases) { option in
-                    Text("\(option.displayName) (\(store.count(for: option)))")
-                        .tag(option)
-                }
+        return Group {
+            if let activity = store.selectedActivity {
+                ActivityDetailView(activity: activity)
+                    .id(activity.id)
+            } else {
+                EmptyStateView(
+                    symbolName: "sidebar.left",
+                    title: "Aucune activité sélectionnée",
+                    description: "Sélectionnez une activité pour voir son résultat."
+                )
             }
-            .pickerStyle(.menu)
-            .help("Filtrer les activités")
         }
     }
 
-    // MARK: - List
+    // MARK: List
 
-    private var list: some View {
+    private var activityList: some View {
         @Bindable var store = store
+        let groups = store.grouped(by: filter, search: searchText)
 
-        return VStack(spacing: 0) {
-            HStack {
-                TextField("Rechercher", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .focused($isSearchFocused)
-                    .accessibilityLabel("Rechercher dans les activités")
-            }
-            .padding(Spacing.related)
+        return VStack(alignment: .leading, spacing: 0) {
+            listHeader(store: store)
 
             if store.activities.isEmpty {
                 EmptyStateView(
                     symbolName: "list.bullet.rectangle",
                     title: "Aucune activité",
-                    description: "Les opérations lancées depuis l'application apparaîtront ici."
+                    description: "Les opérations lancées depuis l’application apparaîtront ici."
                 )
-            } else if visibleActivities.isEmpty {
+            } else if groups.isEmpty {
                 EmptyStateView(
                     symbolName: "line.3.horizontal.decrease.circle",
                     title: "Aucun résultat",
-                    description: "Aucune activité ne correspond au filtre actuel.",
-                    actionLabel: "Effacer le filtre",
+                    description: "Aucune activité ne correspond au filtre ou à la recherche.",
+                    actionLabel: "Effacer les critères",
                     action: {
                         filter = .all
                         searchText = ""
                     }
                 )
             } else {
-                List(visibleActivities, selection: $store.selectedActivityId) { activity in
-                    ActivityRow(activity: activity)
-                        .tag(activity.id)
+                List(selection: $store.selectedActivityId) {
+                    ForEach(groups) { group in
+                        Section {
+                            ForEach(group.activities) { activity in
+                                ActivityListRow(activity: activity)
+                                    .tag(activity.id)
+                            }
+                        } header: {
+                            if !group.title.isEmpty {
+                                Text(group.title)
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                    .textCase(nil)
+                            }
+                        }
+                    }
                 }
                 .listStyle(.inset)
             }
         }
     }
 
-    // MARK: - Detail
+    private func listHeader(store: ActivityStore) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Activité")
+                    .font(.title2.weight(.semibold))
+                Spacer()
+                Text("\(store.filtered(by: filter, search: searchText).count)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Nombre d’activités")
+            }
 
-    @ViewBuilder
-    private var detail: some View {
-        if let activity = store.selectedActivity {
-            ActivityDetailView(activity: activity)
-        } else {
-            EmptyStateView(
-                symbolName: "sidebar.left",
-                title: "Aucune activité sélectionnée",
-                description: "Sélectionnez une activité pour voir son résultat."
-            )
+            HStack(spacing: Spacing.sm) {
+                TextField("Rechercher", text: $searchText)
+                    .textFieldStyle(.roundedBorder)
+                    .focused($isSearchFocused)
+                    .accessibilityLabel("Rechercher dans les activités")
+
+                Picker("Filtrer", selection: $filter) {
+                    ForEach(ActivityFilter.allCases) { option in
+                        Text("\(option.displayName) (\(store.count(for: option)))")
+                            .tag(option)
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(width: 154, alignment: .trailing)
+                .accessibilityLabel("Filtrer les activités")
+            }
         }
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.md)
+        .padding(.bottom, Spacing.sm)
     }
 }
 
-// MARK: - Row
+// MARK: - List row
 
-private struct ActivityRow: View {
+private struct ActivityListRow: View {
     let activity: Activity
 
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.grouped) {
+        HStack(alignment: .center, spacing: Spacing.sm) {
             Image(systemName: activity.status.symbolName)
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(activity.status.tint)
                 .frame(width: 18)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.xxs) {
                 Text(activity.displayName)
-                    .font(.body)
+                    .font(.body.weight(.semibold))
                     .lineLimit(1)
+                    .truncationMode(.middle)
 
                 Text(activity.targetDescription)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .truncationMode(.middle)
 
                 if !activity.summary.isEmpty {
                     Text(activity.summary)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
+                        .lineLimit(1)
                 }
             }
 
-            Spacer(minLength: Spacing.related)
+            Spacer(minLength: Spacing.sm)
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(activity.startedAt, style: .time)
+            VStack(alignment: .trailing, spacing: Spacing.xxs) {
+                Text(AppFormatters.time(activity.startedAt))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
                 if let duration = activity.durationDescription {
                     Text(duration)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
             }
+            .fixedSize(horizontal: true, vertical: false)
         }
-        .padding(.vertical, Spacing.micro)
+        .frame(minHeight: 62, alignment: .center)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(
-            "\(activity.displayName). \(activity.targetDescription). "
-            + "\(activity.status.displayName). \(activity.summary)"
-        )
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    private var accessibilityDescription: String {
+        [
+            activity.displayName,
+            activity.targetDescription,
+            activity.summary.isEmpty ? nil : activity.summary,
+            activity.status.displayName,
+            AppFormatters.time(activity.startedAt),
+            activity.durationDescription
+        ]
+        .compactMap { $0 }
+        .joined(separator: ". ")
     }
 }
 
-// MARK: - Detail view
+// MARK: - Detail
 
-/// Mandatory order (spec 14.5): conclusion, changes, warnings, files,
-/// then collapsed technical details.
+/// Mandatory order: result, changes/warnings, resources, then collapsed
+/// technical details.
 struct ActivityDetailView: View {
     let activity: Activity
 
@@ -166,112 +202,123 @@ struct ActivityDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.sectionGap) {
-                conclusion
+            AdaptiveContentContainer(maxWidth: 820) {
+                VStack(alignment: .leading, spacing: Spacing.lg) {
+                    detailHeader
+                    resultSection
 
-                if let changes = activity.changes, changes.hasChanges || changes.unchanged > 0 {
-                    changesSection(changes)
+                    if let changes = activity.changes,
+                       changes.hasChanges || changes.unchanged > 0 {
+                        changesSection(changes)
+                    }
+
+                    if let error = activity.error {
+                        errorSection(error)
+                    }
+
+                    resourcesSection
+                    technicalSection
                 }
-
-                if let error = activity.error {
-                    errorSection(error)
-                }
-
-                filesSection
-                technicalSection
             }
-            .padding(Spacing.standard)
         }
     }
 
-    // MARK: Conclusion
+    // MARK: Header
 
-    private var conclusion: some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            HStack(alignment: .top, spacing: Spacing.grouped) {
-                Image(systemName: activity.status.symbolName)
-                    .font(.system(size: 22))
-                    .foregroundStyle(activity.status.tint)
-                    .accessibilityHidden(true)
+    private var detailHeader: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack(alignment: .top, spacing: Spacing.md) {
+                ZStack {
+                    Circle()
+                        .fill(activity.status.tint.opacity(0.13))
+                    Image(systemName: activity.status.symbolName)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(activity.status.tint)
+                }
+                .frame(width: 42, height: 42)
+                .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: Spacing.micro) {
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
                     Text(activity.displayName)
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(.title2.weight(.semibold))
+                        .lineLimit(2)
 
-                    Text(activity.summary.isEmpty
-                         ? activity.status.displayName
-                         : activity.summary)
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    Text(activity.status.activityDisplayName)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(activity.status.tint)
                 }
 
                 Spacer(minLength: 0)
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(
-                "\(activity.displayName). \(activity.status.displayName). \(activity.summary)"
-            )
 
-            HStack(spacing: Spacing.standard) {
-                metadata("Cible", activity.targetDescription)
-                metadata("Démarré", activity.startedAt.formatted(date: .abbreviated, time: .standard))
-                if let duration = activity.durationDescription {
-                    metadata("Durée", duration)
-                }
+            if !activity.summary.isEmpty {
+                Text(activity.summary)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-        }
-    }
 
-    private func metadata(_ label: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
-            Text(label)
-                .font(.caption2)
+            Text(metadataLine)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
-            Text(value)
-                .font(.caption)
+                .lineLimit(2)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label) : \(value)")
+        .accessibilityLabel(
+            "\(activity.displayName). \(activity.status.activityDisplayName). "
+            + "\(activity.summary). \(metadataLine)"
+        )
+        .padding(.bottom, Spacing.sm)
     }
 
-    // MARK: Changes
+    private var metadataLine: String {
+        var values = [AppFormatters.observationDate(activity.startedAt)]
+        if let duration = activity.durationDescription {
+            values.append(duration)
+        }
+        values.append(activity.targetDescription)
+        return values.joined(separator: " · ")
+    }
 
-    private func changesSection(_ changes: ActionChanges) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            Text("Changements")
-                .font(.headline)
+    // MARK: Result
 
-            HStack(spacing: Spacing.sectionGap) {
-                countItem("Créés", changes.created)
-                countItem("Mis à jour", changes.updated)
-                countItem("Inchangés", changes.unchanged)
-                if let conflicts = changes.conflicts, conflicts > 0 {
-                    countItem("Conflits", conflicts, tint: .red)
+    private var resultSection: some View {
+        SectionSurface(title: "Résultat", tone: resultTone) {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                Text(activity.summary.isEmpty
+                     ? activity.status.activityDisplayName
+                     : activity.summary)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if activity.warningCount > 0 {
+                    Label(
+                        "\(activity.warningCount) avertissement\(activity.warningCount == 1 ? "" : "s")",
+                        systemImage: "exclamationmark.triangle"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
                 }
-            }
 
-            // Unchanged items never produce a long visible list (spec 12.5).
-            if let blocked = changes.blocked, !blocked.isEmpty {
-                VStack(alignment: .leading, spacing: Spacing.micro) {
-                    Text("Non résolus")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    ForEach(blocked) { item in
-                        Text("• \(item.skill) — \(item.status.displayName)")
-                            .font(.caption)
+                if let changes = activity.changes,
+                   changes.hasChanges || changes.unchanged > 0 {
+                    HStack(spacing: Spacing.lg) {
+                        resultMetric("Créés", changes.created)
+                        resultMetric("Mis à jour", changes.updated)
+                        resultMetric("Inchangés", changes.unchanged)
+                        if let conflicts = changes.conflicts, conflicts > 0 {
+                            resultMetric("Conflits", conflicts, tint: .red)
+                        }
                     }
                 }
             }
         }
     }
 
-    private func countItem(_ label: String, _ value: Int, tint: Color? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
+    private func resultMetric(_ label: String, _ value: Int, tint: Color? = nil) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.xxs) {
             Text("\(value)")
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(.title3.weight(.semibold))
                 .foregroundStyle(tint ?? .primary)
             Text(label)
                 .font(.caption)
@@ -281,60 +328,106 @@ struct ActivityDetailView: View {
         .accessibilityLabel("\(label) : \(value)")
     }
 
-    // MARK: Error
+    private var resultTone: SemanticSurfaceTone {
+        switch activity.status {
+        case .succeeded: return .success
+        case .partiallySucceeded: return .attention
+        case .failed: return .error
+        default: return .neutral
+        }
+    }
 
-    private func errorSection(_ error: ActivityError) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            Text("Erreur")
-                .font(.headline)
+    // MARK: Changes and errors
 
-            InlineFeedbackView(type: .error, message: error.message)
+    private func changesSection(_ changes: ActionChanges) -> some View {
+        SectionSurface(title: "Changements") {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                HStack(spacing: Spacing.lg) {
+                    resultMetric("Créés", changes.created)
+                    resultMetric("Mis à jour", changes.updated)
+                    resultMetric("Inchangés", changes.unchanged)
+                    if let conflicts = changes.conflicts, conflicts > 0 {
+                        resultMetric("Conflits", conflicts, tint: .red)
+                    }
+                }
 
-            if let writeState = error.writeStateDescription {
-                Text(writeState)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-            }
-
-            if let code = error.code {
-                Text("Code : \(code)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if let blocked = changes.blocked, !blocked.isEmpty {
+                    VStack(alignment: .leading, spacing: Spacing.xxs) {
+                        Text("Non résolus")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        ForEach(blocked) { item in
+                            Text("• \(item.skill) — \(item.status.displayName)")
+                                .font(.caption)
+                        }
+                    }
+                }
             }
         }
     }
 
-    // MARK: Files
+    private func errorSection(_ error: ActivityError) -> some View {
+        SectionSurface(title: "Erreur", tone: .error) {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                InlineFeedbackView(type: .error, message: error.message)
 
-    private var filesSection: some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            Text("Rapports et fichiers")
-                .font(.headline)
+                if let writeState = error.writeStateDescription {
+                    Text(writeState)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
 
-            HStack(spacing: Spacing.grouped) {
-                Button("Ouvrir Inventory") { open("open-inventory") }
-                Button("Ouvrir Doctor") { open("open-doctor") }
-                Button("Ouvrir le log") { open("open-log") }
-                    .disabled(activity.technical == nil)
+                if let code = error.code {
+                    Text("Code : \(code)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .controlSize(.small)
+        }
+    }
+
+    // MARK: Resources
+
+    private var resourcesSection: some View {
+        SectionSurface(
+            title: "Rapports et fichiers",
+            subtitle: "Ouvrir les sorties produites par cette activité."
+        ) {
+            VStack(spacing: 0) {
+                ActivityResourceRow(
+                    symbolName: "shippingbox",
+                    title: "Inventory",
+                    subtitle: "État des projets et des skills",
+                    action: { open("open-inventory") }
+                )
+                Divider()
+                ActivityResourceRow(
+                    symbolName: "stethoscope",
+                    title: "Doctor",
+                    subtitle: "Diagnostic et anomalies",
+                    action: { open("open-doctor") }
+                )
+                Divider()
+                ActivityResourceRow(
+                    symbolName: "doc.text",
+                    title: "Journal",
+                    subtitle: "Sortie technique de l’opération",
+                    isEnabled: activity.technical != nil,
+                    action: { open("open-log") }
+                )
+            }
         }
     }
 
     // MARK: Technical
 
+    @ViewBuilder
     private var technicalSection: some View {
-        VStack(alignment: .leading, spacing: Spacing.related) {
-            if let technical = activity.technical {
-                // Collapsed by default (FR-ACT-02).
-                DisclosureGroup("Détails techniques", isExpanded: $showTechnical) {
-                    VStack(alignment: .leading, spacing: Spacing.grouped) {
-                        technicalRow("Action backend", technical.action)
-                        if !technical.arguments.isEmpty {
-                            technicalRow("Arguments", technical.arguments.joined(separator: " "))
-                        }
-                        technicalRow("Code de sortie", "\(technical.exitCode)")
-                        technicalRow("Chemin du log", technical.logPath)
+        if let technical = activity.technical {
+            SectionSurface {
+                DisclosureGroup(isExpanded: $showTechnical) {
+                    VStack(alignment: .leading, spacing: Spacing.md) {
+                        technicalGrid(technical)
 
                         if !technical.stdout.isEmpty {
                             streamBlock("stdout", technical.stdout)
@@ -343,61 +436,153 @@ struct ActivityDetailView: View {
                             streamBlock("stderr", technical.stderr)
                         }
 
-                        HStack(spacing: Spacing.grouped) {
-                            Button("Copier les détails") {
+                        HStack(spacing: Spacing.sm) {
+                            Button {
                                 NSPasteboard.general.clearContents()
                                 NSPasteboard.general.setString(
-                                    technical.copyableText, forType: .string
+                                    technical.copyableText,
+                                    forType: .string
                                 )
+                            } label: {
+                                Label("Copier les détails", systemImage: "doc.on.doc")
                             }
-                            Button("Ouvrir le fichier log") { open("open-log") }
+
+                            Button {
+                                open("open-log")
+                            } label: {
+                                Label("Ouvrir le journal", systemImage: "arrow.up.right.square")
+                            }
                         }
+                        .buttonStyle(.bordered)
                         .controlSize(.small)
-                        .padding(.top, Spacing.micro)
                     }
-                    .padding(.top, Spacing.related)
+                    .padding(.top, Spacing.sm)
+                } label: {
+                    Label("Détails techniques", systemImage: "terminal")
+                        .font(.headline)
                 }
-                .font(.headline)
-            } else {
-                Text("Aucun détail technique disponible pour cette activité.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
         }
     }
 
-    private func technicalRow(_ label: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 1) {
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            // Monospaced type is reserved for this section (FR-ACT-01).
-            Text(value)
-                .font(.system(.caption, design: .monospaced))
-                .textSelection(.enabled)
+    private func technicalGrid(_ technical: TechnicalDetails) -> some View {
+        Grid(
+            alignment: .leading,
+            horizontalSpacing: Spacing.md,
+            verticalSpacing: Spacing.xs
+        ) {
+            GridRow {
+                technicalLabel("Action backend")
+                technicalValue(technical.action)
+            }
+            if !technical.arguments.isEmpty {
+                GridRow {
+                    technicalLabel("Arguments")
+                    technicalValue(technical.arguments.joined(separator: " "))
+                }
+            }
+            GridRow {
+                technicalLabel("Code de sortie")
+                technicalValue("\(technical.exitCode)")
+            }
+            GridRow {
+                technicalLabel("Chemin du log")
+                technicalValue(technical.logPath)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    private func technicalLabel(_ value: String) -> some View {
+        Text(value)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+    }
+
+    private func technicalValue(_ value: String) -> some View {
+        Text(value)
+            .font(.system(.caption, design: .monospaced))
+            .textSelection(.enabled)
+    }
+
     private func streamBlock(_ label: String, _ content: String) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.micro) {
+        VStack(alignment: .leading, spacing: Spacing.xs) {
             Text(label)
-                .font(.caption)
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
 
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 Text(content)
                     .font(.system(.caption, design: .monospaced))
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxHeight: 180)
-            .padding(Spacing.related)
-            .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+            .frame(maxHeight: 160)
+            .padding(Spacing.md)
+            .background(
+                Color(nsColor: .textBackgroundColor).opacity(0.55),
+                in: RoundedRectangle(cornerRadius: AppRadius.compact, style: .continuous)
+            )
         }
     }
 
     private func open(_ action: String) {
         Task { await ProjectSkillsService().openResource(action) }
     }
+}
+
+private struct ActivityResourceRow: View {
+    let symbolName: String
+    let title: String
+    let subtitle: String
+    var isEnabled = true
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: Spacing.sm) {
+                Image(systemName: symbolName)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(isEnabled ? Color.accentColor : Color.secondary)
+                    .frame(width: 22)
+
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    Text(title)
+                        .font(.body.weight(.medium))
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: Spacing.sm)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.55)
+        .accessibilityLabel("\(title). \(subtitle)")
+    }
+}
+
+private extension OperationStatus {
+    var activityDisplayName: String {
+        switch self {
+        case .queued: return "En attente"
+        case .running: return "En cours"
+        case .succeeded: return "Réussie"
+        case .partiallySucceeded: return "Réussie avec avertissements"
+        case .failed: return "Échouée"
+        case .cancelled: return "Annulée"
+        }
+    }
+}
+
+#Preview {
+    ContentView()
 }

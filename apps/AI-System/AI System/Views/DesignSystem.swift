@@ -137,6 +137,13 @@ enum AppFormatters {
         )
     }
 
+    static func time(_ date: Date) -> String {
+        date.formatted(
+            Date.FormatStyle(date: .omitted, time: .shortened)
+                .locale(frenchLocale)
+        )
+    }
+
     static func duration(_ seconds: TimeInterval) -> String {
         let positiveSeconds = max(0.0, seconds)
         let hasFraction = positiveSeconds

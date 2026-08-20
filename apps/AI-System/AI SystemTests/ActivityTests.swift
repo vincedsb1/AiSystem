@@ -84,6 +84,29 @@ struct ActivityStoreTests {
         #expect(store.recent(1).map(\.id) == [second])
     }
 
+    @Test("Groups multiple activities by French time period")
+    func groupsByTimePeriod() {
+        let store = ActivityStore()
+        let now = Date()
+        _ = store.begin(
+            kind: .check,
+            displayName: "Aujourd’hui",
+            scope: .global,
+            startedAt: now
+        )
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        _ = store.begin(
+            kind: .sync,
+            displayName: "Hier",
+            scope: .project("P"),
+            startedAt: yesterday
+        )
+
+        let groups = store.grouped(by: .all, search: "", now: now)
+        #expect(groups.map(\.title) == ["Aujourd’hui", "Hier"])
+        #expect(groups.flatMap(\.activities).count == 2)
+    }
+
     @Test("Scope maps to the right project and skill")
     func scopeMapsToProjectAndSkill() {
         let store = ActivityStore()

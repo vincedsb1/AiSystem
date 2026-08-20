@@ -28,9 +28,15 @@ final class ActivityStore {
     func begin(
         kind: ActivityKind,
         displayName: String,
-        scope: ActivityScope
+        scope: ActivityScope,
+        startedAt: Date = Date()
     ) -> UUID {
-        let activity = Activity(kind: kind, displayName: displayName, scope: scope)
+        let activity = Activity(
+            kind: kind,
+            displayName: displayName,
+            scope: scope,
+            startedAt: startedAt
+        )
         activities.insert(activity, at: 0)
         if activities.count > limit {
             activities.removeLast(activities.count - limit)
@@ -87,6 +93,36 @@ final class ActivityStore {
 
     func count(for filter: ActivityFilter) -> Int {
         activities.filter(filter.matches).count
+    }
+
+    /// Groups the current filtered collection only when it contains more than
+    /// one activity, keeping a single entry visually compact.
+    func grouped(
+        by filter: ActivityFilter,
+        search: String,
+        now: Date = Date()
+    ) -> [ActivityGroup] {
+        let matching = filtered(by: filter, search: search)
+        guard matching.count > 1 else {
+            return matching.map {
+                ActivityGroup(id: "all", title: "", activities: [$0])
+            }
+        }
+
+        let grouped = Dictionary(grouping: matching) {
+            ActivityPeriod.resolve(date: $0.startedAt, now: now)
+        }
+
+        return ActivityPeriod.allCases.compactMap { period in
+            guard let activities = grouped[period], !activities.isEmpty else {
+                return nil
+            }
+            return ActivityGroup(
+                id: period.id,
+                title: period.displayName,
+                activities: activities
+            )
+        }
     }
 
     /// Selects the most recent activity matching a project and skill, so an
