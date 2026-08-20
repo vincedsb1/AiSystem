@@ -136,9 +136,24 @@ run_argv_in_swift_mode() {
 run_project_backend() {
   local subcommand="$1"
   shift
+  run_backend_module "scripts/project_skills.py" "$subcommand" "$@"
+}
+
+# Mutating routes live in a separate module; arguments always stay separate
+# argv items so no user value is ever interpreted by the shell.
+run_project_action() {
+  local subcommand="$1"
+  shift
+  run_backend_module "scripts/project_actions.py" "$subcommand" "$@"
+}
+
+run_backend_module() {
+  local module="$1"
+  local subcommand="$2"
+  shift 2
   local -a command=(
     "$AI_SYSTEM_ROOT/.venv/bin/python"
-    "$AI_SYSTEM_ROOT/scripts/project_skills.py"
+    "$AI_SYSTEM_ROOT/$module"
     "$subcommand"
     "$@"
     "--json"
@@ -232,6 +247,8 @@ Project Management:
   project-list       List active registered projects as JSON
   project-scan       Scan one registered project as JSON (read-only)
   project-overview   Aggregate every enabled project into one system snapshot (read-only)
+  project-import     Import an unmanaged skill (requires PROJECT SKILL SOURCE)
+  project-sync       Sync a project's exports (requires PROJECT, optional --dry-run)
 
 GUI App Building:
   build-gui-app      Build/rebuild AI System.app (AppleScript) with icon
@@ -392,6 +409,34 @@ action_project_scan() {
   run_project_backend "scan" "--project" "$1"
 }
 
+action_project_import() {
+  if [[ $# -ne 3 || -z "$1" || -z "$2" || -z "$3" ]]; then
+    echo "Error: project-import requires PROJECT SKILL SOURCE arguments" >&2
+    exit 1
+  fi
+  if [[ ! "$3" =~ ^(codex|claude)$ ]]; then
+    echo "Error: SOURCE must be one of: codex, claude" >&2
+    exit 1
+  fi
+  run_project_action "import" "--project" "$1" "--skill" "$2" "--source" "$3"
+}
+
+action_project_sync() {
+  if [[ $# -lt 1 || $# -gt 2 || -z "$1" ]]; then
+    echo "Error: project-sync requires PROJECT [--dry-run]" >&2
+    exit 1
+  fi
+  if [[ $# -eq 2 ]]; then
+    if [[ "$2" != "--dry-run" ]]; then
+      echo "Error: second argument must be --dry-run" >&2
+      exit 1
+    fi
+    run_project_action "sync" "--project" "$1" "--dry-run"
+  else
+    run_project_action "sync" "--project" "$1"
+  fi
+}
+
 action_project_overview() {
   if [[ $# -ne 0 ]]; then
     echo "Error: project-overview does not accept arguments" >&2
@@ -501,6 +546,12 @@ case "$action" in
     ;;
   project-overview)
     action_project_overview "$@"
+    ;;
+  project-import)
+    action_project_import "$@"
+    ;;
+  project-sync)
+    action_project_sync "$@"
     ;;
   build-gui-app)
     action_build_gui_app
