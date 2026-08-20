@@ -35,12 +35,18 @@ struct DesignSystemTests {
         #expect(formatted.contains("min"))
     }
 
+    @Test("Times use the French short clock format")
+    func timeIsFrench() {
+        let date = ISO8601DateFormatter().date(from: "2026-08-20T19:18:00Z")!
+        #expect(AppFormatters.time(date).contains("21:18"))
+    }
+
     @Test("Durations use French decimal separators and units")
     func durationIsLocalized() {
         let short = AppFormatters.duration(1.4)
         let compound = AppFormatters.duration(237)
 
-        #expect(short.contains("1,4"))
+        #expect(short.contains("1,4 s"))
         #expect(short.contains("s"))
         #expect(compound.contains("3"))
         #expect(compound.contains("min"))

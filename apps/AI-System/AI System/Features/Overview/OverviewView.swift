@@ -429,8 +429,8 @@ struct RequiredActionRow: View {
         .buttonStyle(.plain)
         .padding(.vertical, Spacing.sm)
         .accessibilityLabel(
-            "(action.skill) dans (action.project). "
-            + "(action.status.displayName). (action.severity.displayName)."
+            "\(action.skill) dans \(action.project). "
+            + "\(action.status.displayName). \(action.severity.displayName)."
         )
     }
 }
@@ -482,8 +482,8 @@ struct RecentActivityRow: View {
         .padding(.vertical, Spacing.sm)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-            "(activity.displayName). (activity.summary). "
-            + "(activity.status.displayName), (AppFormatters.relativeDate(activity.startedAt))."
+            "\(activity.displayName). \(activity.summary). "
+            + "\(activity.status.displayName), \(AppFormatters.relativeDate(activity.startedAt))."
         )
     }
 }

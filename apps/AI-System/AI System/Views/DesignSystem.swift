@@ -158,7 +158,10 @@ enum AppFormatters {
         )
         .locale(frenchLocale)
 
-        return Duration.seconds(positiveSeconds).formatted(style)
+        return Duration.seconds(positiveSeconds)
+            .formatted(style)
+            .replacingOccurrences(of: "\u{202F}", with: " ")
+            .replacingOccurrences(of: "\u{00A0}", with: " ")
     }
 }
 
@@ -300,7 +303,7 @@ struct MetricItemView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("(label) : (value)")
+        .accessibilityLabel("\(label) : \(value)")
     }
 }
 
