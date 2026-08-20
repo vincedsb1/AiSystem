@@ -36,6 +36,9 @@ struct OverviewView: View {
             .padding(.vertical, Spacing.standard)
         }
         .toolbar { toolbarContent }
+        .onReceive(NotificationCenter.default.publisher(for: .refreshRequested)) { _ in
+            Task { await model.load() }
+        }
         .task {
             if !model.hasAttemptedLoad {
                 await model.load()

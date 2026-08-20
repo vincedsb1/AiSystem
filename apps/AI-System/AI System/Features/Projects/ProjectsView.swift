@@ -12,6 +12,7 @@ struct ProjectsView: View {
     @Binding var pendingSelection: String?
 
     @State private var isAddingProject = false
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         HSplitView {
@@ -28,6 +29,15 @@ struct ProjectsView: View {
                 restoreSelection()
                 await model.scanSelectedProject()
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .addProjectRequested)) { _ in
+            isAddingProject = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .refreshRequested)) { _ in
+            Task { await model.refreshAll() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .searchRequested)) { _ in
+            isSearchFocused = true
         }
         .onChange(of: pendingSelection) { _, name in
             guard let name else { return }
@@ -373,6 +383,7 @@ struct ProjectsView: View {
             TextField("Rechercher un skill", text: $model.searchText)
                 .textFieldStyle(.roundedBorder)
                 .frame(maxWidth: 260)
+                .focused($isSearchFocused)
                 .accessibilityLabel("Rechercher un skill par nom ou identifiant canonical")
         }
     }

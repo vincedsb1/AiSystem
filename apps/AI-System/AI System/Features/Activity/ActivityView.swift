@@ -8,6 +8,7 @@ struct ActivityView: View {
 
     @State private var filter: ActivityFilter = .all
     @State private var searchText = ""
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         @Bindable var store = store
@@ -20,6 +21,9 @@ struct ActivityView: View {
                 .frame(minWidth: 380, maxWidth: .infinity)
         }
         .toolbar { toolbarContent }
+        .onReceive(NotificationCenter.default.publisher(for: .searchRequested)) { _ in
+            isSearchFocused = true
+        }
     }
 
     private var visibleActivities: [Activity] {
@@ -51,6 +55,7 @@ struct ActivityView: View {
             HStack {
                 TextField("Rechercher", text: $searchText)
                     .textFieldStyle(.roundedBorder)
+                    .focused($isSearchFocused)
                     .accessibilityLabel("Rechercher dans les activités")
             }
             .padding(Spacing.related)
