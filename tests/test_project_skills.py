@@ -9,6 +9,7 @@ import yaml
 
 from scripts.project_skills import (
     ProjectSkillsError,
+    build_overview,
     list_projects,
     resolve_project,
     scan_project,
@@ -516,6 +517,267 @@ class ProjectSkillsTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(before, after_first)
         self.assertEqual(after_first, after_second)
+
+
+class SharedTargetPolicyTests(unittest.TestCase):
+    """A shared export is only expected on the targets a project installs."""
+
+    def setUp(self) -> None:
+        self.fixture = ProjectFixture()
+
+    def tearDown(self) -> None:
+        self.fixture.close()
+
+    def skill(self, payload: dict, name: str) -> dict:
+        return next(skill for skill in payload["skills"] if skill["name"] == name)
+
+    def test_codex_only_project_does_not_report_missing_claude_export(self):
+        self.fixture.project["install_shared_targets"] = ["codex"]
+        self.fixture.add_runtime("shared-tool", codex=True)
+        self.fixture.add_manifest("shared-tool", canonical_id="shared.shared-tool", scope="shared")
+
+        payload = self.fixture.scan()
+        row = self.skill(payload, "shared-tool")
+
+        self.assertEqual(row["status"], "managed_synced")
+        self.assertTrue(row["managed"])
+        self.assertEqual(payload["summary"]["actionRequired"], 0)
+        self.assertEqual(payload["project"]["sharedTargets"], ["codex"])
+
+    def test_missing_shared_targets_defaults_to_codex_only(self):
+        self.fixture.project.pop("install_shared_targets", None)
+        self.fixture.add_runtime("shared-tool", codex=True)
+        self.fixture.add_manifest("shared-tool", canonical_id="shared.shared-tool", scope="shared")
+
+        payload = self.fixture.scan()
+
+        self.assertEqual(payload["project"]["sharedTargets"], ["codex"])
+        self.assertEqual(self.skill(payload, "shared-tool")["status"], "managed_synced")
+
+    def test_claude_targeted_project_still_reports_missing_claude_export(self):
+        self.fixture.project["install_shared_targets"] = ["codex", "claude"]
+        self.fixture.add_runtime("shared-tool", codex=True)
+        self.fixture.add_manifest("shared-tool", canonical_id="shared.shared-tool", scope="shared")
+
+        payload = self.fixture.scan()
+        row = self.skill(payload, "shared-tool")
+
+        self.assertEqual(row["status"], "missing_claude")
+        self.assertEqual(row["severity"], "attention")
+        self.assertEqual(row["allowedActions"], ["sync"])
+        self.assertEqual(payload["summary"]["actionRequired"], 1)
+
+    def test_project_scoped_skill_is_unaffected_by_shared_targets(self):
+        self.fixture.project["install_shared_targets"] = ["codex"]
+        self.fixture.add_runtime("local-tool", codex=True)
+        self.fixture.add_manifest("local-tool")
+
+        row = self.skill(self.fixture.scan(), "local-tool")
+
+        self.assertEqual(row["status"], "missing_claude")
+
+
+class SkillActionContractTests(unittest.TestCase):
+    """Backend stays authoritative on severity and allowed actions."""
+
+    def setUp(self) -> None:
+        self.fixture = ProjectFixture()
+
+    def tearDown(self) -> None:
+        self.fixture.close()
+
+    def skill(self, payload: dict, name: str) -> dict:
+        return next(skill for skill in payload["skills"] if skill["name"] == name)
+
+    def test_synced_skill_exposes_no_action(self):
+        self.fixture.add_runtime("stable", codex=True, claude=True)
+        self.fixture.add_manifest("stable")
+
+        row = self.skill(self.fixture.scan(), "stable")
+
+        self.assertIsNone(row["severity"])
+        self.assertEqual(row["allowedActions"], [])
+
+    def test_importable_skill_exposes_import_action(self):
+        self.fixture.add_runtime("new-skill", codex=True)
+
+        row = self.skill(self.fixture.scan(), "new-skill")
+
+        self.assertEqual(row["status"], "local_codex_only")
+        self.assertTrue(row["importable"])
+        self.assertEqual(row["allowedActions"], ["import"])
+        self.assertEqual(row["severity"], "attention")
+
+    def test_non_importable_skill_falls_back_to_review(self):
+        self.fixture.add_runtime(
+            "broken",
+            codex=True,
+            codex_content=self.fixture.content("broken", frontmatter=False),
+        )
+
+        row = self.skill(self.fixture.scan(), "broken")
+
+        self.assertFalse(row["importable"])
+        self.assertNotIn("import", row["allowedActions"])
+        self.assertEqual(row["allowedActions"], ["review"])
+
+
+class OverviewTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.fixture = ProjectFixture()
+
+    def tearDown(self) -> None:
+        self.fixture.close()
+
+    def overview(self) -> dict:
+        return build_overview(self.fixture.registry, self.fixture.manifest)
+
+    def test_healthy_system_reports_no_action(self):
+        self.fixture.add_runtime("stable", codex=True, claude=True)
+        self.fixture.add_manifest("stable")
+
+        payload = self.overview()
+
+        self.assertEqual(payload["schemaVersion"], 1)
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["state"], "healthy")
+        self.assertEqual(payload["summary"]["projectsTotal"], 1)
+        self.assertEqual(payload["summary"]["projectsHealthy"], 1)
+        self.assertEqual(payload["summary"]["actionRequired"], 0)
+        self.assertEqual(payload["actions"], [])
+        self.assertIsNone(payload["error"])
+
+    def test_actionable_skill_surfaces_as_attention(self):
+        self.fixture.add_runtime("new-skill", codex=True)
+
+        payload = self.overview()
+
+        self.assertEqual(payload["state"], "attention")
+        self.assertEqual(payload["summary"]["projectsAttention"], 1)
+        self.assertEqual(len(payload["actions"]), 1)
+
+        action = payload["actions"][0]
+        self.assertEqual(action["id"], "Suggst::new-skill")
+        self.assertEqual(action["project"], "Suggst")
+        self.assertEqual(action["severity"], "attention")
+        self.assertTrue(action["importable"])
+
+    def test_blocking_status_surfaces_as_error_and_sorts_first(self):
+        self.fixture.add_runtime("new-skill", codex=True)
+        self.fixture.add_runtime("drifted", codex=True, claude=True)
+        self.fixture.add_manifest(
+            "drifted",
+            canonical_id="suggst.drifted-codex",
+            export_targets=("codex",),
+        )
+        self.fixture.add_manifest(
+            "drifted",
+            canonical_id="suggst.drifted-claude",
+            export_targets=("claude",),
+        )
+
+        payload = self.overview()
+
+        self.assertEqual(payload["state"], "error")
+        self.assertEqual(payload["summary"]["projectsError"], 1)
+        self.assertEqual(payload["actions"][0]["severity"], "error")
+
+    def test_disabled_projects_are_excluded(self):
+        self.fixture.registry["projects"].append(
+            {
+                "name": "Disabled",
+                "root": str(self.fixture.project_root),
+                "enabled": False,
+                "paths": {
+                    "codex_skills": ".agents/skills",
+                    "claude_commands": ".claude/commands",
+                },
+            }
+        )
+
+        payload = self.overview()
+
+        self.assertEqual(payload["summary"]["projectsTotal"], 1)
+        self.assertEqual([entry["name"] for entry in payload["projects"]], ["Suggst"])
+
+    def test_unscannable_project_is_reported_without_breaking_overview(self):
+        self.fixture.add_runtime("stable", codex=True, claude=True)
+        self.fixture.add_manifest("stable")
+        self.fixture.registry["projects"].append(
+            {
+                "name": "Broken",
+                "root": str(self.fixture.base / "does-not-exist"),
+                "enabled": True,
+                "install_shared_targets": ["codex"],
+                "install_shared_skills": [],
+                "paths": {
+                    "codex_skills": ".agents/skills",
+                    "claude_commands": ".claude/commands",
+                },
+            }
+        )
+
+        payload = self.overview()
+
+        self.assertEqual(payload["state"], "error")
+        self.assertEqual(payload["summary"]["projectsTotal"], 2)
+        self.assertEqual(payload["summary"]["projectsError"], 1)
+
+        broken = next(entry for entry in payload["projects"] if entry["name"] == "Broken")
+        self.assertEqual(broken["state"], "error")
+        self.assertEqual(broken["error"]["code"], "missing_project_root")
+
+        healthy = next(entry for entry in payload["projects"] if entry["name"] == "Suggst")
+        self.assertEqual(healthy["state"], "healthy")
+
+    def test_overview_is_read_only(self):
+        self.fixture.add_runtime("stable", codex=True, claude=True)
+        self.fixture.add_manifest("stable")
+
+        def snapshot() -> dict[str, bytes]:
+            return {
+                str(path.relative_to(self.fixture.base)): path.read_bytes()
+                for path in self.fixture.base.rglob("*")
+                if path.is_file() or path.is_symlink()
+            }
+
+        before = snapshot()
+        self.overview()
+        self.assertEqual(before, snapshot())
+
+
+class OverviewCliTests(unittest.TestCase):
+    """The machine route must emit clean JSON on stdout."""
+
+    def setUp(self) -> None:
+        self.fixture = ProjectFixture()
+        self.fixture.add_runtime("stable", codex=True, claude=True)
+        self.fixture.add_manifest("stable")
+        self.fixture.write_configs()
+
+    def tearDown(self) -> None:
+        self.fixture.close()
+
+    def test_overview_cli_emits_parseable_json(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT_PATH),
+                "--registry",
+                str(self.fixture.registry_path),
+                "overview",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["schemaVersion"], 1)
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["state"], "healthy")
 
 
 if __name__ == "__main__":

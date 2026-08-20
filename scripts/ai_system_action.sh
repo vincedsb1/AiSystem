@@ -231,6 +231,7 @@ Project Management:
   add-project        Add new project (requires PROJECT PATH TARGETS INSTALL_NOW args)
   project-list       List active registered projects as JSON
   project-scan       Scan one registered project as JSON (read-only)
+  project-overview   Aggregate every enabled project into one system snapshot (read-only)
 
 GUI App Building:
   build-gui-app      Build/rebuild AI System.app (AppleScript) with icon
@@ -391,6 +392,14 @@ action_project_scan() {
   run_project_backend "scan" "--project" "$1"
 }
 
+action_project_overview() {
+  if [[ $# -ne 0 ]]; then
+    echo "Error: project-overview does not accept arguments" >&2
+    exit 1
+  fi
+  run_project_backend "overview"
+}
+
 action_build_gui_app() {
   bash scripts/build_ai_system_app.sh
 }
@@ -489,6 +498,9 @@ case "$action" in
     ;;
   project-scan)
     action_project_scan "$@"
+    ;;
+  project-overview)
+    action_project_overview "$@"
     ;;
   build-gui-app)
     action_build_gui_app

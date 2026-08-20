@@ -36,6 +36,7 @@ from scripts.ai_inventory import (
     normalize_name,
     path_index_keys,
     pairing_exception,
+    project_shared_targets,
 )
 from scripts.sync_skills import path_is_within
 
@@ -65,6 +66,23 @@ ACTION_REQUIRED_STATUSES = {
     "canonical_drift",
     "manifest_error",
     "conflict",
+}
+
+# Backend stays authoritative on severity (spec section 10.9).  "error" means a
+# blocking inconsistency the user must resolve explicitly; "attention" means a
+# safe, actionable remediation.
+BLOCKING_STATUSES = {"manifest_error", "conflict"}
+
+# Backend stays authoritative on the actions an interface may offer.
+ALLOWED_ACTIONS_BY_STATUS = {
+    "local_codex_only": ["import"],
+    "local_claude_only": ["import"],
+    "local_both_unmanaged": ["review"],
+    "missing_claude": ["sync"],
+    "missing_codex": ["sync"],
+    "canonical_drift": ["review", "sync"],
+    "manifest_error": ["review"],
+    "conflict": ["review"],
 }
 
 
@@ -914,6 +932,7 @@ def build_skill_row(
     registry: dict[str, Any],
     expected_paths: dict[tuple[str, str], Path],
     duplicate_keys: set[tuple[str, str]],
+    shared_targets: set[str],
 ) -> dict[str, Any]:
     pair_issue = pair.get("issue") if pair else None
     candidate_id = str(candidate.get("canonical_id")) if candidate else None
@@ -943,6 +962,17 @@ def build_skill_row(
         claude=claude,
         has_candidate=bool(candidate),
     )
+
+    # A shared skill is only expected on the targets the project actually
+    # installs (``ai_inventory.project_shared_targets`` is authoritative and
+    # defaults to codex-only).  Without this, every project that installs
+    # shared skills on Codex alone would report phantom ``missing_claude``
+    # actions that ``check-ai-system.sh`` does not consider problems.
+    if scope == "shared":
+        if status == "missing_claude" and "claude" not in shared_targets:
+            status, managed = "managed_synced", True
+        elif status == "missing_codex" and "codex" not in shared_targets:
+            status, managed = "managed_synced", True
 
     issues: list[dict[str, Any]] = []
     issues.extend(candidate_issues)
@@ -1029,6 +1059,17 @@ def build_skill_row(
     if description is None and metadata_source:
         description = metadata_source.get("description")
 
+    allowed_actions = list(ALLOWED_ACTIONS_BY_STATUS.get(status, []))
+    if "import" in allowed_actions and not importable:
+        allowed_actions = [action for action in allowed_actions if action != "import"]
+        if not allowed_actions:
+            allowed_actions = ["review"]
+
+    if status in ACTION_REQUIRED_STATUSES:
+        severity = "error" if status in BLOCKING_STATUSES else "attention"
+    else:
+        severity = None
+
     return {
         "name": name,
         "canonicalId": canonical_id,
@@ -1066,6 +1107,8 @@ def build_skill_row(
             "canonical": canonical_path,
         },
         "status": status,
+        "severity": severity,
+        "allowedActions": allowed_actions,
         "exception": exception_value,
         "conflict": conflict_payload(issues),
     }
@@ -1125,6 +1168,7 @@ def scan_project(
     duplicate_keys = {
         key for key, count in duplicate_counts.items() if count > 1
     }
+    shared_targets = project_shared_targets(project["_raw"])
 
     pairs = build_pairs(artifacts, registry)
     represented: set[str] = set()
@@ -1157,6 +1201,7 @@ def scan_project(
                 registry=registry,
                 expected_paths=expected_paths,
                 duplicate_keys=duplicate_keys,
+                shared_targets=shared_targets,
             )
         )
         represented.add(key)
@@ -1183,6 +1228,7 @@ def scan_project(
                 registry=registry,
                 expected_paths=expected_paths,
                 duplicate_keys=duplicate_keys,
+                shared_targets=shared_targets,
             )
         )
 
@@ -1192,12 +1238,174 @@ def scan_project(
         "status": "ok",
         "generatedAt": generated_at(),
         "project": {
-            key: value
-            for key, value in project.items()
-            if not key.startswith("_")
+            **{
+                key: value
+                for key, value in project.items()
+                if not key.startswith("_")
+            },
+            "sharedTargets": sorted(shared_targets),
         },
         "summary": build_summary(skills),
         "skills": skills,
+        "error": None,
+    }
+
+
+def project_state(summary: dict[str, int]) -> str:
+    """Derive the semantic state of a scanned project.
+
+    ``conflicts`` already aggregates ``conflict`` and ``manifest_error``, the two
+    statuses the backend considers blocking.
+    """
+    if summary.get("conflicts", 0) > 0:
+        return "error"
+    if summary.get("actionRequired", 0) > 0:
+        return "attention"
+    return "healthy"
+
+
+def global_state(project_entries: list[dict[str, Any]]) -> str:
+    states = {entry["state"] for entry in project_entries}
+    if "error" in states:
+        return "error"
+    if "attention" in states:
+        return "attention"
+    if not states:
+        return "healthy"
+    return "healthy"
+
+
+def action_items_for_project(
+    project_name: str,
+    skills: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    actions: list[dict[str, Any]] = []
+    for skill in skills:
+        status = skill.get("status")
+        if status not in ACTION_REQUIRED_STATUSES:
+            continue
+        actions.append(
+            {
+                "id": f"{project_name}::{skill['name']}",
+                "project": project_name,
+                "skill": skill["name"],
+                "canonicalId": skill.get("canonicalId"),
+                "status": status,
+                "severity": skill.get("severity")
+                or ("error" if status in BLOCKING_STATUSES else "attention"),
+                "importable": bool(skill.get("importable")),
+                "allowedActions": skill.get("allowedActions", []),
+            }
+        )
+    return actions
+
+
+def empty_project_summary() -> dict[str, int]:
+    return build_summary([])
+
+
+def build_overview(
+    registry: dict[str, Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    """Aggregate every enabled project into a single system-level snapshot.
+
+    A project that fails to scan is reported as an errored entry instead of
+    breaking the whole overview: the interface must still be able to describe
+    the rest of the system.
+    """
+    validate_registry_shape(registry)
+    validate_manifest_shape(manifest)
+
+    project_entries: list[dict[str, Any]] = []
+    actions: list[dict[str, Any]] = []
+
+    totals = {
+        "skillsTotal": 0,
+        "skillsManaged": 0,
+        "actionRequired": 0,
+        "expectedExceptions": 0,
+        "conflicts": 0,
+    }
+
+    for project in registry.get("projects", []):
+        if not project.get("enabled"):
+            continue
+
+        name = str(project.get("name"))
+        try:
+            scan = scan_project(registry, manifest, name)
+        except ProjectSkillsError as exc:
+            project_entries.append(
+                {
+                    "name": name,
+                    "root": project.get("root"),
+                    "enabled": True,
+                    "state": "error",
+                    "summary": empty_project_summary(),
+                    "error": {
+                        "code": exc.code,
+                        "message": exc.message,
+                        "details": exc.details,
+                    },
+                }
+            )
+            continue
+
+        summary = scan["summary"]
+        state = project_state(summary)
+        project_entries.append(
+            {
+                "name": name,
+                "root": scan["project"]["root"],
+                "enabled": True,
+                "state": state,
+                "summary": summary,
+                "error": None,
+            }
+        )
+
+        actions.extend(action_items_for_project(name, scan["skills"]))
+
+        totals["skillsTotal"] += summary.get("total", 0)
+        totals["skillsManaged"] += summary.get("managed", 0)
+        totals["actionRequired"] += summary.get("actionRequired", 0)
+        totals["expectedExceptions"] += summary.get("expectedExceptions", 0)
+        totals["conflicts"] += summary.get("conflicts", 0)
+
+    project_entries.sort(key=lambda entry: str(entry["name"]).casefold())
+    actions.sort(
+        key=lambda action: (
+            0 if action["severity"] == "error" else 1,
+            str(action["project"]).casefold(),
+            str(action["skill"]).casefold(),
+        )
+    )
+
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "status": "ok",
+        "generatedAt": generated_at(),
+        "state": global_state(project_entries),
+        "summary": {
+            "projectsTotal": len(project_entries),
+            "projectsHealthy": sum(
+                entry["state"] == "healthy" for entry in project_entries
+            ),
+            "projectsAttention": sum(
+                entry["state"] == "attention" for entry in project_entries
+            ),
+            "projectsError": sum(
+                entry["state"] == "error" for entry in project_entries
+            ),
+            "skillsTotal": totals["skillsTotal"],
+            "skillsManaged": totals["skillsManaged"],
+            "actionRequired": totals["actionRequired"],
+            "expectedExceptions": totals["expectedExceptions"],
+            "conflicts": totals["conflicts"],
+        },
+        "projects": project_entries,
+        "actions": actions,
         "error": None,
     }
 
@@ -1221,6 +1429,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     scan_parser.add_argument("--project", required=True)
     scan_parser.add_argument("--json", action="store_true")
 
+    overview_parser = subparsers.add_parser("overview")
+    overview_parser.add_argument("--json", action="store_true")
+
     return parser.parse_args(argv)
 
 
@@ -1242,6 +1453,10 @@ def execute(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
         manifest_path = load_manifest_path(registry, args.manifest)
         manifest = read_yaml_document(manifest_path, error_code="invalid_manifest")
+
+        if args.command == "overview":
+            return build_overview(registry, manifest), 0
+
         payload = scan_project(registry, manifest, args.project)
         return payload, 0
     except ProjectSkillsError as exc:
