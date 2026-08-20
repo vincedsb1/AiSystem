@@ -139,10 +139,19 @@ final class OverviewViewModel {
 
     /// Primary action: runs the official global check (FR-OV-01), then reloads
     /// the snapshot so the header reflects the fresh observation.
-    func runCheckThenRefresh() async {
+    ///
+    /// The operation is recorded as an activity so its result has a context
+    /// instead of living in a global `lastResult` (spec 20.5).
+    func runCheckThenRefresh(recordingIn store: ActivityStore? = nil) async {
         guard !isBusy else { return }
         isRunningCheck = true
         lastCheckSucceeded = nil
+
+        let activityId = store?.begin(
+            kind: .check,
+            displayName: "Vérification du système",
+            scope: .global
+        )
 
         let result = await service.runFullCheck()
         lastCheckSucceeded = result.succeeded
@@ -154,6 +163,42 @@ final class OverviewViewModel {
             errorMessage = "La vérification globale s'est terminée en erreur."
             errorIsRetryable = true
         }
+
+        if let store, let activityId {
+            let succeeded = result.succeeded
+            store.finish(
+                activityId,
+                status: succeeded ? .succeeded : .failed,
+                summary: succeeded
+                    ? checkSummary()
+                    : "La vérification globale s'est terminée en erreur.",
+                error: succeeded ? nil : ActivityError(
+                    code: nil,
+                    message: "La vérification globale s'est terminée en erreur.",
+                    writeState: .noChanges,
+                    retryable: true
+                ),
+                technical: TechnicalDetails(
+                    action: "check",
+                    arguments: [],
+                    exitCode: result.exitCode,
+                    duration: result.duration,
+                    stdout: result.stdout,
+                    stderr: result.stderr,
+                    logPath: AISystemPaths.lastLog
+                )
+            )
+        }
+    }
+
+    /// Business conclusion of a check, never derived from stdout (spec 21.8).
+    private func checkSummary() -> String {
+        guard let summary else { return "Vérification terminée." }
+        if summary.actionRequired == 0 {
+            return "\(summary.projectsTotal) projets vérifiés, aucune action requise."
+        }
+        return "\(summary.actionRequired) élément(s) à traiter sur "
+            + "\(summary.projectsTotal) projets."
     }
 
     func dismissError() {

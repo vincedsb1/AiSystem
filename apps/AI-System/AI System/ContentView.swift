@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var center = CommandCenter()
+    @State private var activityStore = ActivityStore()
     @State private var selection: AppSection = .overview
     @AppStorage("selectedAppSection") private var savedSelection: String = AppSection.overview.rawValue
 
@@ -29,6 +30,7 @@ struct ContentView: View {
                 .navigationTitle(selection.navigationTitle)
         }
         .environment(center)
+        .environment(activityStore)
         .frame(minWidth: 900, minHeight: 620)
         .onAppear {
             // Restore previously selected section
@@ -49,56 +51,23 @@ struct ContentView: View {
         selection = .projects
     }
 
+    /// FR-NAV-03: opening an activity from an inline error selects Activité
+    /// and that record.
+    private func openActivity(_ id: UUID) {
+        activityStore.selectedActivityId = id
+        selection = .activity
+    }
+
     @ViewBuilder
     private var detailView: some View {
         switch selection {
         case .overview:
-            OverviewView(onOpenProject: openProject)
+            OverviewView(onOpenProject: openProject, onOpenActivity: openActivity)
         case .projects:
             ProjectsView(pendingSelection: $pendingProjectSelection)
         case .activity:
-            ActivityPlaceholderView()
+            ActivityView()
         }
-    }
-}
-
-// MARK: - Placeholder Views for UX-02
-
-struct ActivityPlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "list.bullet.rectangle.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-
-            Text("Activité")
-                .font(.headline)
-
-            Text("Résultats, rapports et logs contextualisés (UX-07)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-                .padding(.vertical, 8)
-
-            Text("À implémenter dans UX-07:")
-                .font(.caption)
-                .fontWeight(.semibold)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("• Historique des opérations")
-                Text("• Statuts et résumés")
-                Text("• Détails techniques repliés")
-                Text("• Filtres et recherche")
-                Text("• Rapports et logs")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 

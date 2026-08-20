@@ -293,12 +293,22 @@ final class ProjectsViewModel {
 
     /// Imports a skill, then rescans so the row reflects its final state
     /// (spec 11.5). A double submission is refused up front.
-    func importSkill(_ skill: SkillRow, source: ImportSource) async {
+    func importSkill(
+        _ skill: SkillRow,
+        source: ImportSource,
+        recordingIn store: ActivityStore? = nil
+    ) async {
         guard let project = selectedProjectName else { return }
         guard operationState(for: skill) != .running, !isMutating else { return }
 
         skillOperations[skill.name] = .running
         importCandidate = nil
+
+        let activityId = store?.begin(
+            kind: .importSkill,
+            displayName: "Import de \(skill.name)",
+            scope: .skill(project, skill.name)
+        )
 
         let result = await service.importSkill(
             project: project,
@@ -311,20 +321,39 @@ final class ProjectsViewModel {
             skillOperations[skill.name] = .succeeded(response.summary)
             lastActionSummary = response.summary
             lastActionSucceeded = true
+            store?.finish(
+                activityId ?? UUID(),
+                status: response.outcome.isSuccess ? .succeeded : .failed,
+                summary: response.summary,
+                changes: response.changes
+            )
             await scanSelectedProject()
         case .failure(let error):
-            skillOperations[skill.name] = .failed(failureMessage(for: error))
-            lastActionSummary = failureMessage(for: error)
+            let message = failureMessage(for: error)
+            skillOperations[skill.name] = .failed(message)
+            lastActionSummary = message
             lastActionSucceeded = false
+            store?.finish(
+                activityId ?? UUID(),
+                status: .failed,
+                summary: message,
+                error: activityError(for: error)
+            )
         }
     }
 
     // MARK: - Sync
 
     /// Synchronises the selected project, then rescans.
-    func syncSelectedProject() async {
+    func syncSelectedProject(recordingIn store: ActivityStore? = nil) async {
         guard let project = selectedProjectName, !isMutating else { return }
         isSyncing = true
+
+        let activityId = store?.begin(
+            kind: .sync,
+            displayName: "Synchronisation de \(project)",
+            scope: .project(project)
+        )
 
         let result = await service.syncProject(project: project)
         isSyncing = false
@@ -333,12 +362,40 @@ final class ProjectsViewModel {
         case .success(let response):
             lastActionSummary = response.summary
             lastActionSucceeded = response.outcome.isSuccess
+            store?.finish(
+                activityId ?? UUID(),
+                status: response.outcome.isSuccess ? .succeeded : .partiallySucceeded,
+                summary: response.summary,
+                changes: response.changes,
+                warningCount: response.changes?.conflicts ?? 0
+            )
             await scanSelectedProject()
             await loadProjects()
         case .failure(let error):
-            lastActionSummary = failureMessage(for: error)
+            let message = failureMessage(for: error)
+            lastActionSummary = message
             lastActionSucceeded = false
+            store?.finish(
+                activityId ?? UUID(),
+                status: .failed,
+                summary: message,
+                error: activityError(for: error)
+            )
         }
+    }
+
+    /// Structured error carried into the activity record.
+    private func activityError(for error: ProjectSkillsServiceError) -> ActivityError {
+        var writeState: ActionWriteState?
+        if case .backend(let backendError) = error, let raw = backendError.writeState {
+            writeState = ActionWriteState(rawValue: raw)
+        }
+        return ActivityError(
+            code: error.code,
+            message: error.errorDescription ?? "Erreur inconnue.",
+            writeState: writeState,
+            retryable: error.isRetryable
+        )
     }
 
     /// Failure copy always states whether files were modified (spec 17.3).

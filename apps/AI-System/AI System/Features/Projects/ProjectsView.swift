@@ -4,6 +4,7 @@ import SwiftUI
 /// Projets — select a project, understand its state, inspect its skills.
 /// Read-only for UX-04: mutations arrive with UX-05.
 struct ProjectsView: View {
+    @Environment(ActivityStore.self) private var activityStore
     @State private var model = ProjectsViewModel()
     @AppStorage("selectedProjectName") private var savedProjectName = ""
 
@@ -56,7 +57,7 @@ struct ProjectsView: View {
                 isRunning: model.operationState(for: skill).isRunning,
                 onCancel: { model.importCandidate = nil },
                 onConfirm: { source in
-                    Task { await model.importSkill(skill, source: source) }
+                    Task { await model.importSkill(skill, source: source, recordingIn: activityStore) }
                 }
             )
         }
@@ -224,7 +225,7 @@ struct ProjectsView: View {
 
                 if model.canSyncProject() {
                     Button {
-                        Task { await model.syncSelectedProject() }
+                        Task { await model.syncSelectedProject(recordingIn: activityStore) }
                     } label: {
                         if model.isSyncing {
                             HStack(spacing: Spacing.micro) {

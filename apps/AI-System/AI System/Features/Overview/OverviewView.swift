@@ -2,11 +2,15 @@ import SwiftUI
 
 /// Vue d'ensemble — the conclusion first, technical output never (FR-OV-05).
 struct OverviewView: View {
+    @Environment(ActivityStore.self) private var activityStore
     @State private var model = OverviewViewModel()
 
     /// Lets the Overview hand a project over to the Projects destination
     /// (FR-NAV-02).
     var onOpenProject: (String) -> Void = { _ in }
+
+    /// Opens one activity in the Activité destination (FR-NAV-03).
+    var onOpenActivity: (UUID) -> Void = { _ in }
 
     var body: some View {
         ScrollView {
@@ -45,7 +49,7 @@ struct OverviewView: View {
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
             Button {
-                Task { await model.runCheckThenRefresh() }
+                Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
             } label: {
                 Label("Vérifier maintenant", systemImage: "checkmark.shield")
             }
@@ -88,7 +92,7 @@ struct OverviewView: View {
 
             HStack(spacing: Spacing.grouped) {
                 Button {
-                    Task { await model.runCheckThenRefresh() }
+                    Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
                 } label: {
                     if model.isBusy {
                         HStack(spacing: Spacing.micro) {
@@ -200,10 +204,26 @@ struct OverviewView: View {
         VStack(alignment: .leading, spacing: 0) {
             SectionHeaderView(title: "Activité récente", subtitle: nil)
 
-            Text("L'historique des opérations sera disponible dans la vue Activité.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            let recent = activityStore.recent(4)
+            if recent.isEmpty {
+                Text("Aucune opération lancée pendant cette session.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, Spacing.standard)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(recent) { activity in
+                        RecentActivityRow(activity: activity) {
+                            onOpenActivity(activity.id)
+                        }
+                        if activity.id != recent.last?.id {
+                            Divider().padding(.leading, Spacing.standard)
+                        }
+                    }
+                }
+                .background(.quaternary.opacity(0.25), in: RoundedRectangle(cornerRadius: 8))
                 .padding(.horizontal, Spacing.standard)
+            }
         }
     }
 
@@ -365,5 +385,50 @@ private struct SectionHeaderView: View {
         }
         .padding(.horizontal, Spacing.standard)
         .padding(.bottom, Spacing.related)
+    }
+}
+
+// MARK: - Recent activity row
+
+private struct RecentActivityRow: View {
+    let activity: Activity
+    let open: () -> Void
+
+    var body: some View {
+        HStack(spacing: Spacing.grouped) {
+            Image(systemName: activity.status.symbolName)
+                .foregroundStyle(activity.status.tint)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(activity.displayName)
+                    .font(.body)
+                Text(activity.targetDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: Spacing.grouped)
+
+            if let duration = activity.durationDescription {
+                Text(duration)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Text(activity.startedAt, style: .relative)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Button("Voir", action: open)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+        }
+        .padding(.horizontal, Spacing.standard)
+        .padding(.vertical, Spacing.grouped)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            "\(activity.displayName). \(activity.targetDescription). \(activity.status.displayName)."
+        )
     }
 }
