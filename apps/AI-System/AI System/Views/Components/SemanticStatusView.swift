@@ -1,193 +1,111 @@
 import SwiftUI
 
-// MARK: - Semantic Status Badge
+// MARK: - Operation status badge
 
-/// Displays a system state with icon, text, and color.
-struct SystemStatusView: View {
-    let state: SystemState
-    let lastCheckedAt: String?
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: state.symbolName)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(stateColor)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(state.displayName)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-
-                if let timestamp = lastCheckedAt {
-                    Text("Dernière vérification: \(timestamp)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Spacer()
-        }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
-        .background(backgroundColor)
-        .cornerRadius(8)
-    }
-
-    private var stateColor: Color {
-        switch state {
-        case .unknown:
-            return .gray
-        case .checking:
-            return .blue
-        case .healthy:
-            return .green
-        case .attention:
-            return .orange
-        case .error:
-            return .red
-        }
-    }
-
-    private var backgroundColor: Color {
-        stateColor.opacity(0.1)
-    }
-}
-
-// MARK: - Operation Status Badge
-
-/// Displays an operation status (queued, running, succeeded, etc.)
+/// Compact operation status. Colour is always paired with a symbol and a
+/// label (FR-STATE-03).
 struct OperationStatusBadge: View {
     let status: OperationStatus
-    let displayName: String?
+    var displayName: String?
 
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: status.symbolName)
-                .font(.system(size: 12, weight: .semibold))
+        HStack(spacing: Spacing.micro) {
+            if status.isTerminal {
+                Image(systemName: status.symbolName)
+                    .font(.caption)
+            } else {
+                ProgressView().controlSize(.small)
+            }
 
-            if let name = displayName {
-                Text(name)
+            if let displayName {
+                Text(displayName)
                     .font(.caption)
             }
 
             Text(status.displayName)
                 .font(.caption)
                 .fontWeight(.semibold)
-
-            if status.isTerminal {
-                // Terminal state - static
-            } else {
-                // Running state - show progress indicator
-                ProgressView()
-                    .scaleEffect(0.7, anchor: .center)
-            }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(statusColor.opacity(0.15))
-        .cornerRadius(4)
-        .foregroundStyle(statusColor)
-    }
-
-    private var statusColor: Color {
-        switch status {
-        case .queued:
-            return .gray
-        case .running:
-            return .blue
-        case .succeeded:
-            return .green
-        case .partiallySucceeded:
-            return .orange
-        case .failed:
-            return .red
-        case .cancelled:
-            return .gray
-        }
+        .padding(.horizontal, Spacing.related)
+        .padding(.vertical, Spacing.micro)
+        .background(status.tint.opacity(0.15), in: Capsule())
+        .foregroundStyle(status.tint)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel([displayName, status.displayName].compactMap { $0 }.joined(separator: ", "))
     }
 }
 
-// MARK: - Empty State View
+// MARK: - Empty state
 
-/// Generic empty state placeholder.
 struct EmptyStateView: View {
     let symbolName: String
     let title: String
-    let description: String?
-    let actionLabel: String?
-    let action: (() -> Void)?
+    var description: String?
+    var actionLabel: String?
+    var action: (() -> Void)?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Spacing.grouped) {
             Image(systemName: symbolName)
-                .font(.system(size: 48))
+                .font(.system(size: 40))
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
-            VStack(spacing: 8) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+            Text(title)
+                .font(.headline)
 
-                if let desc = description {
-                    Text(desc)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                }
+            if let description {
+                Text(description)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            if let label = actionLabel, let callback = action {
-                Button(action: callback) {
-                    Label(label, systemImage: "plus.circle.fill")
-                        .font(.callout)
-                }
-                .buttonStyle(.bordered)
+            if let actionLabel, let action {
+                Button(actionLabel, action: action)
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top, Spacing.micro)
             }
-
-            Spacer()
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(Spacing.major)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-// MARK: - Loading State View
+// MARK: - Loading state
 
-/// Generic loading state with progress indicator.
 struct LoadingStateView: View {
     let message: String
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Spacing.grouped) {
             ProgressView()
-                .scaleEffect(1.2)
-
             Text(message)
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(message)
     }
 }
 
-// MARK: - Section Header
+// MARK: - Section header
 
-/// Styled section header with optional action.
 struct SectionHeader: View {
     let title: String
-    let subtitle: String?
-    let actionLabel: String?
-    let action: (() -> Void)?
+    var subtitle: String?
+    var actionLabel: String?
+    var action: (() -> Void)?
 
     var body: some View {
-        HStack {
+        HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.headline)
-
-                if let sub = subtitle {
-                    Text(sub)
+                if let subtitle {
+                    Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -195,20 +113,20 @@ struct SectionHeader: View {
 
             Spacer()
 
-            if let label = actionLabel, let callback = action {
-                Button(label, action: callback)
-                    .font(.caption)
-                    .buttonStyle(.bordered)
+            if let actionLabel, let action {
+                Button(actionLabel, action: action)
+                    .controlSize(.small)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, Spacing.standard)
+        .padding(.bottom, Spacing.related)
     }
 }
 
-// MARK: - Inline Feedback View
+// MARK: - Inline feedback
 
-/// Transient feedback message (success, warning, error).
+/// Contextual feedback. Success is never announced through a modal alert
+/// (spec 17.1).
 struct InlineFeedbackView: View {
     enum FeedbackType {
         case success
@@ -216,54 +134,59 @@ struct InlineFeedbackView: View {
         case error
         case info
 
-        var color: Color {
+        var tint: Color {
             switch self {
-            case .success:
-                return .green
-            case .warning:
-                return .orange
-            case .error:
-                return .red
-            case .info:
-                return .blue
+            case .success: return .green
+            case .warning: return .orange
+            case .error: return .red
+            case .info: return .accentColor
             }
         }
 
         var symbolName: String {
             switch self {
-            case .success:
-                return "checkmark.circle.fill"
-            case .warning:
-                return "exclamationmark.circle.fill"
-            case .error:
-                return "xmark.circle.fill"
-            case .info:
-                return "info.circle.fill"
+            case .success: return "checkmark.circle.fill"
+            case .warning: return "exclamationmark.triangle.fill"
+            case .error: return "xmark.octagon.fill"
+            case .info: return "info.circle.fill"
+            }
+        }
+
+        var accessibilityPrefix: String {
+            switch self {
+            case .success: return "Succès"
+            case .warning: return "Avertissement"
+            case .error: return "Erreur"
+            case .info: return "Information"
             }
         }
     }
 
     let type: FeedbackType
     let message: String
+    var actionLabel: String?
+    var action: (() -> Void)?
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.related) {
             Image(systemName: type.symbolName)
-                .font(.system(size: 16))
+                .foregroundStyle(type.tint)
+                .accessibilityHidden(true)
 
             Text(message)
                 .font(.callout)
+                .fixedSize(horizontal: false, vertical: true)
 
-            Spacer()
+            Spacer(minLength: Spacing.related)
+
+            if let actionLabel, let action {
+                Button(actionLabel, action: action)
+                    .controlSize(.small)
+            }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 12)
-        .background(type.color.opacity(0.15))
-        .cornerRadius(6)
-        .foregroundStyle(type.color)
+        .padding(Spacing.grouped)
+        .background(type.tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(type.accessibilityPrefix). \(message)")
     }
 }
-
-// MARK: - Preview
-// Previews disabled due to model dependencies
-// Will be enabled in future iterations

@@ -5,6 +5,9 @@ struct ContentView: View {
     @State private var selection: AppSection = .overview
     @AppStorage("selectedAppSection") private var savedSelection: String = AppSection.overview.rawValue
 
+    /// Project handed over by another destination, consumed by Projects.
+    @State private var pendingProjectSelection: String?
+
     private let sections: [AppSection] = AppSection.allCases.sorted { $0.sortOrder < $1.sortOrder }
 
     var body: some View {
@@ -39,11 +42,18 @@ struct ContentView: View {
         }
     }
 
+    /// FR-NAV-02: opening a required action selects Projects and the project
+    /// it concerns.
+    private func openProject(_ name: String) {
+        pendingProjectSelection = name
+        selection = .projects
+    }
+
     @ViewBuilder
     private var detailView: some View {
         switch selection {
         case .overview:
-            OverviewPlaceholderView()
+            OverviewView(onOpenProject: openProject)
         case .projects:
             ProjectsPlaceholderView()
         case .activity:
@@ -53,44 +63,6 @@ struct ContentView: View {
 }
 
 // MARK: - Placeholder Views for UX-02
-
-struct OverviewPlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "square.grid.2x2.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-
-            Text("Vue d'ensemble")
-                .font(.headline)
-
-            Text("État global du système AI (UX-03)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Divider()
-                .padding(.vertical, 8)
-
-            Text("À implémenter dans UX-03:")
-                .font(.caption)
-                .fontWeight(.semibold)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("• État global (unknown, checking, healthy, attention, error)")
-                Text("• Date de dernière vérification")
-                Text("• Actions requises prioritaires")
-                Text("• Résumé des projets")
-                Text("• Activité récente")
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-}
 
 struct ProjectsPlaceholderView: View {
     var body: some View {

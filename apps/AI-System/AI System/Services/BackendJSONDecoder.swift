@@ -1,5 +1,12 @@
 import Foundation
 
+// MARK: - Versioned payload
+
+/// Any backend envelope carrying a `schemaVersion` the decoder must validate.
+protocol VersionedBackendPayload {
+    var schemaVersion: Int { get }
+}
+
 // MARK: - Centralized JSON Decoder with Versioning
 
 class BackendJSONDecoder {
@@ -55,9 +62,22 @@ class BackendJSONDecoder {
 
     // MARK: - Generic Decoding
 
+    /// Decodes any payload. A type conforming to `VersionedBackendPayload` has
+    /// its `schemaVersion` validated before it is handed back, so an unknown
+    /// major version is refused cleanly instead of being partially trusted
+    /// (spec 21.7).
     func decode<T: Decodable>(_ type: T.Type, from data: Data) -> Result<T, BackendDecodingError> {
         do {
             let value = try decoder.decode(T.self, from: data)
+
+            if let versioned = value as? VersionedBackendPayload,
+               versioned.schemaVersion != PROJECT_SKILLS_SCHEMA_VERSION {
+                return .failure(.schemaVersionMismatch(
+                    expected: PROJECT_SKILLS_SCHEMA_VERSION,
+                    got: versioned.schemaVersion
+                ))
+            }
+
             return .success(value)
         } catch {
             return .failure(.decodingFailed(error.localizedDescription))

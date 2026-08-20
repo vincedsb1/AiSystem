@@ -8,7 +8,7 @@ let PROJECT_SKILLS_SCHEMA_VERSION = 1
 
 // MARK: - List Projects Response
 
-struct ListProjectsResponse: Codable {
+struct ListProjectsResponse: Codable, VersionedBackendPayload {
     let schemaVersion: Int
     let status: String
     let generatedAt: String
@@ -24,23 +24,33 @@ struct ListProjectsResponse: Codable {
     }
 }
 
-struct ProjectInfo: Codable, Identifiable {
+struct ProjectInfo: Codable, Equatable, Identifiable {
     let name: String
     let root: String
     let enabled: Bool
     let paths: ProjectPaths
+    /// Targets the project actually installs shared skills on.
+    /// Absent on older payloads; defaults to codex-only, matching the backend.
+    let sharedTargets: [String]?
 
     var id: String { name }
+
+    var effectiveSharedTargets: [String] { sharedTargets ?? ["codex"] }
+
+    func installsSharedSkills(on target: String) -> Bool {
+        effectiveSharedTargets.contains(target)
+    }
 
     enum CodingKeys: String, CodingKey {
         case name
         case root
         case enabled
         case paths
+        case sharedTargets
     }
 }
 
-struct ProjectPaths: Codable {
+struct ProjectPaths: Codable, Equatable {
     let codexSkills: String
     let claudeCommands: String
 
@@ -52,7 +62,7 @@ struct ProjectPaths: Codable {
 
 // MARK: - Scan Project Response
 
-struct ScanProjectResponse: Codable {
+struct ScanProjectResponse: Codable, VersionedBackendPayload {
     let schemaVersion: Int
     let status: String
     let generatedAt: String
@@ -72,7 +82,7 @@ struct ScanProjectResponse: Codable {
     }
 }
 
-struct SkillSummary: Codable {
+struct SkillSummary: Codable, Equatable {
     let total: Int
     let managed: Int
     let unmanaged: Int
@@ -100,7 +110,7 @@ struct SkillSummary: Codable {
     }
 }
 
-struct SkillRow: Codable, Identifiable {
+struct SkillRow: Codable, Equatable, Identifiable {
     let name: String
     let canonicalId: String?
     let candidateCanonicalId: String?
@@ -111,11 +121,17 @@ struct SkillRow: Codable, Identifiable {
     let importable: Bool
     let presence: SkillPresence
     let paths: SkillPaths
-    let status: String // One of: managed_synced, local_codex_only, local_claude_only, etc.
+    let status: SkillStatus
+    /// Backend-authoritative severity. `nil` when no action is required.
+    let severity: ActionSeverity?
+    /// Backend-authoritative list of actions the interface may offer.
+    let allowedActions: [String]
     let exception: SkillException?
     let conflict: SkillConflict?
 
     var id: String { name }
+
+    var requiresAction: Bool { severity != nil }
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -129,12 +145,14 @@ struct SkillRow: Codable, Identifiable {
         case presence
         case paths
         case status
+        case severity
+        case allowedActions
         case exception
         case conflict
     }
 }
 
-struct SkillPresence: Codable {
+struct SkillPresence: Codable, Equatable {
     let codex: Bool
     let claude: Bool
 
@@ -144,7 +162,7 @@ struct SkillPresence: Codable {
     }
 }
 
-struct SkillPaths: Codable {
+struct SkillPaths: Codable, Equatable {
     let codex: String?
     let claude: String?
     let canonical: String?
@@ -156,7 +174,7 @@ struct SkillPaths: Codable {
     }
 }
 
-struct SkillException: Codable {
+struct SkillException: Codable, Equatable {
     let status: String
     let reason: String?
     let artifactType: String?
@@ -170,7 +188,7 @@ struct SkillException: Codable {
     }
 }
 
-struct SkillConflict: Codable {
+struct SkillConflict: Codable, Equatable {
     let code: String
     let message: String
     let details: [String: AnyCodable]?
@@ -184,7 +202,7 @@ struct SkillConflict: Codable {
 
 // MARK: - Backend Error
 
-struct BackendError: Codable {
+struct BackendError: Codable, Equatable {
     let code: String
     let message: String
     let details: [String: AnyCodable]?
@@ -215,7 +233,7 @@ struct BackendError: Codable {
 // MARK: - Helper: AnyCodable for flexible JSON
 
 /// A type-erased codable wrapper for flexible JSON dictionaries.
-enum AnyCodable: Codable {
+enum AnyCodable: Codable, Equatable {
     case null
     case bool(Bool)
     case int(Int)
@@ -273,7 +291,7 @@ enum AnyCodable: Codable {
 
 // MARK: - Skill Status Enum
 
-enum SkillStatus: String, Codable, CaseIterable {
+enum SkillStatus: String, Codable, Equatable, CaseIterable {
     case managedSynced = "managed_synced"
     case localCodexOnly = "local_codex_only"
     case localClaudeOnly = "local_claude_only"
