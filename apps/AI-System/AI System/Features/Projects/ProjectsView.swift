@@ -4,6 +4,7 @@ import SwiftUI
 /// Projets — select a project, understand its state, inspect its skills.
 /// Read-only for UX-04: mutations arrive with UX-05.
 struct ProjectsView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
     @State private var model = ProjectsViewModel()
     @AppStorage("selectedProjectName") private var savedProjectName = ""
@@ -22,6 +23,7 @@ struct ProjectsView: View {
             detail
                 .frame(minWidth: 420, maxWidth: .infinity)
         }
+        .functionalAnimation(model.selectedProjectName, reduceMotion: reduceMotion)
         .toolbar { toolbarContent }
         .task {
             if !model.hasAttemptedLoad {

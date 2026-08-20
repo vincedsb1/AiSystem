@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Vue d'ensemble — the conclusion first, technical output never (FR-OV-05).
 struct OverviewView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
     @State private var model = OverviewViewModel()
 
@@ -35,6 +36,7 @@ struct OverviewView: View {
             }
             .padding(.vertical, Spacing.standard)
         }
+        .functionalAnimation(model.displayState, reduceMotion: reduceMotion)
         .toolbar { toolbarContent }
         .onReceive(NotificationCenter.default.publisher(for: .refreshRequested)) { _ in
             Task { await model.load() }

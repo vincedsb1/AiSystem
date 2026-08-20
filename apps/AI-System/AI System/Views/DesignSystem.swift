@@ -83,3 +83,16 @@ extension ActionSeverity {
         }
     }
 }
+
+// MARK: - Motion (spec 19.4)
+
+extension View {
+    /// Applies a short, functional transition unless the viewer asked for
+    /// reduced motion. No animation is ever required to understand a state.
+    func functionalAnimation<V: Equatable>(
+        _ value: V,
+        reduceMotion: Bool
+    ) -> some View {
+        animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: value)
+    }
+}
