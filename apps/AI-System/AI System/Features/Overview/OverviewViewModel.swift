@@ -10,6 +10,7 @@ import Observation
 @Observable
 final class OverviewViewModel {
     private let service: ProjectSkillsService
+    private let commandCenter: CommandCenter?
 
     /// Last successfully decoded snapshot. Never cleared by a failed refresh.
     private(set) var overview: SystemOverviewResponse?
@@ -23,8 +24,12 @@ final class OverviewViewModel {
     /// `unknown` state is not confused with a completed empty observation.
     private(set) var hasAttemptedLoad = false
 
-    init(service: ProjectSkillsService = ProjectSkillsService()) {
+    init(
+        service: ProjectSkillsService = ProjectSkillsService(),
+        commandCenter: CommandCenter? = nil
+    ) {
         self.service = service
+        self.commandCenter = commandCenter
     }
 
     // MARK: - Derived presentation state
@@ -111,7 +116,9 @@ final class OverviewViewModel {
         return displayState.title
     }
 
-    var isBusy: Bool { isLoading || isRunningCheck }
+    var isBusy: Bool {
+        isLoading || isRunningCheck || commandCenter?.isRunning == true
+    }
 
     // MARK: - Actions
 
@@ -139,8 +146,13 @@ final class OverviewViewModel {
     ///
     /// The operation is recorded as an activity so its result has a context
     /// instead of living in a global `lastResult` (spec 20.5).
-    func runCheckThenRefresh(recordingIn store: ActivityStore? = nil) async {
+    func runCheckThenRefresh(
+        recordingIn store: ActivityStore? = nil,
+        commandCenter externalCommandCenter: CommandCenter? = nil
+    ) async {
         guard !isBusy else { return }
+        let activeCommandCenter = externalCommandCenter ?? commandCenter
+        guard activeCommandCenter?.canStart != false else { return }
         isRunningCheck = true
         lastCheckSucceeded = nil
 
@@ -148,6 +160,12 @@ final class OverviewViewModel {
             kind: .check,
             displayName: "Vérification du système",
             scope: .global
+        )
+        let operationID = activeCommandCenter?.begin(
+            kind: .check,
+            displayName: "Vérification du système",
+            target: "Système",
+            activityID: activityId
         )
 
         let result = await service.runFullCheck()
@@ -163,12 +181,13 @@ final class OverviewViewModel {
 
         if let store, let activityId {
             let succeeded = result.succeeded
+            let summary = succeeded
+                ? checkSummary()
+                : "La vérification globale s'est terminée en erreur."
             store.finish(
                 activityId,
                 status: succeeded ? .succeeded : .failed,
-                summary: succeeded
-                    ? checkSummary()
-                    : "La vérification globale s'est terminée en erreur.",
+                summary: summary,
                 error: succeeded ? nil : ActivityError(
                     code: nil,
                     message: "La vérification globale s'est terminée en erreur.",
@@ -185,6 +204,24 @@ final class OverviewViewModel {
                     logPath: AISystemPaths.lastLog
                 )
             )
+            if let operationID {
+                activeCommandCenter?.finish(
+                    operationID: operationID,
+                    status: succeeded ? .succeeded : .failed,
+                    headline: store.activity(activityId)?.receipt?.headline
+                        ?? (succeeded ? "Tout est à jour" : "La vérification a échoué"),
+                    statusMessage: summary
+                )
+            }
+        } else if let operationID {
+            activeCommandCenter?.finish(
+                operationID: operationID,
+                status: result.succeeded ? .succeeded : .failed,
+                headline: result.succeeded ? "Vérification terminée" : "La vérification a échoué",
+                statusMessage: result.succeeded
+                    ? checkSummary()
+                    : "La vérification globale s'est terminée en erreur."
+            )
         }
     }
 
@@ -192,7 +229,8 @@ final class OverviewViewModel {
     private func checkSummary() -> String {
         guard let summary else { return "Vérification terminée." }
         if summary.actionRequired == 0 {
-            return "\(summary.projectsTotal) projets vérifiés, aucune action requise."
+            return "\(summary.projectsTotal) projets vérifiés · "
+                + "\(summary.skillsManaged) skills gérés · aucune action requise."
         }
         return "\(summary.actionRequired) élément(s) à traiter sur "
             + "\(summary.projectsTotal) projets."

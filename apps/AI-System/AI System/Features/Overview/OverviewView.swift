@@ -5,6 +5,8 @@ import SwiftUI
 struct OverviewView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
+    @Environment(CommandCenter.self) private var commandCenter
+    @Environment(AppDataStore.self) private var dataStore
     @State private var model = OverviewViewModel()
 
     /// Lets the Overview hand a project over to the Projects destination.
@@ -23,12 +25,7 @@ struct OverviewView: View {
                         InlineFeedbackView(type: .error, message: message)
                     }
 
-                    if let summary = model.summary {
-                        ProjectHealthSummaryView(
-                            summary: summary,
-                            onOpenAttention: openFirstActionProject
-                        )
-                    }
+                    systemPulse
 
                     if !model.topActions.isEmpty {
                         requiredActions
@@ -43,11 +40,14 @@ struct OverviewView: View {
         .functionalAnimation(model.displayState, reduceMotion: reduceMotion)
         .toolbar { toolbarContent }
         .onReceive(NotificationCenter.default.publisher(for: .refreshRequested)) { _ in
-            Task { await model.load() }
+            Task { await loadAndPublish() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .runCheckRequested)) { _ in
+            Task { await runCheck() }
         }
         .task {
             if !model.hasAttemptedLoad {
-                await model.load()
+                await loadAndPublish()
             }
         }
     }
@@ -90,7 +90,24 @@ struct OverviewView: View {
         if model.displayState == .attention, !model.topActions.isEmpty {
             openFirstActionProject()
         } else {
-            Task { await model.runCheckThenRefresh(recordingIn: activityStore) }
+            Task { await runCheck() }
+        }
+    }
+
+    private func loadAndPublish() async {
+        await model.load()
+        if let overview = model.overview {
+            dataStore.updateOverview(overview)
+        }
+    }
+
+    private func runCheck() async {
+        await model.runCheckThenRefresh(
+            recordingIn: activityStore,
+            commandCenter: commandCenter
+        )
+        if let overview = model.overview {
+            dataStore.updateOverview(overview)
         }
     }
 
@@ -105,6 +122,28 @@ struct OverviewView: View {
     }
 
     // MARK: - Sections
+
+    private var systemPulse: some View {
+        SystemPulseView(
+            model: SystemPulseModel(
+                overview: model.overview,
+                state: model.displayState,
+                isRunning: commandCenter.isRunning
+            ),
+            onOpenProjects: {
+                if let project = model.projects.first?.name {
+                    onOpenProject(project)
+                }
+            },
+            onOpenIssue: {
+                if let action = model.topActions.first {
+                    onOpenProject(action.project)
+                } else {
+                    openLatestActivity()
+                }
+            }
+        )
+    }
 
     private var requiredActions: some View {
         SectionSurface(
@@ -453,7 +492,8 @@ struct RecentActivityRow: View {
                         .font(.body.weight(.medium))
                         .lineLimit(1)
 
-                    Text(activity.summary.isEmpty ? activity.targetDescription : activity.summary)
+                    Text(activity.receipt?.headline
+                        ?? (activity.summary.isEmpty ? activity.targetDescription : activity.summary))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)

@@ -149,8 +149,10 @@ private struct ActivityListRow: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
 
-                if !activity.summary.isEmpty {
-                    Text(activity.summary)
+                let headline = activity.receipt?.headline
+                    ?? (activity.summary.isEmpty ? nil : activity.summary)
+                if let headline {
+                    Text(headline)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -252,7 +254,18 @@ struct ActivityDetailView: View {
                 Spacer(minLength: 0)
             }
 
-            if !activity.summary.isEmpty {
+            if let receipt = activity.receipt {
+                Text(receipt.headline)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .fixedSize(horizontal: false, vertical: true)
+                if !receipt.summary.isEmpty, receipt.summary != receipt.headline {
+                    Text(receipt.summary)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } else if !activity.summary.isEmpty {
                 Text(activity.summary)
                     .font(.body)
                     .foregroundStyle(.secondary)
@@ -286,12 +299,23 @@ struct ActivityDetailView: View {
     private var resultSection: some View {
         SectionSurface(title: "Résultat", tone: resultTone) {
             VStack(alignment: .leading, spacing: Spacing.sm) {
-                Text(activity.summary.isEmpty
-                     ? activity.status.activityDisplayName
-                     : activity.summary)
-                    .font(.body)
-                    .fixedSize(horizontal: false, vertical: true)
-
+                if let receipt = activity.receipt {
+                    Text(receipt.headline)
+                        .font(.body.weight(.medium))
+                        .fixedSize(horizontal: false, vertical: true)
+                    if !receipt.summary.isEmpty, receipt.summary != receipt.headline {
+                        Text(receipt.summary)
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } else {
+                    Text(activity.summary.isEmpty
+                         ? activity.status.activityDisplayName
+                         : activity.summary)
+                        .font(.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 if activity.warningCount > 0 {
                     Label(
                         "\(activity.warningCount) avertissement\(activity.warningCount == 1 ? "" : "s")",

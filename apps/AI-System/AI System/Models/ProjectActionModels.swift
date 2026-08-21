@@ -72,6 +72,28 @@ struct ActionChanges: Codable, Equatable {
 
     var hasChanges: Bool { created > 0 || updated > 0 }
 
+    init(
+        created: Int,
+        updated: Int,
+        unchanged: Int,
+        conflicts: Int? = nil,
+        canonicalId: String? = nil,
+        canonicalPath: String? = nil,
+        targets: [String]? = nil,
+        applied: Bool? = nil,
+        blocked: [BlockedSkill]? = nil
+    ) {
+        self.created = created
+        self.updated = updated
+        self.unchanged = unchanged
+        self.conflicts = conflicts
+        self.canonicalId = canonicalId
+        self.canonicalPath = canonicalPath
+        self.targets = targets
+        self.applied = applied
+        self.blocked = blocked
+    }
+
     enum CodingKeys: String, CodingKey {
         case created, updated, unchanged, conflicts
         case canonicalId, canonicalPath, targets, applied, blocked

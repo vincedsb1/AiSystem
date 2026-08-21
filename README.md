@@ -32,10 +32,12 @@ open ~/Applications/"AI System.app"
 ```
 
 **Caractéristiques :**
-- Interface native SwiftUI (macOS 13+)
-- Sidebar avec 7 sections : Tableau de bord, Diffusion, Projets, Rapports, Docs, Outils, Logs
-- Gestion des projets : ajouter, mettre à jour
-- Logs intégrés avec stdout/stderr séparés
+- Interface native SwiftUI avec trois destinations : Vue d’ensemble, Projets, Activité
+- System Pulse : représentation du flux AI System → Projets → Claude/Codex
+- Quick Command global avec `⌘K`, recherche locale et actions protégées
+- Operation Experience : indicateur global, reçus sémantiques et activité contextualisée
+- Gestion des projets : ajouter, analyser, synchroniser et consulter les skills
+- Détails techniques accessibles à la demande, sans interprétation de stdout
 - Pas d'ouverture Terminal par défaut (mode `swift`)
 - Pas de dépendances externes
 - Entièrement local, pas de notarisation
@@ -56,6 +58,7 @@ open ~/Applications/"AI System.app"  # (ancienne version)
 ## Docs utiles
 
 - [docs/OPERATIONS.md](docs/OPERATIONS.md)
+- [docs/UX3-07-CLOSURE.md](docs/UX3-07-CLOSURE.md) — clôture UX3 et preuves de validation
 - [docs/SKILL-WORKFLOW.md](docs/SKILL-WORKFLOW.md)
 - [docs/PROJECT-ONBOARDING.md](docs/PROJECT-ONBOARDING.md)
 - [Plan-AI-System.md](Plan-AI-System.md)
@@ -77,8 +80,8 @@ L'application `AI System` (SwiftUI, macOS) expose trois destinations :
 | Activité | résultats contextualisés, rapports et détails techniques |
 
 Les fonctions secondaires (documentation, rapports, outils, emplacements)
-vivent dans **Réglages** (`⌘,`). Raccourcis : `⌘N` nouveau projet,
-`⌘R` actualiser, `⌘F` rechercher.
+vivent dans **Réglages** (`⌘,`). Raccourcis : `⌘K` Quick Command,
+`⌘N` nouveau projet, `⌘R` actualiser, `⌘F` rechercher.
 
 L'interface ne contient aucune logique métier : elle consomme les contrats
 JSON versionnés de `scripts/project_skills.py` (lecture) et
@@ -86,4 +89,3 @@ JSON versionnés de `scripts/project_skills.py` (lecture) et
 
 Construction : `make build-swift-app`.
 Le lanceur AppleScript reste disponible via `make build-gui-app`.
-

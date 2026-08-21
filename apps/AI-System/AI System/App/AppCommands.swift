@@ -14,6 +14,11 @@ struct AppCommands: Commands {
         }
 
         CommandGroup(after: .toolbar) {
+            Button("Ouvrir Quick Command…") {
+                NotificationCenter.default.post(name: .quickCommandRequested, object: nil)
+            }
+            .keyboardShortcut("k", modifiers: .command)
+
             Button("Actualiser") {
                 NotificationCenter.default.post(name: .refreshRequested, object: nil)
             }
@@ -40,4 +45,6 @@ extension Notification.Name {
     static let addProjectRequested = Notification.Name("ai.system.addProjectRequested")
     static let refreshRequested = Notification.Name("ai.system.refreshRequested")
     static let searchRequested = Notification.Name("ai.system.searchRequested")
+    static let quickCommandRequested = Notification.Name("ai.system.quickCommandRequested")
+    static let runCheckRequested = Notification.Name("ai.system.runCheckRequested")
 }

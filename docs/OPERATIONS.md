@@ -173,9 +173,9 @@ make gui-open-finder
 
 ## Interface locale macOS
 
-### SwiftUI App (Recommandée — en développement)
+### SwiftUI App (Recommandée)
 
-Une nouvelle interface native macOS SwiftUI remplace progressivement l'AppleScript. Elle offre une meilleure UX, logs intégrés, et gestion native des projets.
+L'interface native macOS SwiftUI est l'interface principale. L'AppleScript reste le fallback. SwiftUI offre System Pulse, Quick Command, des opérations globales et des reçus sémantiques tout en conservant les détails techniques à la demande.
 
 #### Installation et lancement
 
@@ -199,13 +199,15 @@ Ou simplement cliquer sur l'icône dans le Finder/Spotlight.
 
 #### Fonctionnalités
 
-- **Tableau de bord** : vérification du système, diffusion partout.
-- **Diffusion** : mettre à jour Codex / Claude / Tout.
-- **Projets** : ajouter ou mettre à jour des projets (formulaire avec `NSOpenPanel`).
-- **Rapports** : afficher Inventory et Doctor.
-- **Documentation** : accès aux docs principales.
-- **Outils** : installer hooks, consulter Git, ouvrir IDE/Terminal/Finder.
-- **Logs** : afficher stdout/stderr/exit code, copier, effacer.
+- **Vue d’ensemble** : conclusion de santé, System Pulse, actions requises et activité récente.
+- **Projets** : ajouter, analyser, synchroniser et consulter les skills via `NSOpenPanel`.
+- **Activité** : reçus sémantiques, changements, avertissements et détails techniques à la demande.
+- **Quick Command (`⌘K`)** : navigation, projets, skills déjà chargés, activités et ressources, filtrés en mémoire.
+- **Operation Experience** : indicateur global dans la toolbar, popover et lien vers Activité.
+- **Réglages (`⌘,`)** : documentation, rapports, outils et emplacements secondaires.
+- **Clôture UX3** : [baseline et prototypes](UX3-00-BASELINE-AND-PROTOTYPES.md), [rapport final](UX3-07-CLOSURE.md).
+- Les actions mutantes restent protégées par le contexte et les confirmations existantes.
+- Les logs sont conservés comme preuve technique secondaire ; aucun statut métier n’est déduit de stdout.
 
 #### Mode CLI sans GUI
 

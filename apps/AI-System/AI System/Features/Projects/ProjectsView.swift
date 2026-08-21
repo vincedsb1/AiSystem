@@ -5,13 +5,18 @@ import SwiftUI
 struct ProjectsView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ActivityStore.self) private var activityStore
+    @Environment(CommandCenter.self) private var commandCenter
+    @Environment(AppDataStore.self) private var dataStore
     @State private var model = ProjectsViewModel()
     @AppStorage("selectedProjectName") private var savedProjectName = ""
 
     /// Project handed over by the Overview.
     @Binding var pendingSelection: String?
+    @Binding var pendingSkillSelection: QuickCommandSkillSelection?
+    @Binding var pendingSyncProject: String?
 
     @State private var isAddingProject = false
+    @State private var isConfirmingSync = false
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
@@ -27,15 +32,16 @@ struct ProjectsView: View {
         .task {
             if !model.hasAttemptedLoad {
                 await model.loadProjects()
+                publishOverview()
                 restoreSelection()
-                await model.scanSelectedProject()
+                await scanAndPublish()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .addProjectRequested)) { _ in
             isAddingProject = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .refreshRequested)) { _ in
-            Task { await model.refreshAll() }
+            Task { await refreshAndPublish() }
         }
         .onReceive(NotificationCenter.default.publisher(for: .searchRequested)) { _ in
             isSearchFocused = true
@@ -44,17 +50,33 @@ struct ProjectsView: View {
             guard let name else { return }
             model.select(projectNamed: name, focusActions: true)
             pendingSelection = nil
-            Task { await model.scanSelectedProject() }
+            Task { await scanAndPublish() }
+        }
+        .onChange(of: pendingSkillSelection) { _, destination in
+            guard let destination else { return }
+            model.select(projectNamed: destination.project, focusActions: false)
+            model.searchText = destination.skill
+            pendingSkillSelection = nil
+            Task { await scanAndPublish() }
+        }
+        .onChange(of: pendingSyncProject) { _, project in
+            guard let project else { return }
+            model.select(projectNamed: project, focusActions: false)
+            pendingSyncProject = nil
+            isConfirmingSync = true
         }
         .sheet(isPresented: $isAddingProject) {
             AddProjectSheet(
+                recordingIn: activityStore,
+                commandCenter: commandCenter,
                 onCancel: { isAddingProject = false },
                 onAdded: { name in
                     isAddingProject = false
                     Task {
                         await model.loadProjects()
+                        publishOverview()
                         model.select(projectNamed: name, focusActions: false)
-                        await model.scanSelectedProject()
+                        await scanAndPublish()
                     }
                 }
             )
@@ -69,15 +91,42 @@ struct ProjectsView: View {
                 onCancel: { model.importCandidate = nil },
                 onConfirm: { source in
                     Task {
-                        await model.importSkill(skill, source: source, recordingIn: activityStore)
+                        await model.importSkill(
+                            skill,
+                            source: source,
+                            recordingIn: activityStore,
+                            commandCenter: commandCenter
+                        )
                     }
                 }
             )
         }
+        .confirmationDialog(
+            "Synchroniser \(model.selectedProjectName ?? "le projet") ?",
+            isPresented: $isConfirmingSync,
+            titleVisibility: .visible
+        ) {
+            Button("Synchroniser") {
+                Task {
+                    await model.syncSelectedProject(
+                        recordingIn: activityStore,
+                        commandCenter: commandCenter
+                    )
+                }
+            }
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Les exports seront préparés selon les règles du backend.")
+        }
         .onChange(of: model.selectedProjectName) { _, name in
             savedProjectName = name ?? ""
+            dataStore.selectedProjectName = name
             guard name != nil else { return }
-            Task { await model.scanSelectedProject() }
+            Task { await scanAndPublish() }
+        }
+        .onChange(of: model.scannedProjectName) { _, name in
+            guard let name, let scan = model.scan else { return }
+            dataStore.updateScan(scan, for: name)
         }
     }
 
@@ -88,6 +137,25 @@ struct ProjectsView: View {
               model.projects.contains(where: { $0.name == savedProjectName })
         else { return }
         model.selectedProjectName = savedProjectName
+    }
+
+    private func scanAndPublish() async {
+        await model.scanSelectedProject()
+        if let name = model.scannedProjectName, let scan = model.scan {
+            dataStore.updateScan(scan, for: name)
+        }
+    }
+
+    private func refreshAndPublish() async {
+        await model.refreshAll()
+        publishOverview()
+        await scanAndPublish()
+    }
+
+    private func publishOverview() {
+        if let overview = model.overviewSnapshot {
+            dataStore.updateOverview(overview)
+        }
     }
 
     // MARK: - Toolbar
@@ -164,7 +232,7 @@ struct ProjectsView: View {
                                 type: .error,
                                 message: message,
                                 actionLabel: "Réessayer",
-                                action: { Task { await model.scanSelectedProject() } }
+                                action: { Task { await scanAndPublish() } }
                             )
                         }
 
@@ -229,7 +297,7 @@ struct ProjectsView: View {
     private var headerActions: some View {
         HStack(spacing: Spacing.sm) {
             Button {
-                Task { await model.scanSelectedProject() }
+                Task { await scanAndPublish() }
             } label: {
                 if model.isScanning {
                     HStack(spacing: Spacing.xxs) {
@@ -243,9 +311,14 @@ struct ProjectsView: View {
             .buttonStyle(.borderedProminent)
             .disabled(model.isScanning)
 
-            if model.canSyncProject() {
+            if model.canSyncProject() && !commandCenter.isRunning {
                 Button {
-                    Task { await model.syncSelectedProject(recordingIn: activityStore) }
+                    Task {
+                        await model.syncSelectedProject(
+                            recordingIn: activityStore,
+                            commandCenter: commandCenter
+                        )
+                    }
                 } label: {
                     if model.isSyncing {
                         HStack(spacing: Spacing.xxs) {
@@ -379,7 +452,7 @@ struct ProjectsView: View {
                     title: "Projet non analysé",
                     description: "Lancez une analyse pour afficher les skills de ce projet.",
                     actionLabel: "Analyser",
-                    action: { Task { await model.scanSelectedProject() } }
+                    action: { Task { await scanAndPublish() } }
                 )
                 .frame(minHeight: 200)
             } else if model.visibleSkills.isEmpty {
@@ -468,7 +541,7 @@ struct ProjectsView: View {
                         skill: skill,
                         sharedTargets: model.sharedTargets,
                         operation: model.operationState(for: skill),
-                        canImport: model.canImport(skill),
+                        canImport: model.canImport(skill) && !commandCenter.isRunning,
                         onImport: { model.importCandidate = skill }
                     )
                     if skill.id != model.visibleSkills.last?.id {

@@ -45,9 +45,14 @@ enum SkillFilter: String, CaseIterable, Identifiable {
 @Observable
 final class ProjectsViewModel {
     private let service: ProjectSkillsService
+    private let commandCenter: CommandCenter?
 
     // Project list
     private(set) var projects: [OverviewProject] = []
+    /// The same structured overview used to populate the project list. This
+    /// lets Quick Command stay useful even when Projects is the first screen
+    /// opened in a restored session.
+    private(set) var overviewSnapshot: SystemOverviewResponse?
     private(set) var isLoadingProjects = false
     private(set) var projectsError: String?
     private(set) var hasAttemptedLoad = false
@@ -85,8 +90,12 @@ final class ProjectsViewModel {
     private(set) var lastActionSummary: String?
     private(set) var lastActionSucceeded = true
 
-    init(service: ProjectSkillsService = ProjectSkillsService()) {
+    init(
+        service: ProjectSkillsService = ProjectSkillsService(),
+        commandCenter: CommandCenter? = nil
+    ) {
         self.service = service
+        self.commandCenter = commandCenter
     }
 
     // MARK: - Derived list
@@ -244,7 +253,9 @@ final class ProjectsViewModel {
     /// True while any mutating operation runs. Navigation and reading stay
     /// available; only incompatible operations are blocked (spec 22.3).
     var isMutating: Bool {
-        isSyncing || skillOperations.values.contains { $0.isRunning }
+        isSyncing
+            || skillOperations.values.contains { $0.isRunning }
+            || commandCenter?.isRunning == true
     }
 
     func operationState(for skill: SkillRow) -> SkillOperationState {
@@ -285,6 +296,7 @@ final class ProjectsViewModel {
 
         switch await service.overview() {
         case .success(let payload):
+            overviewSnapshot = payload
             projects = payload.projects
             projectsError = nil
 
@@ -362,10 +374,13 @@ final class ProjectsViewModel {
     func importSkill(
         _ skill: SkillRow,
         source: ImportSource,
-        recordingIn store: ActivityStore? = nil
+        recordingIn store: ActivityStore? = nil,
+        commandCenter externalCommandCenter: CommandCenter? = nil
     ) async {
         guard let project = selectedProjectName else { return }
         guard operationState(for: skill) != .running, !isMutating else { return }
+        let activeCommandCenter = externalCommandCenter ?? commandCenter
+        guard activeCommandCenter?.canStart != false else { return }
 
         skillOperations[skill.name] = .running
         importCandidate = nil
@@ -374,6 +389,12 @@ final class ProjectsViewModel {
             kind: .importSkill,
             displayName: "Import de \(skill.name)",
             scope: .skill(project, skill.name)
+        )
+        let operationID = activeCommandCenter?.begin(
+            kind: .importSkill,
+            displayName: "Import de \(skill.name)",
+            target: "\(project) · \(skill.name)",
+            activityID: activityId
         )
 
         let result = await service.importSkill(
@@ -393,6 +414,17 @@ final class ProjectsViewModel {
                 summary: response.summary,
                 changes: response.changes
             )
+            if let operationID {
+                activeCommandCenter?.finish(
+                    operationID: operationID,
+                    status: response.outcome.isSuccess ? .succeeded : .failed,
+                    headline: store?.activity(activityId ?? UUID())?.receipt?.headline
+                        ?? (response.outcome.isSuccess
+                            ? "\(skill.name) est maintenant géré"
+                            : "L’import de \(skill.name) a échoué"),
+                    statusMessage: response.summary
+                )
+            }
             await scanSelectedProject()
         case .failure(let error):
             let message = failureMessage(for: error)
@@ -405,20 +437,39 @@ final class ProjectsViewModel {
                 summary: message,
                 error: activityError(for: error)
             )
+            if let operationID {
+                activeCommandCenter?.finish(
+                    operationID: operationID,
+                    status: .failed,
+                    headline: "L’import de \(skill.name) a échoué",
+                    statusMessage: message
+                )
+            }
         }
     }
 
     // MARK: - Sync
 
     /// Synchronises the selected project, then rescans.
-    func syncSelectedProject(recordingIn store: ActivityStore? = nil) async {
+    func syncSelectedProject(
+        recordingIn store: ActivityStore? = nil,
+        commandCenter externalCommandCenter: CommandCenter? = nil
+    ) async {
         guard let project = selectedProjectName, !isMutating else { return }
+        let activeCommandCenter = externalCommandCenter ?? commandCenter
+        guard activeCommandCenter?.canStart != false else { return }
         isSyncing = true
 
         let activityId = store?.begin(
             kind: .sync,
             displayName: "Synchronisation de \(project)",
             scope: .project(project)
+        )
+        let operationID = activeCommandCenter?.begin(
+            kind: .sync,
+            displayName: "Synchronisation de \(project)",
+            target: project,
+            activityID: activityId
         )
 
         let result = await service.syncProject(project: project)
@@ -435,6 +486,15 @@ final class ProjectsViewModel {
                 changes: response.changes,
                 warningCount: response.changes?.conflicts ?? 0
             )
+            if let operationID {
+                activeCommandCenter?.finish(
+                    operationID: operationID,
+                    status: response.outcome.isSuccess ? .succeeded : .partiallySucceeded,
+                    headline: store?.activity(activityId ?? UUID())?.receipt?.headline
+                        ?? "\(project) synchronisé",
+                    statusMessage: response.summary
+                )
+            }
             await scanSelectedProject()
             await loadProjects()
         case .failure(let error):
@@ -447,6 +507,14 @@ final class ProjectsViewModel {
                 summary: message,
                 error: activityError(for: error)
             )
+            if let operationID {
+                activeCommandCenter?.finish(
+                    operationID: operationID,
+                    status: .failed,
+                    headline: "La synchronisation de \(project) a échoué",
+                    statusMessage: message
+                )
+            }
         }
     }
 

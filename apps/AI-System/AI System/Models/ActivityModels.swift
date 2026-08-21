@@ -22,6 +22,7 @@ struct Activity: Identifiable, Equatable {
     var warningCount: Int
     var error: ActivityError?
     var technical: TechnicalDetails?
+    var receipt: OperationReceipt?
 
     init(
         id: UUID = UUID(),
@@ -35,7 +36,8 @@ struct Activity: Identifiable, Equatable {
         changes: ActionChanges? = nil,
         warningCount: Int = 0,
         error: ActivityError? = nil,
-        technical: TechnicalDetails? = nil
+        technical: TechnicalDetails? = nil,
+        receipt: OperationReceipt? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -49,6 +51,7 @@ struct Activity: Identifiable, Equatable {
         self.warningCount = warningCount
         self.error = error
         self.technical = technical
+        self.receipt = receipt
     }
 
     var duration: TimeInterval? {

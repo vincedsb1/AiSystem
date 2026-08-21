@@ -39,6 +39,8 @@ struct RegisteredProject: Codable, Equatable {
 @Observable
 final class AddProjectViewModel {
     private let service: ProjectSkillsService
+    private let activityStore: ActivityStore?
+    private let commandCenter: CommandCenter?
 
     private(set) var inspection: FolderInspection?
     private(set) var isInspecting = false
@@ -51,8 +53,14 @@ final class AddProjectViewModel {
     /// Set once the project has been added, so the caller can select it.
     private(set) var addedProjectName: String?
 
-    init(service: ProjectSkillsService = ProjectSkillsService()) {
+    init(
+        service: ProjectSkillsService = ProjectSkillsService(),
+        activityStore: ActivityStore? = nil,
+        commandCenter: CommandCenter? = nil
+    ) {
         self.service = service
+        self.activityStore = activityStore
+        self.commandCenter = commandCenter
     }
 
     var selectedPath: String? { inspection?.path }
@@ -105,17 +113,73 @@ final class AddProjectViewModel {
         defer { isSubmitting = false }
 
         let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard commandCenter?.canStart != false else { return }
+        let activityID = activityStore?.begin(
+            kind: .addProject,
+            displayName: "Ajout de projet",
+            scope: .project(trimmed)
+        )
+        let operationID = commandCenter?.begin(
+            kind: .addProject,
+            displayName: "Ajout de projet",
+            target: trimmed,
+            activityID: activityID
+        )
+
         switch await service.addProject(name: trimmed, path: path, targets: targets) {
         case .success(let response):
             if response.succeeded {
                 addedProjectName = response.project ?? trimmed
                 errorMessage = nil
+                activityStore?.finish(
+                    activityID ?? UUID(),
+                    status: response.outcome.isSuccess ? .succeeded : .failed,
+                    summary: response.summary,
+                    changes: response.changes
+                )
+                if let operationID {
+                    commandCenter?.finish(
+                        operationID: operationID,
+                        status: response.outcome.isSuccess ? .succeeded : .failed,
+                        headline: activityStore?.activity(activityID ?? UUID())?.receipt?.headline
+                            ?? "\(trimmed) est maintenant géré",
+                        statusMessage: response.summary
+                    )
+                }
             } else {
                 errorMessage = response.summary
+                activityStore?.finish(
+                    activityID ?? UUID(),
+                    status: .failed,
+                    summary: response.summary
+                )
+                if let operationID {
+                    commandCenter?.finish(
+                        operationID: operationID,
+                        status: .failed,
+                        headline: "L’ajout de \(trimmed) a échoué",
+                        statusMessage: response.summary
+                    )
+                }
             }
         case .failure(let error):
             // Every error states whether the project was added (spec 13.4).
-            errorMessage = Self.message(for: error)
+            let message = Self.message(for: error)
+            errorMessage = message
+            activityStore?.finish(
+                activityID ?? UUID(),
+                status: .failed,
+                summary: message,
+                error: Self.activityError(for: error)
+            )
+            if let operationID {
+                commandCenter?.finish(
+                    operationID: operationID,
+                    status: .failed,
+                    headline: "L’ajout de \(trimmed) a échoué",
+                    statusMessage: message
+                )
+            }
         }
     }
 
@@ -126,6 +190,20 @@ final class AddProjectViewModel {
               let state = ActionWriteState(rawValue: raw)
         else { return reason }
         return "\(reason) \(state.description)"
+    }
+
+    private static func activityError(for error: ProjectSkillsServiceError) -> ActivityError {
+        var writeState: ActionWriteState?
+        if case .backend(let backendError) = error,
+           let raw = backendError.writeState {
+            writeState = ActionWriteState(rawValue: raw)
+        }
+        return ActivityError(
+            code: error.code,
+            message: error.errorDescription ?? "Erreur inconnue.",
+            writeState: writeState,
+            retryable: error.isRetryable
+        )
     }
 
     func toggle(target: String) {
@@ -142,10 +220,30 @@ final class AddProjectViewModel {
 
 /// Guided project creation, replacing the permanent technical form.
 struct AddProjectSheet: View {
-    @State private var model = AddProjectViewModel()
+    @State private var model: AddProjectViewModel
 
+    private let recordingIn: ActivityStore?
+    private let commandCenter: CommandCenter?
     let onCancel: () -> Void
     let onAdded: (String) -> Void
+
+    init(
+        recordingIn: ActivityStore? = nil,
+        commandCenter: CommandCenter? = nil,
+        onCancel: @escaping () -> Void,
+        onAdded: @escaping (String) -> Void
+    ) {
+        self.recordingIn = recordingIn
+        self.commandCenter = commandCenter
+        self.onCancel = onCancel
+        self.onAdded = onAdded
+        _model = State(
+            initialValue: AddProjectViewModel(
+                activityStore: recordingIn,
+                commandCenter: commandCenter
+            )
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.standard) {

@@ -62,6 +62,7 @@ final class ActivityStore {
         activities[index].warningCount = warningCount
         activities[index].error = error
         activities[index].technical = technical
+        activities[index].receipt = OperationReceiptBuilder.build(from: activities[index])
     }
 
     // MARK: - Reading
